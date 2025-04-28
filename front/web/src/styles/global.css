@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Pretendard-Bold";
+  src: url("../assets//fonts/Pretendard-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-Medium";
+  src: url("../assets/fonts/Pretendard-Medium.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-Light";
+  src: url("../assets/fonts/Pretendard-Light.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-Black";
+  src: url("../assets/fonts/Pretendard-Black.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-ExtraBold";
+  src: url("../assets/fonts/Pretendard-ExtraBold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-ExtraLight";
+  src: url("../assets/fonts/Pretendard-ExtraLight.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("../assets/fonts/Pretendard-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-SemiBold";
+  src: url("../assets/fonts/Pretendard-SemiBold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Pretendard-Thin";
+  src: url("../assets/fonts/Pretendard-Thin.woff") format("woff");
+}
+
+/* 모바일 화면에서 실제 높이를 계산하여 사용하는 방법 */
+:root {
+  --vh: 100%; /* --vh라는 변수를 선언하고 100%로 설정 */
+}
+
+/* 스크롤바 숨기기 (웹킷 기반 브라우저에서 스크롤바 숨김) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* 스크롤바를 숨깁니다. */
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE, Edge에서 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+}
+
+/* 전역 스타일 설정 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* 모든 엘리먼트의 크기를 패딩과 보더를 포함한 크기로 계산 */
+}
+
+/* 전체 페이지 기본 스타일 */
+html,
+body {
+  margin: 0; /* 기본 마진을 0으로 설정 */
+  padding: 0; /* 기본 패딩을 0으로 설정 */
+  width: 100%; /* 너비를 100%로 설정 */
+  height: 100vh;
+  overflow-x: hidden; /* 가로 스크롤을 방지 */
+}
+
+/* 앱 컨테이너 스타일 */
+.app {
+  width: 100%; /* 너비를 100%로 설정 */
+  max-width: 1440px; /* 최대 너비를 420px로 설정 */
+  height: 100vh; /* 높이를 화면의 100vh를 높이로 설정, --vh 변수를 활용 */
+  margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 중앙 정렬 */
+  display: flex; /* flexbox로 설정하여 자식 요소들을 가로로 배치 */
+  flex-direction: column; /* 세로 방향으로 배치 */
+  align-items: center; /* 가로축 중앙 정렬 */
+  justify-content: center; /* 세로축 중앙 정렬 */
+  position: relative; /* 상대 위치로 설정 */
+  overflow-x: hidden; /* 가로 스크롤을 방지 */
+}
+
+.header {
+  width: 100%;
+  position: relative;
+  max-width: 1440px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 12px;
+
+  @media (min-width: 768px) {
+    padding: 40px 60px;
+  }
+}
+
+/* 메인 콘텐츠 패딩 설정 (헤더와 푸터 고려) */
+.content {
+  flex-grow: 1; /* 콘텐츠 영역이 남은 공간을 차지하도록 설정 */
+  padding-top: 60px; /* 헤더의 높이만큼 패딩을 추가 */
+  padding-bottom: 60px; /* 푸터의 높이만큼 패딩을 추가 */
+  padding-left: 50px; /* 좌측 패딩*/
+  padding-right: 50px; /* 우측 패딩*/
+  width: 100%; /* 너비 100% */
+  max-width: 1440px; /* 최대 너비를 420px로 설정 */
+  box-sizing: border-box; /* 패딩과 보더를 포함한 크기 계산 */
+  color: #1e1e1e;
+}
