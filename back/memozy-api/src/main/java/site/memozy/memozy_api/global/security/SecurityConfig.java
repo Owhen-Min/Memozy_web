@@ -1,0 +1,89 @@
+package site.memozy.memozy_api.global.security;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import lombok.RequiredArgsConstructor;
+import site.memozy.memozy_api.domain.user.repository.UserRepository;
+import site.memozy.memozy_api.domain.user.service.UserAuthServiceImpl;
+import site.memozy.memozy_api.global.jwt.JwtAuthenticationEntryPoint;
+import site.memozy.memozy_api.global.jwt.JwtFilter;
+import site.memozy.memozy_api.global.jwt.JwtUtil;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+	private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final CustomSuccessHandler customSuccessHandler;
+	private final UserAuthServiceImpl userAuthServiceImpl;
+	private final JwtUtil jwtUtil;
+
+	private static final List<String> PERMIT_URLS = List.of(
+		"/favicon.ico", "/css/**", "/js/**", "/images/**",
+		"/oauth2/**", "/login/oauth2/**", "/login",
+		"/ws-connect", "/ws-connect/**"
+	);
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
+		http
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(csrf -> csrf.disable())
+			.formLogin(form -> form.disable())
+			.httpBasic(basic -> basic.disable())
+			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+			.oauth2Login(oauth2 -> oauth2
+				.authorizationEndpoint(endpoint -> endpoint
+					.baseUri("/oauth2/authorization")
+					.authorizationRequestRepository(new HttpSessionOAuth2AuthorizationRequestRepository())
+				)
+				.userInfoEndpoint(userInfo -> userInfo.userService(userAuthServiceImpl))
+				.successHandler(customSuccessHandler)
+				.failureHandler(oAuth2AuthenticationFailureHandler)
+			)
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
+				.anyRequest().authenticated()
+			)
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+
+		return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList(
+			"http://localhost:5173",
+			"https://localhost:5173",
+			"http://memozy.site",
+			"https://memozy.site"
+		));
+		configuration.setAllowedMethods(Collections.singletonList("*"));
+		configuration.setAllowedHeaders(Collections.singletonList("*"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
+}

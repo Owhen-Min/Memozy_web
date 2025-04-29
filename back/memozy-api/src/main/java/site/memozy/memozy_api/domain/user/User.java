@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
+import site.memozy.memozy_api.global.auth.UserOAuthDto;
 
 @Entity
 @Getter
@@ -21,15 +22,26 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userId;
 
-	@Column(nullable = false)
-	private String name;
-
-	@Column(nullable = false)
-	private String nickname;
+	@Column(name = "personal_id", length = 100)
+	private String personalId;
 
 	@Column(nullable = false, length = 100, unique = true)
 	private String email;
 
 	@Column(nullable = false)
+	private String name;
+
+	@Column(nullable = false)
 	private String profileImage;
+
+	public static User createUser(UserOAuthDto userOAuthDto) {
+		User user = new User();
+		user.email = userOAuthDto.getEmail();
+		user.profileImage = userOAuthDto.getProfileImage();
+		user.name = userOAuthDto.getName();
+		user.personalId = userOAuthDto.getPersonalId();
+
+		return user;
+
+	}
 }
