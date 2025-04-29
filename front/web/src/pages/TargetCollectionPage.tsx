@@ -11,7 +11,7 @@ function TargetCollectionPage() {
         <div className="content">
             <h1 className="text-32 font-pre-bold mb-8 text-normalactive">
                 {targetCollectionName}
-                <span className="text-20 font-pre-medium text-main200 pl-2">컬렉션</span>
+                <span className="text-20 font-pre-medium text-main100 pl-2">컬렉션</span>
             </h1>
 
         </div>
