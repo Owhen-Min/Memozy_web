@@ -2,14 +2,18 @@ import { useParams } from "react-router-dom";
 
 
 function TargetCollectionPage() {
-    const { targetCollectionId } = useParams();
-    const targetCollectionName = targetCollectionId === 'all' 
+    const { collectionId } = useParams();
+    const targetCollectionName = collectionId === 'all' 
         ? '모두 보기' 
-        : targetCollectionId ? targetCollectionId.replace(/-/g, ' ') : '';
+        : collectionId ? collectionId : '';
 
     return (
         <div className="content">
-            <h1 className="text-32 font-pre-bold mb-8 text-normalactive">{targetCollectionName}</h1>
+            <h1 className="text-32 font-pre-bold mb-8 text-normalactive">
+                {targetCollectionName}
+                <span className="text-20 font-pre-medium text-main200 pl-2">컬렉션</span>
+            </h1>
+
         </div>
     );
 }

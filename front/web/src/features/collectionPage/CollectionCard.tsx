@@ -12,7 +12,7 @@ function CollectionCard({ collection }: CollectionCardProps) {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/target-collection/${collection.name.replace(/\s+/g, '-')}`);
+        navigate(`/collection/${collection.id}`);
     };
 
     const handleEditClick = (e: React.MouseEvent) => {
