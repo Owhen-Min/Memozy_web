@@ -14,7 +14,7 @@ const AppLayout = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/my" element={<MyPage />} />
         <Route path="/collection" element={<CollectionPage />} />
-        <Route path="/target-collection/:targetCollectionId" element={<TargetCollectionPage />} />
+        <Route path="/collection/:collectionId" element={<TargetCollectionPage />} />
       </Routes>
     </>
   );

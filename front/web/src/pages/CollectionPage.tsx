@@ -1,5 +1,5 @@
 import { collectionData } from '../dummy/collectionData';
-import CollectionCard from '../features/collectionPage/collectionCard';
+import CollectionCard from '../features/collectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ function CollectionPage() {
   const totalQuizCount = collectionData[0].data.reduce((sum, item) => sum + item.quizCount, 0);
 
   const handleAllCollectionsClick = () => {
-    navigate('/target-collection/all');
+    navigate('/collection/all');
   };
 
   return (
