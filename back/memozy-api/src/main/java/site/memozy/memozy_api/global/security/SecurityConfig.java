@@ -35,7 +35,7 @@ public class SecurityConfig {
 	private final JwtUtil jwtUtil;
 
 	private static final List<String> PERMIT_URLS = List.of(
-		"/", "/index.html", "/favicon.ico", "/css/**", "/js/**", "/images/**",
+		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
 		"/ws-connect", "/ws-connect/**"
 	);
