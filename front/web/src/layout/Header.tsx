@@ -3,7 +3,7 @@ import logo from "../assets/logo.svg";
 
 function Header() {
   const location = useLocation();
-  const isLoginPage = location.pathname === "/login";
+  const isLoginPage = location.pathname === "/";
   const currentPath = location.pathname;
 
   return (
@@ -43,7 +43,7 @@ function Header() {
       {!isLoginPage && (
         <div>
           <Link
-            to="/login"
+            to="/"
             className="text-[#4285F4] font-pre-medium text-[16px] hover:text-[#0F56B3] transition-colors duration-200"
           >
             로그아웃

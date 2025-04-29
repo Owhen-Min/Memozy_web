@@ -10,8 +10,8 @@ const AppLayout = () => {
     <>
       <Header />
       <Routes>
+        <Route path="/" element={<LoginPage />} />
         <Route path="/my" element={<MyPage />} />
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/collection" element={<CollectionPage />} />
       </Routes>
     </>
