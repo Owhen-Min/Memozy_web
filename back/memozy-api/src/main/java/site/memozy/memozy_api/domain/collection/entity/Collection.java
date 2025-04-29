@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.domain.collection;
+package site.memozy.memozy_api.domain.collection.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
