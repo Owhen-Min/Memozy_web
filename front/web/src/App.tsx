@@ -1,16 +1,27 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MyPage from "./pages/MyPage";
 import LoginPage from "./pages/LoginPage";
 import CollectionPage from "./pages/CollectionPage";
+import Header from "./layout/Header"; // 헤더 컴포넌트 추가
 
-function App() {
+// 헤더를 조건부로 렌더링할 수 있게 AppLayout 구성
+const AppLayout = () => {
   return (
-    <BrowserRouter>
+    <>
+      <Header />
       <Routes>
         <Route path="/my" element={<MyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/collection" element={<CollectionPage />} />
       </Routes>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
     </BrowserRouter>
   );
 }
