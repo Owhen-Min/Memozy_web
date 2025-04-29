@@ -1,10 +1,17 @@
-import "./styles/global.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import MyPage from "./pages/MyPage";
+import LoginPage from "./pages/LoginPage";
+import CollectionPage from "./pages/CollectionPage";
 
 function App() {
   return (
-    <>
-      <div className="font-pre-medium text-lightactive">하이, 나는 가희</div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/my" element={<MyPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/collection" element={<CollectionPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
