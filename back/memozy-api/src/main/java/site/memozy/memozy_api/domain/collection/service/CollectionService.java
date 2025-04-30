@@ -6,14 +6,13 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
 
 public interface CollectionService {
-	void createCollection(CustomOAuth2User user, CollectionCreateRequest request);
+	void createCollection(Integer userId, CollectionCreateRequest request);
 
-	void deleteCollection(CustomOAuth2User user, CollectionDeleteRequest request);
+	void deleteCollection(Integer userId, CollectionDeleteRequest request);
 
-	void updateCollection(CustomOAuth2User user, Integer collectionId, CollectionUpdateRequest request);
+	void updateCollection(Integer userId, Integer collectionId, CollectionUpdateRequest request);
 
-	List<CollectionSummaryResponse> getAllCollections(CustomOAuth2User user);
+	List<CollectionSummaryResponse> getAllCollections(Integer userId);
 }

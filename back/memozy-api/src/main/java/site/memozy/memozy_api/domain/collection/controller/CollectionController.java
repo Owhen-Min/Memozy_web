@@ -38,7 +38,7 @@ public class CollectionController {
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@RequestBody @Valid CollectionCreateRequest request) {
 
-		collectionService.createCollection(user, request);
+		collectionService.createCollection(user.getUserId(), request);
 		return ApiResponse.success();
 	}
 
@@ -48,7 +48,7 @@ public class CollectionController {
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@Parameter(description = "삭제할 컬렉션 ID", example = "1") @RequestBody CollectionDeleteRequest request) {
 
-		collectionService.deleteCollection(user, request);
+		collectionService.deleteCollection(user.getUserId(), request);
 		return ApiResponse.success();
 	}
 
@@ -59,7 +59,7 @@ public class CollectionController {
 		@Parameter(description = "수정할 컬렉션 ID", example = "1") @PathVariable Integer collectionId,
 		@RequestBody @Valid CollectionUpdateRequest request) {
 
-		collectionService.updateCollection(user, collectionId, request);
+		collectionService.updateCollection(user.getUserId(), collectionId, request);
 		return ApiResponse.success();
 	}
 
@@ -68,7 +68,7 @@ public class CollectionController {
 	public ApiResponse<List<CollectionSummaryResponse>> getAllCollections(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user) {
 
-		List<CollectionSummaryResponse> response = collectionService.getAllCollections(user);
+		List<CollectionSummaryResponse> response = collectionService.getAllCollections(user.getUserId());
 		return ApiResponse.success(response);
 	}
 }
