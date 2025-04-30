@@ -3,15 +3,27 @@ import CollectionCard from '../features/collectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
 import { useNavigate } from 'react-router-dom';
+import AddCollection from '../components/CollectionPageModal/AddCollection';
+import { useState } from 'react';
 
 function CollectionPage() {
   const navigate = useNavigate();
+  const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
+  
   // 모든 컬렉션의 memozyCount와 quizCount 총합 계산
   const totalMemozyCount = collectionData[0].data.reduce((sum, item) => sum + item.memozyCount, 0);
   const totalQuizCount = collectionData[0].data.reduce((sum, item) => sum + item.quizCount, 0);
 
   const handleAllCollectionsClick = () => {
     navigate('/collection/all');
+  };
+
+  const handleAddCollectionClick = () => {
+    setIsAddCollectionModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsAddCollectionModalOpen(false);
   };
 
   return (
@@ -42,10 +54,17 @@ function CollectionPage() {
         ))}
 
         {/* 새 컬렉션 추가 카드 */}
-        <div className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:border-normal">
+        <div className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:border-normal"
+          onClick={handleAddCollectionClick}
+        >
           <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
         </div>
       </div>
+
+      <AddCollection 
+        isOpen={isAddCollectionModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </div>
   );
 }
