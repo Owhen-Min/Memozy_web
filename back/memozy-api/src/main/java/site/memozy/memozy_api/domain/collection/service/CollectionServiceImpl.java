@@ -12,7 +12,6 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +20,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional
-	public void createCollection(CustomOAuth2User user, CollectionCreateRequest request) {
-		Integer userId = user.getUserId();
+	public void createCollection(Integer userId, CollectionCreateRequest request) {
 		String name = request.getTitle();
 
 		if (collectionRepository.existsByUserIdAndName(userId, name)) {
@@ -35,11 +33,10 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional
-	public void deleteCollection(CustomOAuth2User user, CollectionDeleteRequest request) {
-		Integer userId = user.getUserId();
+	public void deleteCollection(Integer userId, CollectionDeleteRequest request) {
 		Integer collectionId = request.getCollectionId();
 
-		Collection collection = collectionRepository.findById(collectionId)
+		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 컬렉션이 존재하지 않습니다."));
 
 		if (!collection.getUserId().equals(userId)) {
@@ -51,8 +48,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional
-	public void updateCollection(CustomOAuth2User user, Integer collectionId, CollectionUpdateRequest request) {
-		Integer userId = user.getUserId();
+	public void updateCollection(Integer userId, Integer collectionId, CollectionUpdateRequest request) {
 		String newName = request.getTitle();
 
 		Collection collection = collectionRepository.findById(collectionId)
@@ -73,7 +69,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CollectionSummaryResponse> getAllCollections(CustomOAuth2User user) {
-		return collectionRepository.findCollectionSummariesByUserId(user.getUserId());
+	public List<CollectionSummaryResponse> getAllCollections(Integer userId) {
+		return collectionRepository.findCollectionSummariesByUserId(userId);
 	}
 }
