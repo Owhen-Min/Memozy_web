@@ -33,13 +33,13 @@ function AddCollection({ isOpen, onClose }: AddCollectionProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-red text-white rounded-lg hover:bg-redhover"
+              className="px-4 py-2 bg-white font-pre-semibold text-red rounded-lg hover:text-redhover"
             >
               취소
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-normal text-white rounded-lg hover:bg-normalhover"
+              className="px-4 py-2 bg-normal font-pre-semibold text-white rounded-lg hover:bg-normalhover"
             >
               생성
             </button>
