@@ -21,9 +21,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.user.repository.UserRepository;
 import site.memozy.memozy_api.domain.user.service.UserAuthServiceImpl;
-import site.memozy.memozy_api.global.jwt.JwtAuthenticationEntryPoint;
-import site.memozy.memozy_api.global.jwt.JwtFilter;
-import site.memozy.memozy_api.global.jwt.JwtUtil;
+import site.memozy.memozy_api.global.security.exception.CustomDeniedHandler;
+import site.memozy.memozy_api.global.security.jwt.JwtAuthenticationEntryPoint;
+import site.memozy.memozy_api.global.security.jwt.JwtFilter;
+import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -34,6 +35,7 @@ public class SecurityConfig {
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final CustomSuccessHandler customSuccessHandler;
 	private final UserAuthServiceImpl userAuthServiceImpl;
+	private final CustomDeniedHandler customDeniedHandler;
 	private final JwtUtil jwtUtil;
 
 	private static final List<String> PERMIT_URLS = List.of(
@@ -73,7 +75,9 @@ public class SecurityConfig {
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+			.exceptionHandling(ex -> ex
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+				.accessDeniedHandler(customDeniedHandler));
 
 		return http.build();
 	}
