@@ -1,9 +1,9 @@
 import { collectionData } from '../dummy/collectionData';
-import CollectionCard from '../features/collectionPage/CollectionCard';
+import CollectionCard from '../features/CollectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
 import { useNavigate } from 'react-router-dom';
-import AddCollection from '../components/CollectionPageModal/AddCollection';
+import AddCollection from '../features/CollectionPage/CollectionPageModal/AddCollection';
 import { useState } from 'react';
 
 function CollectionPage() {
@@ -32,7 +32,7 @@ function CollectionPage() {
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* 컬렉션 모두보기 */}
         <div 
-          className="w-full p-5 border border-normal rounded-xl bg-light relative cursor-pointer hover:border-normalhover"
+          className="w-full p-5 border border-normal rounded-xl bg-light relative cursor-pointer hover:bg-lighthover"
           onClick={handleAllCollectionsClick}
         >
           <h3 className="text-24 font-pre-semibold mb-5">모두 보기</h3>
@@ -54,7 +54,7 @@ function CollectionPage() {
         ))}
 
         {/* 새 컬렉션 추가 카드 */}
-        <div className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:border-normal"
+        <div className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC]"
           onClick={handleAddCollectionClick}
         >
           <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
