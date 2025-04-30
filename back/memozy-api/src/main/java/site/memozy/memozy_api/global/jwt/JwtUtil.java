@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class JwtUtil {
 
-	private SecretKey secretKey;
+	private static final MacAlgorithm ALG = Jwts.SIG.HS256;
+	private final SecretKey secretKey;
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
 		secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
@@ -82,7 +84,7 @@ public class JwtUtil {
 			.claim("name", name)
 			.issuedAt(new Date(System.currentTimeMillis()))
 			.expiration(new Date(System.currentTimeMillis() + expiredMs * 1000))
-			.signWith(secretKey)
+			.signWith(secretKey, ALG)
 			.compact();
 	}
 }
