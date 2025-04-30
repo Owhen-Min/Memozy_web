@@ -13,6 +13,7 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 
+// TODO: 컬렉션 삭제 시, Memozy 및 퀴즈도 삭제하는 로직 추가하기
 @Service
 @RequiredArgsConstructor
 public class CollectionServiceImpl implements CollectionService {
