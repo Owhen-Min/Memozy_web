@@ -63,8 +63,8 @@ public class CollectionServiceImpl implements CollectionService {
 		}
 
 		// 동일한 이름으로 수정하려고 하면 그건 인정해주기!
-		if (!collection.getName().equals(newName) &&
-			collectionRepository.existsByUserIdAndName(userId, newName)) {
+		if (!collection.getName().equals(newName)
+			&& collectionRepository.existsByUserIdAndName(userId, newName)) {
 			throw new IllegalArgumentException("이미 같은 이름의 컬렉션이 존재합니다.");
 		}
 
