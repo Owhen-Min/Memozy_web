@@ -21,6 +21,7 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.service.CollectionService;
 import site.memozy.memozy_api.global.auth.CustomOAuth2User;
 import site.memozy.memozy_api.global.response.ApiResponse;
@@ -70,5 +71,15 @@ public class CollectionController {
 
 		List<CollectionSummaryResponse> response = collectionService.getAllCollections(user.getUserId());
 		return ApiResponse.success(response);
+	}
+
+	@Operation(summary = "Memozy의 퀴즈들을 조회", description = "url_id를 기준으로 퀴즈들의 조회")
+	@GetMapping("/url/{url_id}/quiz")
+	public ApiResponse<List<QuizSummaryResponse>> getQuizzesByCollectionUrl(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@PathVariable("url_id") Integer urlId) {
+
+		List<QuizSummaryResponse> responses = collectionService.getQuizzesByCollectionUrl(user.getUserId(), urlId);
+		return ApiResponse.success(responses);
 	}
 }

@@ -10,14 +10,17 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 
 // TODO: 컬렉션 삭제 시, Memozy 및 퀴즈도 삭제하는 로직 추가하기
 @Service
 @RequiredArgsConstructor
 public class CollectionServiceImpl implements CollectionService {
 	private final CollectionRepository collectionRepository;
+	private final QuizSourceRepository quizSourceRepository;
 
 	@Override
 	@Transactional
@@ -72,5 +75,14 @@ public class CollectionServiceImpl implements CollectionService {
 	@Transactional(readOnly = true)
 	public List<CollectionSummaryResponse> getAllCollections(Integer userId) {
 		return collectionRepository.findCollectionSummariesByUserId(userId);
+	}
+
+	@Override
+	public List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId) {
+		if (!quizSourceRepository.existsBySourceIdAndUserId(sourceId, userId)) {
+			throw new IllegalArgumentException("해당 user가 요청할 수 없는 sourceId.");
+		}
+
+		return collectionRepository.findQuizSummariesBySourceIdAndUserId(sourceId, userId);
 	}
 }
