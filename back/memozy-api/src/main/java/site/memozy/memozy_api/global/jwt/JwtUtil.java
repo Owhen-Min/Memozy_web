@@ -21,7 +21,9 @@ public class JwtUtil {
 	private final SecretKey secretKey;
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+		log.info("🔐 [JWT INIT] raw secret: '{}'", secret);
 		log.info("🔐 [JWT INIT] secret length: {}", secret.getBytes(StandardCharsets.UTF_8).length);
+
 		secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
 			Jwts.SIG.HS256.key().build().getAlgorithm());
 	}
