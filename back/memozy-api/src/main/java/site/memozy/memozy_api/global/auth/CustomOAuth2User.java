@@ -48,4 +48,8 @@ public class CustomOAuth2User implements OAuth2User {
 	public String getPersonalId() {
 		return userOAuthDto.getPersonalId();
 	}
+
+	public String getProfileImage() {
+		return userOAuthDto.getProfileImage();
+	}
 }
