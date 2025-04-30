@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -37,11 +39,17 @@ public class SecurityConfig {
 	private static final List<String> PERMIT_URLS = List.of(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**"
+		"/ws-connect", "/ws-connect/**",
+		"/", "/index.html"
 	);
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository,
+		ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+
+		OAuth2AuthorizationRequestResolver customResolver =
+			new CustomAuthorizationRequestResolver(clientRegistrationRepository, "/oauth2/authorization");
+
 		http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(csrf -> csrf.disable())
@@ -50,6 +58,7 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(endpoint -> endpoint
+					.authorizationRequestResolver(customResolver)
 					.baseUri("/oauth2/authorization")
 					.authorizationRequestRepository(new HttpSessionOAuth2AuthorizationRequestRepository())
 				)
@@ -58,8 +67,9 @@ public class SecurityConfig {
 				.failureHandler(oAuth2AuthenticationFailureHandler)
 			)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
-				.anyRequest().authenticated()
+				// .requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
+				// .anyRequest().authenticated()
+				.anyRequest().permitAll()
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

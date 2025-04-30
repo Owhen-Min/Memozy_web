@@ -20,27 +20,46 @@ import site.memozy.memozy_api.global.jwt.JwtUtil;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final JwtUtil jwtUtil;
-	private static final long TOKEN_EXPIRATION = 60L * 60L * 24L * 365L;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException {
 
 		CustomOAuth2User userDetails = (CustomOAuth2User)authentication.getPrincipal();
+		String token = generateJwtToken(authentication, userDetails);
+		String state = request.getParameter("state");
 
-		String personalId = userDetails.getPersonalId();
-		Integer userId = userDetails.getUserId();
-		String name = userDetails.getName();
+		if (state != null && state.startsWith("mode:extension")) {
+			log.info("Extension login success");
+			respondToExtension(response, token);
+		} else {
+			log.info("Web login success");
+			respondToWeb(response, token);
+		}
+	}
 
+	private String generateJwtToken(Authentication authentication, CustomOAuth2User userDetails) {
 		String role = authentication.getAuthorities().stream()
 			.findFirst()
 			.map(GrantedAuthority::getAuthority)
 			.orElse("ROLE_GUEST");
 
-		String token = jwtUtil.createJwt(userId, personalId, role, name, TOKEN_EXPIRATION);
-
-		String redirectUrl = "http://localhost:5173/?token=" + token;
-		response.sendRedirect(redirectUrl);
+		return jwtUtil.createJwt(userDetails, role);
 	}
 
+	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
+		String htmlResponse = """
+			<html><body><script>
+			      window.opener.postMessage('%s', '*');
+			      window.close();
+			</script></body></html>""".formatted(token);
+		response.setContentType("text/html;charset=UTF-8");
+		response.getWriter().write(htmlResponse);
+	}
+
+	private void respondToWeb(HttpServletResponse response, String token) throws IOException {
+		String redirectUrl = "http://localhost:5173/?token=" + token;
+		// String redirectUrl = "http://localhost:8080/?token=" + token;
+		response.sendRedirect(redirectUrl);
+	}
 }
