@@ -35,11 +35,4 @@ public class UserOAuthDto {
 		return User.createUser(userDto);
 	}
 
-	public UserOAuthDto(Integer userId, String personalId, String role, String name) {
-		this.userId = userId;
-		this.personalId = personalId;
-		this.role = role;
-		this.name = name;
-	}
-
 }

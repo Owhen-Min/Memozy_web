@@ -29,7 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final List<String> NO_CHECK_URLS = Arrays.asList(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**"
+		"/ws-connect", "/ws-connect/**",
+		"/", "/index.html"
 	);
 
 	@Override
@@ -66,8 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			String role = jwtUtil.getRole(token);
 			Integer userId = jwtUtil.getUserId(token);
 			String name = jwtUtil.getName(token);
+			String email = jwtUtil.getEmail(token);
+			String profileImage = jwtUtil.getProfileImage(token);
 
-			UserOAuthDto userDto = new UserOAuthDto(userId, personalId, role, name);
+			UserOAuthDto userDto = new UserOAuthDto(userId, personalId, email, name, role, profileImage);
 			CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
 
 			Authentication authToken = new UsernamePasswordAuthenticationToken(
