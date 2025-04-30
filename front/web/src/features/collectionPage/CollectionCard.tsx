@@ -5,6 +5,7 @@ import { Collection } from '../../types/collection';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import DeleteCollection from './CollectionPageModal/DeleteCollection';
+import EditCollectionName from './CollectionPageModal/EditCollectionName';
 
 interface CollectionCardProps {
     collection: Collection;
@@ -13,6 +14,7 @@ interface CollectionCardProps {
 function CollectionCard({ collection }: CollectionCardProps) {
     const navigate = useNavigate();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const handleClick = () => {
         navigate(`/collection/${collection.id}`);
@@ -20,19 +22,27 @@ function CollectionCard({ collection }: CollectionCardProps) {
 
     const handleEditClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        // 수정 로직 추가
+        setIsEditModalOpen(true);
     };
 
     const handleDeleteClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         setIsDeleteModalOpen(true);
     };
+    
 
     const handleDeleteConfirm = () => {
         // TODO: 삭제 API 호출
         console.log('컬렉션 삭제:', collection.id);
         setIsDeleteModalOpen(false);
     };
+
+    const handleEditConfirm = () => {
+        // TODO: 수정 API 호출
+        console.log('컬렉션 수정:', collection.id);
+        setIsEditModalOpen(false);
+    };
+
 
     return (
         <>
@@ -77,6 +87,12 @@ function CollectionCard({ collection }: CollectionCardProps) {
                 onClose={() => setIsDeleteModalOpen(false)}
                 collectionName={collection.name}
                 onDelete={handleDeleteConfirm}
+            />
+            <EditCollectionName
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                collectionName={collection.name}
+                onEdit={handleEditConfirm}
             />
         </>
     );

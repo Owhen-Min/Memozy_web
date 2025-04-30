@@ -14,6 +14,7 @@ function AddCollection({ isOpen, onClose }: AddCollectionProps) {
     e.preventDefault();
     // 차후 컬렉션 생성 로직 추가
     console.log('새 컬렉션 생성:', collectionName);
+    setCollectionName('');
     onClose();
   };
 
