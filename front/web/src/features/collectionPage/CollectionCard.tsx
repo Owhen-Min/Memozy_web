@@ -4,8 +4,8 @@ import trashIcon from '../../assets/icons/trashIcon.png';
 import { Collection } from '../../types/collection';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import DeleteCollection from './CollectionPageModal/DeleteCollection';
-import EditCollectionName from './CollectionPageModal/EditCollectionName';
+import DeleteCollection from './collectionPageModal/DeleteCollection';
+import EditCollectionName from './collectionPageModal/EditCollectionName';
 
 interface CollectionCardProps {
     collection: Collection;

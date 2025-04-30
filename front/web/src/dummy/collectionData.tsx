@@ -23,6 +23,12 @@ export const collectionData: CollectionResponse[] = [
                 "name": "정처기",
                 "memozyCount": 8,
                 "quizCount": 80
+            },
+            {
+                "id": 4,
+                "name": "알고리즘",
+                "memozyCount": 2,
+                "quizCount": 10
             }
         ]
     }
