@@ -13,7 +13,7 @@ public interface CollectionService {
 
 	void deleteCollection(CustomOAuth2User user, CollectionDeleteRequest request);
 
-	void updateCollection(CustomOAuth2User user, Integer CollectionId, CollectionUpdateRequest request);
+	void updateCollection(CustomOAuth2User user, Integer collectionId, CollectionUpdateRequest request);
 
 	List<CollectionSummaryResponse> getAllCollections(CustomOAuth2User user);
 }
