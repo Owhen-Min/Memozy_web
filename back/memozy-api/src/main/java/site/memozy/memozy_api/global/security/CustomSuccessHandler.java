@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
-import site.memozy.memozy_api.global.jwt.JwtUtil;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
+import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
 @Component

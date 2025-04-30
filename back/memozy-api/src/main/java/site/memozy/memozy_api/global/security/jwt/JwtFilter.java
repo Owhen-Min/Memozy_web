@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.jwt;
+package site.memozy.memozy_api.global.security.jwt;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,8 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
-import site.memozy.memozy_api.global.auth.UserOAuthDto;
+import site.memozy.memozy_api.global.payload.ApiResponse;
+import site.memozy.memozy_api.global.security.SecurityResponseUtil;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
+import site.memozy.memozy_api.global.security.auth.UserOAuthDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -58,8 +60,8 @@ public class JwtFilter extends OncePerRequestFilter {
 			boolean isExpired = jwtUtil.isExpired(token);
 			if (isExpired) {
 				log.error("Token expired");
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				response.sendRedirect("http://localhost:8080/");
+				ApiResponse apiResponse = new ApiResponse(false, "400", "로그인이 필요합니다. 먼저 로그인해주세요", null);
+				SecurityResponseUtil.writeJsonResponse(response, apiResponse);
 				return;
 			}
 
@@ -80,8 +82,9 @@ public class JwtFilter extends OncePerRequestFilter {
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		} catch (Exception e) {
-			log.error("JWT 필터 처리 중 에러 발생", e);
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			log.error("Token Error");
+			ApiResponse apiResponse = new ApiResponse(false, "400", "필터처리 중 에러 발생", null);
+			SecurityResponseUtil.writeJsonResponse(response, apiResponse);
 			return;
 		}
 

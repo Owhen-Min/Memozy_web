@@ -10,7 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
-import site.memozy.memozy_api.global.auth.UserOAuthDto;
+import site.memozy.memozy_api.global.security.auth.UserOAuthDto;
 
 @Entity
 @Getter

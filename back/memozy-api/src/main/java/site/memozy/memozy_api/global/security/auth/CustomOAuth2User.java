@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.auth;
+package site.memozy.memozy_api.global.security.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
