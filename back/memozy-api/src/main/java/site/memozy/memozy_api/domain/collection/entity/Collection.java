@@ -27,9 +27,23 @@ public class Collection extends BaseTimeEntityWithUpdatedAt {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, length = 50)
+	@Column(nullable = true, length = 50)
 	private String code;
 
 	@Column(nullable = false)
 	private Integer userId;
+
+	private Collection(String name, Integer userId) {
+		this.name = name;
+		this.userId = userId;
+	}
+
+	public static Collection create(String name, Integer userId) {
+		return new Collection(name, userId);
+	}
+
+	public void updateName(String newName) {
+		this.name = newName;
+	}
+
 }

@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.domain.quiz;
+package site.memozy.memozy_api.domain.quiz.entity;
 
 public enum QuizType {
 

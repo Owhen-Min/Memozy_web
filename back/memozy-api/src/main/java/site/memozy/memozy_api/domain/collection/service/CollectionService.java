@@ -1,12 +1,18 @@
 package site.memozy.memozy_api.domain.collection.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
+import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
+import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
+import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 
-@Service
-@RequiredArgsConstructor
-public class CollectionService {
-	private final CollectionRepository collectionRepository;
+public interface CollectionService {
+	void createCollection(Integer userId, CollectionCreateRequest request);
+
+	void deleteCollection(Integer userId, CollectionDeleteRequest request);
+
+	void updateCollection(Integer userId, Integer collectionId, CollectionUpdateRequest request);
+
+	List<CollectionSummaryResponse> getAllCollections(Integer userId);
 }
