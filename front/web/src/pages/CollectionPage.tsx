@@ -1,9 +1,9 @@
 import { collectionData } from '../dummy/collectionData';
-import CollectionCard from '../features/CollectionPage/CollectionCard';
+import CollectionCard from '../features/collectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
 import { useNavigate } from 'react-router-dom';
-import AddCollection from '../features/CollectionPage/CollectionPageModal/AddCollection';
+import AddCollection from '../features/collectionPage/collectionPageModal/AddCollection';
 import { useState } from 'react';
 
 function CollectionPage() {
