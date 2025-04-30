@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { validateCollectionName } from '../../../utils/validation';
 
 interface EditCollectionNameProps {
     isOpen: boolean;
@@ -9,15 +10,27 @@ interface EditCollectionNameProps {
 
 function EditCollectionName({ isOpen, onClose, collectionName, onEdit }: EditCollectionNameProps) {
     const [newName, setNewName] = useState(collectionName);
+    const [errorMessage, setErrorMessage] = useState('');
 
     if (!isOpen) return null;
 
     const handleSubmit = () => {
-        if (newName.trim() === '') {
-            alert('컬렉션 이름을 입력해주세요.');
+        const validation = validateCollectionName(newName);
+        if (!validation.isValid) {
+            setErrorMessage(validation.message);
             return;
         }
+
         onEdit(newName);
+        setErrorMessage('');
+    };
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setNewName(value);
+        
+        const validation = validateCollectionName(value);
+        setErrorMessage(validation.message);
     };
 
     return (
@@ -32,10 +45,13 @@ function EditCollectionName({ isOpen, onClose, collectionName, onEdit }: EditCol
                         type="text"
                         id="collectionName"
                         value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        className="w-full px-4 py-2 border border-normal rounded-lg focus:outline-none focus:border-primary"
+                        onChange={handleNameChange}
+                        className={`w-full px-4 py-2 border ${errorMessage ? 'border-red' : 'border-normal'} rounded-lg focus:outline-none focus:border-primary`}
                         placeholder="컬렉션 이름을 입력하세요"
                     />
+                    {errorMessage && (
+                        <p className="mt-1 text-12 text-red">{errorMessage}</p>
+                    )}
                 </div>
                 <div className="flex justify-end gap-2">
                     <button
