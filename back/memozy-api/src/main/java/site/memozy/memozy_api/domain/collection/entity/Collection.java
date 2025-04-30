@@ -27,7 +27,7 @@ public class Collection extends BaseTimeEntityWithUpdatedAt {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, length = 50)
+	@Column(nullable = true, length = 50)
 	private String code;
 
 	@Column(nullable = false)
