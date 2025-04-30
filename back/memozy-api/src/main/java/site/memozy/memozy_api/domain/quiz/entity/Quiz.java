@@ -1,7 +1,9 @@
-package site.memozy.memozy_api.domain.quizsource;
+package site.memozy.memozy_api.domain.quiz.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,31 +17,37 @@ import site.memozy.memozy_api.global.audit.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "quiz_sources",
+@Table(name = "quizzes",
 	indexes = {
-		@Index(name = "idx_user_id", columnList = "user_id"),
-		@Index(name = "idx_collection_id", columnList = "collection_id")
+		@Index(name = "idx_collection_id", columnList = "collection_id"),
+		@Index(name = "idx_source_id", columnList = "source_id")
 	}
 )
-public class QuizSource extends BaseTimeEntity {
+public class Quiz extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer sourceId;
-
-	@Column(nullable = false)
-	private String title;
+	private Long quizId;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
-	private String summary;
+	private String content;
 
-	@Column(nullable = false, length = 1024)
-	private String url;
+	@Enumerated(EnumType.STRING)
+	private QuizType type;
 
 	@Column(nullable = false)
-	private Integer userId;
+	private String answer;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String commentary;
+
+	@Column(name = "quiz_option", columnDefinition = "TEXT")
+	private String option;
 
 	@Column(nullable = false)
 	private Integer collectionId;
+
+	@Column(nullable = false)
+	private Integer sourceId;
 
 }
