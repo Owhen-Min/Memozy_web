@@ -21,7 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.user.repository.UserRepository;
 import site.memozy.memozy_api.domain.user.service.UserAuthServiceImpl;
-import site.memozy.memozy_api.global.security.exception.CustomDeniedHandler;
 import site.memozy.memozy_api.global.security.jwt.JwtAuthenticationEntryPoint;
 import site.memozy.memozy_api.global.security.jwt.JwtFilter;
 import site.memozy.memozy_api.global.security.jwt.JwtUtil;
