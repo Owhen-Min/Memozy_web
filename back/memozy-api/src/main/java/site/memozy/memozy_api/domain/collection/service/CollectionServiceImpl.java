@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
-import site.memozy.memozy_api.domain.collection.dto.CollectionListResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
@@ -74,9 +73,7 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public CollectionListResponse getAllCollections(CustomOAuth2User user) {
-		List<CollectionSummaryResponse> data = collectionRepository.findCollectionSummariesByUserId(user.getUserId());
-
-		return CollectionListResponse.from(data);
+	public List<CollectionSummaryResponse> getAllCollections(CustomOAuth2User user) {
+		return collectionRepository.findCollectionSummariesByUserId(user.getUserId());
 	}
 }

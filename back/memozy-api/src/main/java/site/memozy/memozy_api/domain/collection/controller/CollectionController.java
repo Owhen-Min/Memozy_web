@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.collection.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
-import site.memozy.memozy_api.domain.collection.dto.CollectionListResponse;
+import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.service.CollectionService;
 import site.memozy.memozy_api.global.auth.CustomOAuth2User;
@@ -63,10 +65,10 @@ public class CollectionController {
 
 	@Operation(summary = "컬렉션 목록 조회", description = "현재 로그인한 사용자의 컬렉션 목록을 조회")
 	@GetMapping
-	public ApiResponse<CollectionListResponse> getAllCollections(
+	public ApiResponse<List<CollectionSummaryResponse>> getAllCollections(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user) {
 
-		CollectionListResponse response = collectionService.getAllCollections(user);
+		List<CollectionSummaryResponse> response = collectionService.getAllCollections(user);
 		return ApiResponse.success(response);
 	}
 }
