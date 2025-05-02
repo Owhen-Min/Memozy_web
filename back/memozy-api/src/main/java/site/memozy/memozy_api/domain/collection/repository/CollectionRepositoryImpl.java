@@ -1,12 +1,17 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
+import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QCollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QQuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
@@ -85,5 +90,34 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				quizSource.userId.eq(currentUserId)
 			)
 			.fetch();
+	}
+
+	@Override
+	public List<MemozyContentResponse> findByCollectionIdWithPaging(Integer collectionId, Pageable pageable) {
+		// return queryFactory
+		// 	.select(Projections.constructor(UrlSummary.class,
+		// 		quizSource.sourceId,
+		// 		quizSource.title,
+		// 		quizSource.summary,
+		// 		quiz.count()
+		// 	))
+		// 	.from(quizSource)
+		// 	.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
+		// 	.where(quizSource.collectionId.eq(collectionId))
+		// 	.groupBy(quizSource.sourceId)
+		// 	.orderBy(quizSource.createdAt.desc())
+		// 	.offset(pageable.getOffset())
+		// 	.limit(pageable.getPageSize())
+		// 	.fetch();
+		return null;
+	}
+
+	@Override
+	public long countByCollectionId(Integer collectionId) {
+		return queryFactory
+			.select(quizSource.count())
+			.from(quizSource)
+			.where(quizSource.collectionId.eq(collectionId))
+			.fetchOne();
 	}
 }

@@ -4,14 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
+import site.memozy.memozy_api.domain.collection.dto.CollectionMemozyListResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
@@ -186,6 +191,37 @@ public class CollectionServiceImpl implements CollectionService {
 
 			quizRepository.saveAll(copiedQuizzes);
 		}
+	}
+
+	@Override
+	@Transactional
+	public List<CollectionMemozyListResponse> getMemoziesByCollectionId(Integer userId, Integer collectionId,
+		int offset, int pageSize) {
+		// 1. CollectionName 얻기
+		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
+			.orElseThrow(
+				() -> new RuntimeException("예외처리")
+			);
+
+		// 2. Pageable 생성 (page = offset / pageSize)
+		Pageable pageable = PageRequest.of(offset / pageSize, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		// 3. content 조회
+		List<MemozyContentResponse> content = collectionRepository.findByCollectionIdWithPaging(collectionId,
+			pageable);
+		// 4. 전체 개수 조회
+		long totalCount = collectionRepository.countByCollectionId(collectionId);
+
+		boolean last = pageable.getOffset() + pageable.getPageSize() >= totalCount;
+
+		// return new CollectionMemozyListResponse(
+		// 	collection.getName(),
+		// 	content,
+		// 	(int)pageable.getOffset(),
+		// 	pageable.getPageSize(),
+		// 	last
+		// );
+		return List.of();
 	}
 
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {

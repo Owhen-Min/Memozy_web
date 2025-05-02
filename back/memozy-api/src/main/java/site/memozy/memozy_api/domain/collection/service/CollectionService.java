@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.validation.constraints.NotEmpty;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
+import site.memozy.memozy_api.domain.collection.dto.CollectionMemozyListResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
@@ -26,4 +27,7 @@ public interface CollectionService {
 	void deleteQuizzesByRequest(Integer userId, QuizDeleteRequest request);
 
 	void copyMemozies(Integer userId, Integer copyCollectionId, @NotEmpty List<Integer> sourceId);
+
+	List<CollectionMemozyListResponse> getMemoziesByCollectionId(Integer userId, Integer collectionId, int offset,
+		int page);
 }

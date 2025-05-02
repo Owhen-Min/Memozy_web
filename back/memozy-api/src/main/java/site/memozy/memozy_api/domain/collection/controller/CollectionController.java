@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
+import site.memozy.memozy_api.domain.collection.dto.CollectionMemozyListResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.dto.MemozyCopyRequest;
@@ -111,10 +113,22 @@ public class CollectionController {
 	public ApiResponse<Void> copyQuizzesFromCollection(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@PathVariable Integer copyCollectionId,
-		@RequestBody MemozyCopyRequest request
+		@RequestBody @Valid MemozyCopyRequest request
 	) {
 		collectionService.copyMemozies(user.getUserId(), copyCollectionId, request.getSourceId());
 		return ApiResponse.success();
 	}
 
+	@Operation(summary = "컬렉션 내 memozy 목록 조회")
+	@GetMapping("/collection/url")
+	public ApiResponse<List<CollectionMemozyListResponse>> getUrlsInCollection(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@RequestParam("collectionId") Integer collectionId,
+		@RequestParam(value = "offset", defaultValue = "0") int offset,
+		@RequestParam(value = "page", defaultValue = "5") int page
+	) {
+		List<CollectionMemozyListResponse> response = collectionService.getMemoziesByCollectionId(collectionId, offset,
+			page, user.getUserId());
+		return ApiResponse.success(response);
+	}
 }
