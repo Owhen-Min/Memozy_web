@@ -34,7 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
 	private final String errorMsg;
 
 	@Override
-	public ErrorReasonResponse getErrorReason() {
-		return new ErrorReasonResponse(httpStatusCode, errorCode, errorMsg);
+	public ErrorStatus getErrorReason() {
+		return this;
 	}
 }
