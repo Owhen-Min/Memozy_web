@@ -56,4 +56,34 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			.where(quiz.sourceId.eq(sourceId))
 			.fetch();
 	}
+
+	@Override
+	public List<Long> findValidQuizIdsByUser(List<Long> requestedQuizIds, Integer currentUserId) {
+		QQuiz quiz = QQuiz.quiz;
+		QQuizSource quizSource = QQuizSource.quizSource;
+
+		return queryFactory
+			.select(quiz.quizId)
+			.from(quiz)
+			.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
+			.where(
+				quiz.quizId.in(requestedQuizIds),
+				quizSource.userId.eq(currentUserId)
+			)
+			.fetch();
+	}
+
+	@Override
+	public List<Integer> findValidSourceIdsByUser(List<Integer> requestedSourceIds, Integer currentUserId) {
+		QQuizSource quizSource = QQuizSource.quizSource;
+
+		return queryFactory
+			.select(quizSource.sourceId)
+			.from(quizSource)
+			.where(
+				quizSource.sourceId.in(requestedSourceIds),
+				quizSource.userId.eq(currentUserId)
+			)
+			.fetch();
+	}
 }
