@@ -39,7 +39,6 @@ public class QuizSource extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Integer userId;
 
-	@Column(nullable = false)
 	private Integer collectionId;
 
 }
