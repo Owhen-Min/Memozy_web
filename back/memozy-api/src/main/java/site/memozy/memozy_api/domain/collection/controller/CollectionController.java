@@ -21,6 +21,7 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.MemozyCopyRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizIdListRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
@@ -31,7 +32,7 @@ import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 @Tag(name = "Collection", description = "Collection 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/collection")
+@RequestMapping("/api/collection")
 public class CollectionController {
 	private final CollectionService collectionService;
 
@@ -102,6 +103,17 @@ public class CollectionController {
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@RequestBody @Valid QuizDeleteRequest request) {
 		collectionService.deleteQuizzesByRequest(user.getUserId(), request);
+		return ApiResponse.success();
+	}
+
+	@Operation(summary = "컬렉션 내 memozy 복사")
+	@PostMapping("/quiz/copy/{copyCollectionId}")
+	public ApiResponse<Void> copyQuizzesFromCollection(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@PathVariable Integer copyCollectionId,
+		@RequestBody MemozyCopyRequest request
+	) {
+		collectionService.copyMemozies(user.getUserId(), copyCollectionId, request.getSourceId());
 		return ApiResponse.success();
 	}
 
