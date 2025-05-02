@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.security;
+package site.memozy.memozy_api.global.security.handler;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;

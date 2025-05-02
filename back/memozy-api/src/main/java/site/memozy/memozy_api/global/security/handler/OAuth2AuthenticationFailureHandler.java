@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.security;
+package site.memozy.memozy_api.global.security.handler;
 
 import java.io.IOException;
 
@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.global.payload.ApiResponse;
+import site.memozy.memozy_api.global.security.SecurityResponseUtil;
 
 @Slf4j
 @Component
@@ -19,7 +20,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException exception) throws IOException, ServletException {
-		ApiResponse apiResponse = new ApiResponse(false, "400", exception.getMessage(), null);
+		ApiResponse<Void> apiResponse = new ApiResponse<>(false, "400", exception.getMessage(), null);
 		SecurityResponseUtil.writeJsonResponse(response, apiResponse);
 	}
 

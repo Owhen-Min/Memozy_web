@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.security;
+package site.memozy.memozy_api.global.security.handler;
 
 import java.io.IOException;
 import java.net.URLEncoder;
