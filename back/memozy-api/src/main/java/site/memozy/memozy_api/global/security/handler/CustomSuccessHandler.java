@@ -1,6 +1,8 @@
-package site.memozy.memozy_api.global.security;
+package site.memozy.memozy_api.global.security.handler;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,8 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
-import site.memozy.memozy_api.global.jwt.JwtUtil;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
+import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
 @Component
@@ -48,13 +50,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
-		String htmlResponse = """
-			<html><body><script>
-			      window.opener.postMessage('%s', '*');
-			      window.close();
-			</script></body></html>""".formatted(token);
-		response.setContentType("text/html;charset=UTF-8");
-		response.getWriter().write(htmlResponse);
+		String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/"; // 실제 ID로 교체 필요
+		String tokenParam = "access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+		String finalRedirectUrl = redirectUri + "#" + tokenParam; // 해시 사용 예시
+		response.setStatus(HttpServletResponse.SC_FOUND); // 302 Found
+		response.setHeader("Location", finalRedirectUrl);
+		response.getWriter().write("Redirecting..."); // 본문은 크게 중요하지 않음
 	}
 
 	private void respondToWeb(HttpServletResponse response, String token) throws IOException {

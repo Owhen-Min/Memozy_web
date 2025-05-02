@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.response;
+package site.memozy.memozy_api.global.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

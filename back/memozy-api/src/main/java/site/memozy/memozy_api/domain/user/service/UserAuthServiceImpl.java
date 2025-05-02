@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.user.User;
 import site.memozy.memozy_api.domain.user.repository.UserRepository;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
-import site.memozy.memozy_api.global.auth.GoogleResponse;
-import site.memozy.memozy_api.global.auth.OAuth2Response;
-import site.memozy.memozy_api.global.auth.UserOAuthDto;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
+import site.memozy.memozy_api.global.security.auth.GoogleResponse;
+import site.memozy.memozy_api.global.security.auth.OAuth2Response;
+import site.memozy.memozy_api.global.security.auth.UserOAuthDto;
 
 @Slf4j
 @Service
@@ -28,7 +28,7 @@ public class UserAuthServiceImpl extends DefaultOAuth2UserService {
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		OAuth2Response oAuth2Response = getOAuth2Response(oAuth2User);
-		
+
 		UserOAuthDto userDto = UserOAuthDto.createUserDto(oAuth2Response);
 
 		User findUser = userRepository.findByEmail(oAuth2Response.getEmail())
