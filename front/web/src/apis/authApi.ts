@@ -1,5 +1,5 @@
 import httpClient from "./httpClient";
-import { UserInfo } from "../types/userTypes";
+import { UserInfo } from "../types/user";
 import { getUserInfoFromToken } from "../utils/auth";
 
 // URL 파라미터에서 토큰 추출

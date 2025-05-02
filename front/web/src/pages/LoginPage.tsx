@@ -50,11 +50,7 @@ function LoginPage() {
 
     // 사용자 정보에서 이름 추출
     return (
-      userInfo.name?.toString() ||
-      userInfo.nickname?.toString() ||
-      userInfo.preferred_username?.toString() ||
-      userInfo.sub?.toString() ||
-      "사용자"
+      userInfo.name?.toString() || userInfo.nickname?.toString() || "사용자"
     );
   };
 
