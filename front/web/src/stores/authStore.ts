@@ -6,7 +6,7 @@ import {
   setUserInfo,
   getUserInfo,
 } from "../utils/auth";
-import { UserInfo } from "../types/userTypes";
+import { UserInfo } from "../types/user";
 import { getUserInfoFromTokenApi, extractTokenFromUrl } from "../apis/authApi";
 
 // 인증 상태 인터페이스
