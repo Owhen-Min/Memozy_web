@@ -1,5 +1,12 @@
+import AnalysisReport from "../features/myPage/AnalysisReport";
+import WrongAnswerNote from "../features/myPage/WrongAnswerNote";
 function MyPage() {
-  return <div className="font-pre-medium text-lightactive">MyPage</div>;
+  return (
+    <div className="content">
+      <AnalysisReport />
+      <WrongAnswerNote />
+    </div>
+  );
 }
 
 export default MyPage;
