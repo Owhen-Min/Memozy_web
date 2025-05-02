@@ -134,9 +134,7 @@ function AnalysisReport() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-lg font-semibold mb-2">
-            컬렉션별 정답률 (가장 최근 풀이 기준)
-          </h3>
+          <h3 className="text-lg font-semibold mb-2">컬렉션별 정답률</h3>
           <Bar
             data={barChartData}
             options={{
@@ -148,8 +146,33 @@ function AnalysisReport() {
 
         <div className="bg-white p-6 rounded-xl shadow flex flex-col justify-center items-center">
           <h3 className="text-lg font-semibold mb-2">컬렉션 분포도</h3>
-          <div style={{ height: "200px", width: "200px" }}>
-            <Pie data={pieChartData} />
+          <div style={{ height: "240px", width: "240px" }}>
+            <Pie
+              data={pieChartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    display: false, // 차트 내 레전드 비활성화
+                  },
+                },
+              }}
+            />
+          </div>
+          {/* 레전드를 차트 외부에 별도로 구현 */}
+          <div className="flex justify-center mt-4">
+            {pieChartData.labels.map((label, index) => (
+              <div key={index} className="flex items-center mx-2">
+                <div
+                  className="w-3 h-3"
+                  style={{
+                    backgroundColor:
+                      pieChartData.datasets[0].backgroundColor[index],
+                  }}
+                ></div>
+                <span className="ml-1 text-sm">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
