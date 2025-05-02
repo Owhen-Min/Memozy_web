@@ -23,8 +23,8 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.service.CollectionService;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
-import site.memozy.memozy_api.global.response.ApiResponse;
+import site.memozy.memozy_api.global.payload.ApiResponse;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
 @Tag(name = "Collection", description = "Collection 관련 API")
 @RestController
