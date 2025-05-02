@@ -44,10 +44,13 @@ public class Quiz extends BaseTimeEntity {
 	@Column(name = "quiz_option", columnDefinition = "TEXT")
 	private String option;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private Integer collectionId;
 
 	@Column(nullable = false)
 	private Integer sourceId;
 
+	public void updateCollectionId(Integer collectionId) {
+		this.collectionId = collectionId;
+	}
 }
