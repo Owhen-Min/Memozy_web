@@ -12,4 +12,6 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 	List<QuizSource> findAllBySourceIdIn(List<Integer> sourceIds);
 
 	void deleteBySourceIdIn(List<Integer> sourceIds);
+
+	List<QuizSource> findBySourceIdInAndUserId(List<Integer> sourceIds, Integer userId);
 }

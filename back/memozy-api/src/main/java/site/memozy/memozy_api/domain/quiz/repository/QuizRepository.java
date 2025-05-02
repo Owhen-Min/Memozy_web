@@ -12,4 +12,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	void deleteByQuizIdIn(List<Long> quizIds);
 
 	List<Quiz> findBySourceIdIn(List<Integer> sourceIds);
+
+	List<Quiz> findBySourceId(Integer sourceId);
 }

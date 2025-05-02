@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
@@ -49,6 +50,18 @@ public class Quiz extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private Integer sourceId;
+
+	@Builder
+	public Quiz(String content, QuizType type, String answer, String commentary,
+		Integer collectionId, Integer sourceId, String option) {
+		this.content = content;
+		this.type = type;
+		this.answer = answer;
+		this.commentary = commentary;
+		this.collectionId = collectionId;
+		this.sourceId = sourceId;
+		this.option = option;
+	}
 
 	public void updateCollectionId(Integer collectionId) {
 		this.collectionId = collectionId;
