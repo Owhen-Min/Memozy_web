@@ -21,6 +21,8 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizIdListRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.service.CollectionService;
 import site.memozy.memozy_api.global.payload.ApiResponse;
@@ -82,4 +84,25 @@ public class CollectionController {
 		List<QuizSummaryResponse> responses = collectionService.getQuizzesByCollectionUrl(user.getUserId(), urlId);
 		return ApiResponse.success(responses);
 	}
+
+	@Operation(summary = "컬렉션에 퀴즈 추가", description = "지정된 collectionId에 사용자의 퀴즈들을 추가")
+	@PostMapping("/{collectionId}/quiz")
+	public ApiResponse<Void> addQuizzesToCollection(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@PathVariable("collectionId") Integer collectionId,
+		@RequestBody @Valid QuizIdListRequest request
+	) {
+		collectionService.addQuizzesToCollection(user.getUserId(), collectionId, request.getQuizIdList());
+		return ApiResponse.success();
+	}
+
+	@Operation(summary = "퀴즈 삭제", description = "요청한 quizId 또는 sourceId에 해당하는 퀴즈들을 삭제, 두 값 중 하나만 줘야함(비워주셈!)")
+	@DeleteMapping("/quiz")
+	public ApiResponse<Void> deleteQuizzes(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@RequestBody @Valid QuizDeleteRequest request) {
+		collectionService.deleteQuizzesByRequest(user.getUserId(), request);
+		return ApiResponse.success();
+	}
+
 }
