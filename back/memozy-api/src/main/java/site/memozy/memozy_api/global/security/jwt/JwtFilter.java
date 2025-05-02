@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final List<String> NO_CHECK_URLS = Arrays.asList(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**",
+		"/ws-connect", "/ws-connect/**", "/swagger-ui/**",
 		"/", "/index.html"
 	);
 
@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			boolean isExpired = jwtUtil.isExpired(token);
 			if (isExpired) {
 				log.error("Token expired");
-				ApiResponse apiResponse = new ApiResponse(false, "400", "로그인이 필요합니다. 먼저 로그인해주세요", null);
+				ApiResponse<Void> apiResponse = new ApiResponse<>(false, "400", "로그인이 필요합니다. 먼저 로그인해주세요", null);
 				SecurityResponseUtil.writeJsonResponse(response, apiResponse);
 				return;
 			}
@@ -83,7 +83,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		} catch (Exception e) {
 			log.error("Token Error");
-			ApiResponse apiResponse = new ApiResponse(false, "400", "필터처리 중 에러 발생", null);
+			ApiResponse<Void> apiResponse = new ApiResponse<>(false, "400", "필터처리 중 에러 발생", null);
 			SecurityResponseUtil.writeJsonResponse(response, apiResponse);
 			return;
 		}
