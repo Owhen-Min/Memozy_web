@@ -2,6 +2,7 @@ package site.memozy.memozy_api.domain.collection.service;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotEmpty;
 import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
@@ -23,4 +24,6 @@ public interface CollectionService {
 	void addQuizzesToCollection(Integer userId, Integer collectionId, List<Long> quizIds);
 
 	void deleteQuizzesByRequest(Integer userId, QuizDeleteRequest request);
+
+	void copyMemozies(Integer userId, Integer copyCollectionId, @NotEmpty List<Integer> sourceId);
 }
