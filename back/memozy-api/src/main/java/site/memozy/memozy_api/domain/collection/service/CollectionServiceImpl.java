@@ -1,6 +1,8 @@
 package site.memozy.memozy_api.domain.collection.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,9 +12,13 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.quiz.entity.Quiz;
+import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 
 // TODO: 컬렉션 삭제 시, Memozy 및 퀴즈도 삭제하는 로직 추가하기
@@ -21,6 +27,7 @@ import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 public class CollectionServiceImpl implements CollectionService {
 	private final CollectionRepository collectionRepository;
 	private final QuizSourceRepository quizSourceRepository;
+	private final QuizRepository quizRepository;
 
 	@Override
 	@Transactional
@@ -78,11 +85,74 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId) {
 		if (!quizSourceRepository.existsBySourceIdAndUserId(sourceId, userId)) {
 			throw new IllegalArgumentException("해당 user가 요청할 수 없는 sourceId.");
 		}
 
 		return collectionRepository.findQuizSummariesBySourceIdAndUserId(sourceId, userId);
+	}
+
+	// NOTE: 퀴즈의 컬렉션이 NULL인지는 확인하지 않기(추후에 컬렉션 이동이 있을 경우 동일한 메소드 사용하기)
+	@Override
+	@Transactional
+	public void addQuizzesToCollection(Integer userId, Integer collectionId, List<Long> quizIds) {
+		// 1. 퀴즈 목록 조회
+		List<Quiz> quizzes = quizRepository.findByQuizIdIn(quizIds);
+		if (quizzes.isEmpty()) {
+			throw new IllegalArgumentException("요청한 퀴즈가 존재하지 않습니다.");
+		}
+
+		// 2. quiz들의 sourceId 목록 추출
+		List<Integer> sourceIds = quizzes.stream()
+			.map(Quiz::getSourceId)
+			.distinct()
+			.toList();
+
+		// 3. 한 번에 소유자 정보 조회
+		Map<Integer, Integer> sourceIdToUserIdMap = quizSourceRepository.findAllBySourceIdIn(sourceIds).stream()
+			.collect(Collectors.toMap(QuizSource::getSourceId, QuizSource::getUserId));
+
+		// 4. 소유자 검증
+		boolean containsInvalidOwner = quizzes.stream()
+			.anyMatch(quiz -> {
+				Integer quizOwnerId = sourceIdToUserIdMap.get(quiz.getSourceId());
+				if (quizOwnerId == null) {
+					throw new IllegalStateException("해당 sourceId에 대한 userId를 찾을 수 없습니다: " + quiz.getSourceId());
+				}
+				return !userId.equals(quizOwnerId);
+			});
+		if (containsInvalidOwner) {
+			throw new RuntimeException("다른 사용자의 퀴즈를 수정할 수 없습니다.");
+		}
+
+		// 5. 컬렉션 ID 업데이트
+		quizzes.forEach(q -> q.updateCollectionId(collectionId));
+	}
+
+	@Override
+	@Transactional
+	public void deleteQuizzesByRequest(Integer userId, QuizDeleteRequest request) {
+		if (request.hasQuizIds()) { // Quiz 삭제하기
+			deleteValidQuizzes(request.getQuizId(), userId);
+		} else if (request.hasSourceIds()) { // 문제 원본 삭제 + 문제 원본에 포함된 Quiz 삭제하기
+			// 문제 원본의 문제들 삭제하기
+			List<Long> quizIds = quizRepository.findBySourceIdIn(request.getSourceId()).stream()
+				.map(Quiz::getQuizId)
+				.toList();
+			deleteValidQuizzes(quizIds, userId);
+
+			// 문제 원본들 삭제하기
+			List<Integer> validSourceIds = collectionRepository.findValidSourceIdsByUser(request.getSourceId(), userId);
+			quizSourceRepository.deleteBySourceIdIn(validSourceIds);
+		} else {
+			throw new IllegalArgumentException("quizId 또는 sourceId 중 하나는 필수입니다.");
+		}
+	}
+
+	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
+		List<Long> validQuizIds = collectionRepository.findValidQuizIdsByUser(quizIds, userId);
+		quizRepository.deleteByQuizIdIn(validQuizIds);
 	}
 }

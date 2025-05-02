@@ -6,6 +6,7 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionCreateRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionUpdateRequest;
+import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 
 public interface CollectionService {
@@ -18,4 +19,8 @@ public interface CollectionService {
 	List<CollectionSummaryResponse> getAllCollections(Integer userId);
 
 	List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId);
+
+	void addQuizzesToCollection(Integer userId, Integer collectionId, List<Long> quizIds);
+
+	void deleteQuizzesByRequest(Integer userId, QuizDeleteRequest request);
 }
