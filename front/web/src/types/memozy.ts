@@ -1,11 +1,11 @@
-export interface MemozyContent {
+interface MemozyContent {
     urlId: number;
     urlTitle: string;
     summary: string;
     quizCount: number;
 }
 
-export interface MemozyData {
+interface MemozyData {
     collectionName: string;
     content: MemozyContent[];
     offset: number;
@@ -15,7 +15,7 @@ export interface MemozyData {
 
 export interface MemozyResponse {
     success: boolean;
-    errorMsg: string | null;
-    errorCode: string | null;
+    errorMsg: null | string;
+    errorCode: null | string;
     data: MemozyData;
 }
