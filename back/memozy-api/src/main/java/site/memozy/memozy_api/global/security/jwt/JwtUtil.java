@@ -1,4 +1,4 @@
-package site.memozy.memozy_api.global.jwt;
+package site.memozy.memozy_api.global.security.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -13,7 +13,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-import site.memozy.memozy_api.global.auth.CustomOAuth2User;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
 @Slf4j
 @Component
