@@ -9,7 +9,7 @@ function ErrorPage() {
                 </h1>
                 
                 <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 w-full">
-                    <p className="text-[14px] sm:text-[15px] md:text-[16px] font-pre-medium text-main200">
+                    <p className="text-[12px] sm:text-[14px] md:text-[16px] font-pre-medium text-main200">
                         이런! 문제가 발생했어요.
                     </p>
                     <p className="text-[12px] sm:text-[14px] md:text-[16px] font-pre-medium text-red">
