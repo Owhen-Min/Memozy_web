@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.user.User;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
 @Slf4j
@@ -72,6 +73,20 @@ public class JwtUtil {
 			.claim("name", customOAuth2User.getName())
 			.claim("email", customOAuth2User.getEmail())
 			.claim("profileImage", customOAuth2User.getProfileImage())
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION * 1000))
+			.signWith(secretKey, ALG)
+			.compact();
+	}
+
+	public String createJwt(User user) {
+		return Jwts.builder()
+			.claim("userId", user.getUserId())
+			.claim("personalId", user.getPersonalId())
+			.claim("role", "ROLE_USER")
+			.claim("name", user.getName())
+			.claim("email", user.getEmail())
+			.claim("profileImage", user.getProfileImage())
 			.issuedAt(new Date(System.currentTimeMillis()))
 			.expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION * 1000))
 			.signWith(secretKey, ALG)
