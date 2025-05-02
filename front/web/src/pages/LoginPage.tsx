@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Memozy_logo from "../assets/images/Memozylogo.svg";
 import monster1 from "../assets/images/monster1.png";
 import profile_monster from "../assets/images/profile_monster.png";
@@ -8,6 +8,9 @@ import ServiceCards from "../features/LoginPage/ServiceCard";
 import { useAuthStore } from "../stores/authStore";
 
 function LoginPage() {
+  // 애니메이션 상태 추가
+  const [titleVisible, setTitleVisible] = useState(false);
+  const [textVisible, setTextVisible] = useState(false);
   // 인증 상태 가져오기
   const {
     isLoggedIn,
@@ -27,6 +30,19 @@ function LoginPage() {
       handleAuthCallback();
     }
   }, [location.search, handleAuthCallback]);
+
+  // 애니메이션 효과를 위한 useEffect 추가
+  useEffect(() => {
+    // 타이틀 애니메이션 - 첫번째로 표시
+    setTimeout(() => {
+      setTitleVisible(true);
+    }, 300);
+
+    // 본문 애니메이션 - 타이틀 후에 표시
+    setTimeout(() => {
+      setTextVisible(true);
+    }, 800);
+  }, []);
 
   // 사용자 이름 표시 로직
   const getUserDisplayName = (): string => {
@@ -65,8 +81,22 @@ function LoginPage() {
           {/* 설명 파란 박스 */}
           <div className="relative z-10 ml-4 md:ml-36">
             <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
-              <h2 className="text-20 mb-2 font-pre-medium">Memozy와 함께,</h2>
-              <p className=" ml-6 text-14 font-pre-regular">
+              <h2
+                className={`text-20 mb-2 font-pre-medium transform transition-all duration-700 ${
+                  titleVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
+                Memozy와 함께,
+              </h2>
+              <p
+                className={`ml-6 text-14 font-pre-regular transform transition-all duration-700 ${
+                  textVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
                 원하는 정보를 저장하고, 복습하며, 지식을 더 쉽고 오래 내 것으로
                 만드세요!
               </p>
