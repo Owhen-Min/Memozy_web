@@ -1,6 +1,8 @@
 package site.memozy.memozy_api.global.websocket;
 
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -10,23 +12,34 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import site.memozy.memozy_api.global.jwt.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtChannelInterceptor implements ChannelInterceptor {
+public class StompHandler implements ChannelInterceptor {
 
 	private final JwtUtil jwtUtil;
 
-	private static final String BEARER = "Bearer ";
+	private final String BEARER = "Bearer ";
 
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
+		if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+			log.info("STOMP 정상 종료 요청: {}", accessor.getSessionId());
+			return message;
+		}
+
 		if (!StompCommand.CONNECT.equals(accessor.getCommand())) {
 			return message;
 		}
+
+		String userId = UUID.randomUUID().toString();
+		String nickname = "Guest" + ThreadLocalRandom.current().nextInt(100, 1000);
+		boolean isMember = false;
 
 		String token = Optional.ofNullable(accessor.getFirstNativeHeader("Authorization"))
 			.filter(t -> t.startsWith(BEARER))
@@ -35,10 +48,13 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 			.orElse(null);
 
 		if (token != null) {
-			Integer userId = jwtUtil.getUserId(token);
-			String userName = jwtUtil.getName(token);
-			accessor.getSessionAttributes().put("userId", userId);
-
+			userId = String.valueOf(jwtUtil.getUserId(token));
+			nickname = jwtUtil.getName(token);
+			isMember = true;
 		}
+		accessor.setUser(new StompPrincipal(userId, nickname, isMember));
+
+		log.info("WebSocket 연결: userId={}, nickname={}, isMember={}", userId, nickname, isMember);
+		return message;
 	}
 }
