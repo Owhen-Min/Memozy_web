@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceCreateRequest;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
 
 @Entity
@@ -41,4 +42,13 @@ public class QuizSource extends BaseTimeEntity {
 
 	private Integer collectionId;
 
+	public static QuizSource toEntity(QuizSourceCreateRequest request, Integer userId) {
+		QuizSource quizSource = new QuizSource();
+		quizSource.title = request.getTitle();
+		quizSource.summary = request.getContext();
+		quizSource.url = request.getUrl();
+		quizSource.userId = userId;
+
+		return quizSource;
+	}
 }
