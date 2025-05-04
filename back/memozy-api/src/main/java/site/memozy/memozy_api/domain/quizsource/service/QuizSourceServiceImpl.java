@@ -1,13 +1,19 @@
 package site.memozy.memozy_api.domain.quizsource.service;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.QUIZ_SOURCE_EXISTS;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceCreateRequest;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
+import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
 @Service
@@ -15,7 +21,8 @@ import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceCreateRequest;
 public class QuizSourceServiceImpl implements QuizSourceService {
 
 	private final ChatClient chatClient;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
+	private final QuizSourceRepository quizSourceRepository;
 
 	@Override
 	public String summarizeMarkdown(QuizSourceCreateRequest request) {
@@ -40,6 +47,19 @@ public class QuizSourceServiceImpl implements QuizSourceService {
 			.user(promptText)
 			.call()
 			.content();
+	}
+
+	@Override
+	@Transactional
+	public Integer saveQuizSourceSummary(QuizSourceCreateRequest request, Integer userId) {
+		if (quizSourceRepository.existsByUrlAndUserId(request.getUrl(), userId)) {
+			throw new GeneralException(QUIZ_SOURCE_EXISTS);
+		}
+
+		QuizSource quizSource = QuizSource.toEntity(request, userId);
+		QuizSource saveQuizSource = quizSourceRepository.save(quizSource);
+
+		return saveQuizSource.getSourceId();
 	}
 }
 

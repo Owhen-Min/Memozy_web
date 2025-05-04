@@ -4,5 +4,7 @@ import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceCreateRequest;
 
 public interface QuizSourceService {
 
-	public String summarizeMarkdown(QuizSourceCreateRequest request);
+	String summarizeMarkdown(QuizSourceCreateRequest request);
+
+	Integer saveQuizSourceSummary(QuizSourceCreateRequest request, Integer userId);
 }

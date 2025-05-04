@@ -23,8 +23,8 @@ public class QuizSourceController {
 
 	private final QuizSourceService quizSourceService;
 
-	@Operation(summary = "해당 데이터 요약", description = "해당 데이터를 요약해서 저장")
-	@PostMapping
+	@Operation(summary = "해당 데이터 요약", description = "해당 데이터를 요약해서 마크다운 형식으로 반환")
+	@PostMapping("/summary")
 	public ApiResponse<String> createQuizSourceSummary(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@RequestBody QuizSourceCreateRequest request) {
@@ -32,6 +32,17 @@ public class QuizSourceController {
 		String summary = quizSourceService.summarizeMarkdown(request);
 
 		return ApiResponse.success(summary);
+	}
+
+	@Operation(summary = "해당 데이터 저장", description = "해당 데이터를 요약해서 데이터베이스에 저장")
+	@PostMapping
+	public ApiResponse<Integer> saveQuizSourceSummary(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@RequestBody QuizSourceCreateRequest request) {
+
+		Integer quizSourceId = quizSourceService.saveQuizSourceSummary(request, user.getUserId());
+
+		return ApiResponse.success(quizSourceId);
 	}
 
 }
