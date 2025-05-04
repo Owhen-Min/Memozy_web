@@ -1,7 +1,6 @@
 package site.memozy.memozy_api.domain.quizsource.service;
 
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +35,11 @@ public class QuizSourceServiceImpl implements QuizSourceService {
 			    - 데이터가 하나의 주제로 파악하기 위해 논리적이고 체계적인 접근 방식을 사용하세요.
 			""" + request.getContext();
 
-		Prompt prompt = new Prompt(promptText);
-		return chatClient.call(prompt).getResult().getOutput().getContent();
+		return chatClient
+			.prompt()
+			.user(promptText)
+			.call()
+			.content();
 	}
 }
+
