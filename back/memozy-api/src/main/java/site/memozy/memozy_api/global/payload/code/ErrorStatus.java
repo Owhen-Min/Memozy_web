@@ -19,11 +19,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// User 에러 (USER)
 	MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER401", "사용자가 없습니다."),
-	MEMBER_DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "USER402", "이미 사용 중인 이메일입니다.");
+	MEMBER_DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "USER402", "이미 사용 중인 이메일입니다."),
 
 	// Quiz 에러 (QUIZ)
 
 	// QuizSource 에러 (QUIZ_SOURCE)
+	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다.");
 
 	// History 에러 (HISTORY)
 
