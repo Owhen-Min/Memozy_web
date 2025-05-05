@@ -1,6 +1,8 @@
 package site.memozy.memozy_api.domain.quizsource.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceCreateRequest;
+import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceResponse;
 import site.memozy.memozy_api.domain.quizsource.service.QuizSourceService;
 import site.memozy.memozy_api.global.payload.ApiResponse;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
@@ -44,5 +47,15 @@ public class QuizSourceController {
 
 		return ApiResponse.success(quizSourceId);
 	}
+	
+	@Operation(summary = "해당 요약 데이터 조회", description = "해당 요약 데이터를 조회")
+	@GetMapping("/{sourceId}")
+	public ApiResponse<QuizSourceResponse> getQuizSourceSummary(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@Parameter(description = "요약을 조회할 원본데이터 ID ", example = "1") @PathVariable Integer sourceId) {
 
+		QuizSourceResponse quizSource = quizSourceService.getQuizSourceById(sourceId, user.getUserId());
+
+		return ApiResponse.success(quizSource);
+	}
 }
