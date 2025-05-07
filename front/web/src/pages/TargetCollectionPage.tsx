@@ -4,6 +4,8 @@ import MemozyCard from "../features/targetCollectionPage/MemozyCard";
 import { useState } from 'react';
 import CreateQuizShowModal from '../features/targetCollectionPage/CreateQuizShowModal';
 import memozyIcon from '../assets/icons/memozyIcon.png';
+import DeleteMemozyModal from '../features/targetCollectionPage/DeleteMemozyModal';
+import CopyMemozyModal from '../features/targetCollectionPage/CopyMemozyModal';
 
 interface LocationState {
     collectionName: string;
@@ -16,6 +18,18 @@ function TargetCollectionPage() {
     const location = useLocation();
     const { collectionName, memozyCount, quizCount } = location.state as LocationState;
     const [isQuizShowModalOpen, setIsQuizShowModalOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [selectedMemozyIds, setSelectedMemozyIds] = useState<number[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+
+    const handleMemozySelect = (memozyId: number) => {
+        setSelectedMemozyIds(prev => 
+            prev.includes(memozyId) 
+                ? prev.filter(id => id !== memozyId)
+                : [...prev, memozyId]
+        );
+    };
 
     return (
         <>
@@ -38,11 +52,35 @@ function TargetCollectionPage() {
                         >
                             퀴즈쇼 생성
                         </button>
-                        <button className="text-16 font-pre-medium text-normal bg-white rounded-xl px-4 py-1 border border-normal">
-                            Memozy 편집
+                        <button 
+                            onClick={() => {
+                                setIsEditMode(!isEditMode);
+                                if (!isEditMode) {
+                                    setSelectedMemozyIds([]);
+                                }
+                            }}
+                            className={`text-16 font-pre-medium ${isEditMode ? 'text-white bg-normal' : 'text-normal bg-white'} rounded-xl px-4 py-1 border border-normal`}
+                        >
+                            {isEditMode ? '편집 완료' : 'Memozy 편집'}
                         </button>
                     </div>
                 </div>
+                {isEditMode && (
+                    <div className="flex gap-4 mb-4">
+                        <button
+                            className="border border-normal text-normal bg-bg rounded-xl px-4 py-1 font-pre-medium text-[16px] transition-colors hover:bg-normal hover:text-white"
+                            onClick={() => setIsCopyModalOpen(true)}
+                        >
+                            <span className="font-pre-bold">선택 Memozy 복제</span>
+                        </button>
+                        <button
+                            className="border border-red text-red bg-bg rounded-xl px-4 py-1 font-pre-medium text-[16px] transition-colors hover:bg-red hover:text-white"
+                            onClick={() => setIsDeleteModalOpen(true)}
+                        >
+                            <span className="font-pre-bold">선택 Memozy 삭제</span>
+                        </button>
+                    </div>
+                )}
                 {memozyData.data.content.map((content) => (
                     <MemozyCard 
                         key={content.urlId}
@@ -50,6 +88,9 @@ function TargetCollectionPage() {
                         urlTitle={content.urlTitle}
                         summary={content.summary}
                         quizCount={content.quizCount}
+                        isEditMode={isEditMode}
+                        isSelected={selectedMemozyIds.includes(content.urlId)}
+                        onSelect={() => handleMemozySelect(content.urlId)}
                     />
                 ))}
             </div>
@@ -59,6 +100,20 @@ function TargetCollectionPage() {
                     onClose={() => setIsQuizShowModalOpen(false)} 
                     collectionId={collectionId}
                     quizCount={quizCount}
+                />
+            )}
+
+            {isDeleteModalOpen && (
+                <DeleteMemozyModal
+                    memozyIds={selectedMemozyIds}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                />
+            )}
+
+            {isCopyModalOpen && (
+                <CopyMemozyModal
+                    memozyIds={selectedMemozyIds}
+                    onClose={() => setIsCopyModalOpen(false)}
                 />
             )}
         </>
