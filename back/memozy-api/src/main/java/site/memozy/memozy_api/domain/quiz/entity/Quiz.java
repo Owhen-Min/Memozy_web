@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.memozy.memozy_api.domain.quiz.dto.QuizItemResponse;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
 
 @Entity

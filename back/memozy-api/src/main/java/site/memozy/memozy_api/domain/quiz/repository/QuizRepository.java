@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 
-public interface QuizRepository extends JpaRepository<Quiz, Long> {
+public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositoryCustom {
 	List<Quiz> findByQuizIdIn(List<Long> quizIds);
 
 	void deleteByQuizIdIn(List<Long> quizIds);
@@ -16,6 +16,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	List<Quiz> findBySourceIdIn(List<Integer> sourceIds);
 
 	List<Quiz> findBySourceId(Integer sourceId);
+
 	@Modifying
 	@Query("DELETE FROM Quiz q WHERE q.sourceId = :sourceId AND q.collectionId IS NULL")
 	int deleteAllBySource(Integer sourceId);
