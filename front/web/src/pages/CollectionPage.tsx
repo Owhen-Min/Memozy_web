@@ -11,8 +11,8 @@ function CollectionPage() {
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
   
   // 모든 컬렉션의 memozyCount와 quizCount 총합 계산
-  const totalMemozyCount = collectionData[0].data.reduce((sum, item) => sum + item.memozyCount, 0);
-  const totalQuizCount = collectionData[0].data.reduce((sum, item) => sum + item.quizCount, 0);
+  const totalMemozyCount = collectionData.data.reduce((sum, item) => sum + item.memozyCount, 0);
+  const totalQuizCount = collectionData.data.reduce((sum, item) => sum + item.quizCount, 0);
 
   const handleAllCollectionsClick = () => {
     navigate('/collection/all');
@@ -49,8 +49,14 @@ function CollectionPage() {
           </div>
         </div>
 
-        {collectionData[0].data.map((item, index) => (
-          <CollectionCard key={index} collection={item} />
+        {collectionData.data.map(({id, name, memozyCount, quizCount}) => (
+          <CollectionCard 
+            key={id} 
+            id={id}
+            name={name}
+            memozyCount={memozyCount}
+            quizCount={quizCount}
+          />
         ))}
 
         {/* 새 컬렉션 추가 카드 */}
