@@ -11,7 +11,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     const [collections, setCollections] = useState<{id: number, name: string}[]>([]);
 
     useEffect(() => {
-        // 실제 API 연동 시 fetch로 대체
+        // 실제 API 연동 시 axios로 대체
         setCollections(collectionData.data.map(col => ({ id: col.id, name: col.name })));
         if (collectionData.data.length > 0) {
             setSelectedCollectionId(collectionData.data[0].id);
