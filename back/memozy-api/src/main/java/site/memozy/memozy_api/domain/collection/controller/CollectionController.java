@@ -121,14 +121,14 @@ public class CollectionController {
 
 	@Operation(summary = "컬렉션 내 memozy 목록 조회")
 	@GetMapping("/collection/url")
-	public ApiResponse<List<CollectionMemozyListResponse>> getUrlsInCollection(
+	public ApiResponse<CollectionMemozyListResponse> getUrlsInCollection(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@RequestParam("collectionId") Integer collectionId,
-		@RequestParam(value = "offset", defaultValue = "0") int offset,
-		@RequestParam(value = "page", defaultValue = "5") int page
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(value = "pageSize", defaultValue = "5") int pageSize
 	) {
-		List<CollectionMemozyListResponse> response = collectionService.getMemoziesByCollectionId(collectionId, offset,
-			page, user.getUserId());
+		CollectionMemozyListResponse response = collectionService.getMemoziesByCollectionId(user.getUserId(),
+			collectionId, page, pageSize);
 		return ApiResponse.success(response);
 	}
 }
