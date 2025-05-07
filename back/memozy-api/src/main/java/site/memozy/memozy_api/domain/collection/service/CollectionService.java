@@ -28,6 +28,6 @@ public interface CollectionService {
 
 	void copyMemozies(Integer userId, Integer copyCollectionId, @NotEmpty List<Integer> sourceId);
 
-	List<CollectionMemozyListResponse> getMemoziesByCollectionId(Integer userId, Integer collectionId, int offset,
+	CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId, int offset,
 		int page);
 }

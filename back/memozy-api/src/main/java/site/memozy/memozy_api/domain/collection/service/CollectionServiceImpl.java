@@ -195,33 +195,29 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional
-	public List<CollectionMemozyListResponse> getMemoziesByCollectionId(Integer userId, Integer collectionId,
-		int offset, int pageSize) {
+	public CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId,
+		int paze, int pageSize) {
 		// 1. CollectionName 얻기
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(
 				() -> new RuntimeException("예외처리")
 			);
 
-		// 2. Pageable 생성 (page = offset / pageSize)
-		Pageable pageable = PageRequest.of(offset / pageSize, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+		// 2. Pageable 생성
+		Pageable pageable = PageRequest.of(paze, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		// 3. content 조회
 		List<MemozyContentResponse> content = collectionRepository.findByCollectionIdWithPaging(collectionId,
 			pageable);
-		// 4. 전체 개수 조회
-		long totalCount = collectionRepository.countByCollectionId(collectionId);
 
-		boolean last = pageable.getOffset() + pageable.getPageSize() >= totalCount;
+		// 4. 마지막 페이지 여부 계산
+		boolean isLast = content.size() < pageSize;
 
-		// return new CollectionMemozyListResponse(
-		// 	collection.getName(),
-		// 	content,
-		// 	(int)pageable.getOffset(),
-		// 	pageable.getPageSize(),
-		// 	last
-		// );
-		return List.of();
+		return CollectionMemozyListResponse.builder()
+			.collectionName(collection.getName())
+			.content(content)
+			.last(isLast)
+			.build();
 	}
 
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
