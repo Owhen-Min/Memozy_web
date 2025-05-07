@@ -33,10 +33,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		if (state != null && state.startsWith("mode:extension")) {
 			log.info("Extension login success");
-			respondToExtension(response, token);
+			respondToExtension(request, response, token);
 		} else {
 			log.info("Web login success");
-			respondToWeb(response, token);
+			respondToWeb(request, response, token);
 		}
 	}
 
@@ -49,18 +49,40 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		return jwtUtil.createJwt(userDetails, role);
 	}
 
-	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
-		String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/"; // 실제 ID로 교체 필요
+	private void respondToExtension(HttpServletRequest request, HttpServletResponse response, String token) throws
+		IOException {
+		String referer = request.getHeader("Referer");
+		String extensionId = "";
+
+		if (referer != null) {
+			if (referer.contains("dfghbgncpceajjhnkmfinhmdafmkglak")) {
+				extensionId = "dfghbgncpceajjhnkmfinhmdafmkglak";
+			} else if (referer.contains("edkigpibifokljeefiomnfadenbfcchj")) {
+				extensionId = "edkigpibifokljeefiomnfadenbfcchj";
+			}
+		}
+
+		String redirectUri = "chrome-extension://" + extensionId + "/";
 		String tokenParam = "access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
-		String finalRedirectUrl = redirectUri + "#" + tokenParam; // 해시 사용 예시
-		response.setStatus(HttpServletResponse.SC_FOUND); // 302 Found
+		String finalRedirectUrl = redirectUri + "#" + tokenParam;
+
+		response.setStatus(HttpServletResponse.SC_FOUND);
 		response.setHeader("Location", finalRedirectUrl);
-		response.getWriter().write("Redirecting..."); // 본문은 크게 중요하지 않음
+		response.getWriter().write("Redirecting...");
 	}
 
-	private void respondToWeb(HttpServletResponse response, String token) throws IOException {
-		String redirectUrl = "http://localhost:5173/?token=" + token;
-		// String redirectUrl = "http://localhost:8080/?token=" + token;
+	private void respondToWeb(HttpServletRequest request, HttpServletResponse response, String token) throws
+		IOException {
+		String host = request.getHeader("Host");
+		String redirectUrl = "";
+
+		if (host != null && host.contains("memozy.site")) {
+			redirectUrl = "https://memozy.site/?token=" + token;
+		}
+		if (host != null && host.contains("localhost")) {
+			redirectUrl = "http://localhost:5173/?token=" + token;
+		}
+
 		response.sendRedirect(redirectUrl);
 	}
 }

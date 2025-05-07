@@ -45,11 +45,22 @@ public class Quiz extends BaseTimeEntity {
 	@Column(name = "quiz_option", columnDefinition = "TEXT")
 	private String option;
 
-	@Column(nullable = true)
 	private Integer collectionId;
 
 	@Column(nullable = false)
 	private Integer sourceId;
+
+	public static Quiz createQuiz(QuizItemResponse response, Integer sourceId) {
+		Quiz quiz = new Quiz();
+		quiz.content = response.question();
+		quiz.type = QuizType.fromCode(response.quizType());
+		quiz.answer = response.answer();
+		quiz.commentary = response.explanation();
+		quiz.option = String.join(",", response.options());
+		quiz.sourceId = sourceId;
+
+		return quiz;
+	}
 
 	@Builder
 	public Quiz(String content, QuizType type, String answer, String commentary,

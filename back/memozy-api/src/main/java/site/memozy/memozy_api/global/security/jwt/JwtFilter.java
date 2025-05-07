@@ -31,7 +31,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final List<String> NO_CHECK_URLS = Arrays.asList(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**", "/swagger-ui/**",
+		"/ws-connect", "/ws-connect/**",
+		"/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
 		"/", "/index.html"
 	);
 
