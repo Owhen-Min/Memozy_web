@@ -89,6 +89,8 @@ public class SecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList(
+			"chrome-extension://dfghbgncpceajjhnkmfinhmdafmkglak",
+			"chrome-extension://edkigpibifokljeefiomnfadenbfcchj",
 			"http://localhost:5173",
 			"https://localhost:5173",
 			"http://memozy.site",

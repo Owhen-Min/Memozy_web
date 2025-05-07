@@ -1,0 +1,20 @@
+package site.memozy.memozy_api.domain.quizsource.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
+
+public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer> {
+
+	boolean existsByUrlAndUserId(String url, Integer userId);
+
+	Optional<QuizSource> findBySourceIdAndUserId(Integer sourceId, Integer userId);
+
+	@Query("SELECT q.summary FROM QuizSource q WHERE q.sourceId = :sourceId AND q.userId = :userId")
+	Optional<String> findSummary(Integer sourceId, Integer userId);
+
+	boolean existsBySourceIdAndUserId(Integer sourceId, Integer userId);
+}
