@@ -126,6 +126,13 @@ public class OpenAiService {
 				  - DevOps·CI/CD·모니터링: Jenkins, GitHub Actions, Prometheus 등
 				  - 알고리즘·자료구조·컴퓨터 구조
 				
+				+ ### 1.3 일반 정보 (General Info / Non-Quizable Content)
+				+ - **개념 정의**: 코딩 테스트 개요, 알고리즘 시험 절차, 회사 채용 프로세스 등 \s
+				+ - **목록/참고자료**: 온라인 저지 사이트 목록, 추천 도서, 도구 리스트 등 \s
+				+ - **역사/배경 설명**: 특정 기술의 역사나 기업의 서비스 구조 설명 등 \s
+				+\s
+				+ 위 항목에 해당하면 → **거부**
+				
 				- **비-IT 예시**
 				  요리 레시피, 역사 사건, 스포츠 경기 결과, 여행지 추천 등
 				
