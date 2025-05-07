@@ -1,6 +1,6 @@
 -- 1. Users (1명)
-INSERT INTO Users (user_id, name, email, profile_image, created_at, personal_id)
-VALUES (1, '홍길동', 'hong@example.com', 'https://image.example.com/hong.jpg', NOW(), 123456);
+-- INSERT INTO Users (user_id, name, email, profile_image, created_at, personal_id)
+-- VALUES (1, '홍길동', 'hong@example.com', 'https://image.example.com/hong.jpg', NOW(), 123456);
 
 -- 2. Collections (3개)
 INSERT INTO Collections (collection_id, user_id, name, created_at, updated_at, code)
