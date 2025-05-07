@@ -187,7 +187,7 @@ function LoginPage() {
             {/* 익스텐션 설치 버튼 - 로그인 박스 아래에 배치 */}
             <div className="mt-20 flex justify-center">
               <Link
-                to="#"
+                to="https://chromewebstore.google.com/detail/memozy/edkigpibifokljeefiomnfadenbfcchj"
                 className="text-center bg-[#4285F4] font-pre-regular text-white shadow-md w-[272px] h-[43px] rounded-md hover:normalactive transition-colors duration-200 flex items-center justify-center"
               >
                 익스텐션 설치하기
