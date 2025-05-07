@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collectionData } from '../../dummy/collectionData';
-
+import closeIcon from '../../assets/icons/closeIcon.svg';
 interface CopyMemozyModalProps {
     memozyIds: number[];
     onClose: () => void;
@@ -26,11 +26,11 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     return (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-8 max-w-[350px] w-full mx-4 relative flex flex-col items-center">
-                <button
+                <button 
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
+                    className="absolute top-4 right-4"
                 >
-                    ×
+                    <img src={closeIcon} alt="close" className="w-3 h-3" />
                 </button>
                 <h1 className="text-[20px] font-pre-bold text-center mb-4">
                     <span className="font-pre-bold">Memozy 복제하기</span>

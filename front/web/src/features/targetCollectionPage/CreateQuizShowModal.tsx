@@ -59,10 +59,18 @@ function CreateQuizShowModal({ onClose, collectionId, quizCount: totalQuizCount 
 
                     <div className="flex items-center justify-between">
                         <span className="text-[16px] font-pre-medium">퀴즈 수</span>
-                        <select 
+                        <select
                             value={quizCount}
                             onChange={(e) => setQuizCount(Number(e.target.value))}
-                            className="border border-light rounded-lg px-4 py-2 w-24 text-center appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')] bg-no-repeat bg-right-4 bg-center-y"
+                            className="
+                                border border-gray-300 rounded-lg px-4 py-2 w-24 text-center
+                                text-[16px] font-pre-medium
+                                focus:outline-none focus:ring-2 focus:ring-main200
+                                appearance-none
+                                bg-white
+                                bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')]
+                                bg-no-repeat bg-[right_1rem_center]
+                            "
                         >
                             {availableQuizCounts.map((num) => (
                                 <option key={num} value={num}>{num}</option>
