@@ -194,7 +194,7 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId,
 		int paze, int pageSize) {
 		// 1. CollectionName 얻기
