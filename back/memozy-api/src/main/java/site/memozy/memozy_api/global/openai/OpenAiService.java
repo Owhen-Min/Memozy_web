@@ -31,7 +31,9 @@ public class OpenAiService {
 
 	public String summarizeMarkdown(QuizSourceCreateRequest request) {
 		String promptText = """
-			당신의 임무는 받는 데이터를 정리해주는 것입니다.
+			당신의 임무는 받는 데이터를 **한국어로 정리**해주는 것입니다.
+			모든 응답은 반드시 **한국어로 출력**해야 합니다.
+			
 			# Steps
 			1. **주어진 데이터를 분석하여 해당 데이터에서 어떤 주제인지 확인**
 			    - 입력한 데이터를 분석하여 어떤 주제의 내용인지 확인합니다.
