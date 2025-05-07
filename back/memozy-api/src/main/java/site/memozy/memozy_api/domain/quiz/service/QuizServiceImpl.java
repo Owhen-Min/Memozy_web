@@ -42,7 +42,11 @@ public class QuizServiceImpl implements QuizService {
 
 		QuizResponse quizItems = openAiService.createQuiz(request.getQuizCount(), request.getQuizTypes(), summary);
 
-		saveQuiz(quizItems, sourceId);
+		List<Quiz> entities = quizItems.content().stream()
+			.map(item -> item.toEntity(sourceId))
+			.toList();
+
+		quizRepository.saveAll(entities);
 
 		return quizItems;
 	}
@@ -67,14 +71,5 @@ public class QuizServiceImpl implements QuizService {
 
 		return quizRepository.findAllQuizBySourceId(sourceId);
 	}
-
-	@Transactional
-	protected void saveQuiz(QuizResponse quizzes, Integer sourceId) {
-		List<Quiz> entities = quizzes.content().stream()
-			.map(item -> item.toEntity(sourceId))
-			.toList();
-
-		quizRepository.saveAll(entities);
-	}
-
+	
 }
