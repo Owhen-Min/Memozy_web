@@ -112,7 +112,7 @@ function AnalysisReport() {
       ...reportData.topCollections.map(
         (item) => `${item.name} (${item.problemCount})`
       ),
-      `기타 (${reportData.otherCollectionsCount})`,
+      `기타 (${reportData.otherCollectionsCount}) `,
     ],
     datasets: [
       {
@@ -131,7 +131,7 @@ function AnalysisReport() {
   };
 
   return (
-    <div className="mb-10">
+    <div className="mb-20">
       <div className="flex items-center gap-2 mb-8">
         <img src={small_logo} alt="로고" className="w-10" />
         <h2 className="text-[28px] font-pre-medium">분석 레포트</h2>

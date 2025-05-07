@@ -7,8 +7,8 @@ function WrongAnswerNote() {
   const wrongAnswers = wrongAnswerData[0].data || [];
 
   return (
-    <div className="mb-10">
-      <div className="flex items-center mb-4">
+    <div>
+      <div className="flex items-center mb-10">
         <img src={small_logo} alt="로고" className="w-10" />
         <h2 className="text-[28px] font-pre-medium">오답노트</h2>
       </div>
