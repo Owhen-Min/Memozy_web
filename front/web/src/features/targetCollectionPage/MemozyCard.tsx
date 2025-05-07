@@ -1,6 +1,6 @@
 import { useState } from "react";
 import summaryIcon from "../../assets/icons/summaryIcon.svg";
-import dropDownIcon from "../../assets/icons/dropdownIcon.svg";
+import dropDownIcon from "../../assets/icons/dropDownIcon.svg";
 import NoteModal from "./NoteModal";
 import DropDownBox from "./DropDownBox";
 
