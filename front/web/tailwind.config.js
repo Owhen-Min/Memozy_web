@@ -18,7 +18,7 @@ export default {
         gray100: "#D2D2D2",
         gray300: "#D9D9D9",
         red: "#FA3E41",
-        redhover: "#A60003"
+        redhover: "#A60003",
       },
       fontFamily: {
         "pre-black": ["Pretendard-Black", "sans-serif"],
