@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import small_logo from "../../assets/images/small_logo.png";
 import { analysisReportData } from "../../dummy/analysisReportData";
-import { AnalysisReportData } from "../../types/analysisReport"; // 타입 임포트
+import { AnalysisReportData } from "../../types/analysisReport";
 import bookicon from "../../assets/icons/book.svg";
 import openbookicon from "../../assets/icons/openbook.svg";
 
@@ -97,11 +97,11 @@ function AnalysisReport() {
         label: "정답률 (%)",
         data: reportData.collectionAccuracy.map((item) => item.latestAccuracy),
         backgroundColor: [
-          "#FF6384",
+          "#FFCE56",
           "#6A5ACD",
+          "#CCCCCC",
           "#3CB371",
-          "#FFB347",
-          "#4BC0C0",
+          "#3E6FFA",
         ],
       },
     ],
@@ -121,9 +121,9 @@ function AnalysisReport() {
           reportData.otherCollectionsCount,
         ],
         backgroundColor: [
-          "#36A2EB",
+          "#3E6FFA",
           "#FFCE56",
-          "#4BC0C0",
+          "#3CB371",
           "#CCCCCC", // 기타 항목 색상
         ],
       },
@@ -132,28 +132,44 @@ function AnalysisReport() {
 
   return (
     <div className="mb-10">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-8">
         <img src={small_logo} alt="로고" className="w-10" />
         <h2 className="text-[28px] font-pre-medium">분석 레포트</h2>
         <div className="flex justify-end gap-4 ml-auto font-pre-medium">
           <div
-            className="flex items-center bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white"
+            className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
-            <img src={bookicon} alt="Book Icon" className="w-6 ml-2" />
-            <div className="flex flex-col justify-center items-center flex-grow">
+            <div
+              className="flex items-center justify-center"
+              style={{ width: "48px" }}
+            >
+              <img src={bookicon} alt="Book Icon" className="w-6" />
+            </div>
+
+            {/* 텍스트 박스를 절대 위치로 중앙 정렬 */}
+            <div className="absolute inset-0 flex flex-col justify-center items-center">
               <div className="text-sm text-center">전체 퀴즈 개수</div>
               <div className="text-xl font-bold text-center">
                 {reportData.totalQuizCount}
               </div>
             </div>
           </div>
+
           <div
-            className="flex items-center bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white"
+            className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
-            <img src={openbookicon} alt="Open Book Icon" className="w-6 ml-2" />
-            <div className="flex flex-col justify-center items-center flex-grow">
+            {/* 아이콘 */}
+            <div
+              className="flex items-center justify-center"
+              style={{ width: "48px" }}
+            >
+              <img src={openbookicon} alt="Open Book Icon" className="w-6" />
+            </div>
+
+            {/* 중앙 정렬된 텍스트 */}
+            <div className="absolute inset-0 flex flex-col justify-center items-center">
               <div className="text-sm text-center">푼 퀴즈 개수</div>
               <div className="text-xl font-bold text-center">
                 {reportData.solvedQuizCount}
@@ -163,7 +179,7 @@ function AnalysisReport() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow mb-10">
+      <div className="bg-white p-6 rounded-lg border border-normal shadow-md mb-10">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold">학습 참여도</h3>
           {/* 보기 옵션 드롭박스 */}
@@ -215,13 +231,15 @@ function AnalysisReport() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-1">
+        <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
           <h3 className="text-lg font-semibold mb-2">컬렉션별 정답률</h3>
           <div className="overflow-x-auto">
             <div
               style={{
-                width: `${reportData.collectionAccuracy.length * 96}px`,
+                width: `${
+                  Math.max(reportData.collectionAccuracy.length, 5) * 96
+                }px`,
                 minWidth: "480px",
                 maxWidth: "480px",
                 height: "300px",
@@ -264,7 +282,7 @@ function AnalysisReport() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
           <h3 className="text-lg font-semibold mb-2">컬렉션별 분포도</h3>
           <div className="flex flex-col justify-center items-center">
             <div style={{ height: "240px", width: "240px" }}>
