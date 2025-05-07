@@ -1,5 +1,6 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
 import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QCollectionSummaryResponse;
+import site.memozy.memozy_api.domain.collection.dto.QMemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QQuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.QCollection;
@@ -94,22 +96,21 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 	@Override
 	public List<MemozyContentResponse> findByCollectionIdWithPaging(Integer collectionId, Pageable pageable) {
-		// return queryFactory
-		// 	.select(Projections.constructor(UrlSummary.class,
-		// 		quizSource.sourceId,
-		// 		quizSource.title,
-		// 		quizSource.summary,
-		// 		quiz.count()
-		// 	))
-		// 	.from(quizSource)
-		// 	.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
-		// 	.where(quizSource.collectionId.eq(collectionId))
-		// 	.groupBy(quizSource.sourceId)
-		// 	.orderBy(quizSource.createdAt.desc())
-		// 	.offset(pageable.getOffset())
-		// 	.limit(pageable.getPageSize())
-		// 	.fetch();
-		return null;
+		return queryFactory
+			.select(new QMemozyContentResponse(
+				quizSource.sourceId,
+				quizSource.title,
+				quizSource.summary,
+				quiz.count().intValue() // 각 quizSource에 묶인 quiz 개수
+			))
+			.from(quizSource)
+			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
+			.where(quizSource.collectionId.eq(collectionId))
+			.groupBy(quizSource.sourceId)
+			.orderBy(quizSource.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
 	}
 
 	@Override
