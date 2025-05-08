@@ -25,8 +25,13 @@ import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.TopCollectionResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
+import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
+import site.memozy.memozy_api.domain.history.entity.History;
 import site.memozy.memozy_api.domain.history.entity.QHistory;
+import site.memozy.memozy_api.domain.history.entity.QuizDetailResponse;
 import site.memozy.memozy_api.domain.quiz.entity.QQuiz;
+import site.memozy.memozy_api.domain.quiz.entity.Quiz;
+import site.memozy.memozy_api.domain.quiz.entity.QuizType;
 import site.memozy.memozy_api.domain.quizsource.entity.QQuizSource;
 
 @RequiredArgsConstructor
@@ -210,7 +215,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			.where(quiz.collectionId.in(collectionIds))
 			.groupBy(quiz.collectionId)
 			.fetch();
-		
+
 		List<TopCollectionResponse> top3 = new ArrayList<>();
 		int otherCount = 0;
 
@@ -234,5 +239,63 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 		}
 
 		return new QuizCountAnalysisResponse(top3, otherCount);
+	}
+
+	@Override
+	public List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId) {
+		QHistory history = QHistory.history;
+		QQuiz quiz = QQuiz.quiz;
+
+		List<Integer> rounds = queryFactory
+			.select(history.round)
+			.from(history)
+			.where(history.collectionId.eq(collectionId))
+			.groupBy(history.round)
+			.orderBy(history.round.desc())
+			.fetch();
+
+		List<CollectionHistoryDetailResponse> result = new ArrayList<>();
+
+		for (Integer round : rounds) {
+			List<Tuple> tuples = queryFactory
+				.select(history, quiz)
+				.from(history)
+				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.where(
+					history.collectionId.eq(collectionId),
+					history.round.eq(round),
+					history.isSolved.eq(false)
+				)
+				.fetch();
+
+			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
+				History h = tuple.get(history);
+				Quiz q = tuple.get(quiz);
+				return new QuizDetailResponse(
+					q.getQuizId(),
+					q.getContent(),
+					q.getType().name(),
+					h.getUserSelect(),
+					(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
+						? List.of(q.getOption().split(","))
+						: null,
+					q.getAnswer(),
+					q.getCommentary()
+				);
+			}).toList();
+
+			History anyHistory = tuples.get(0).get(history);
+			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+
+			result.add(new CollectionHistoryDetailResponse(
+				anyHistory.getHistoryId(),
+				round,
+				failCount,
+				anyHistory.getCreatedAt().toLocalDate().toString(),
+				quizList
+			));
+		}
+
+		return result;
 	}
 }

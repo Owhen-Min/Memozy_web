@@ -11,6 +11,8 @@ import site.memozy.memozy_api.domain.collection.entity.Collection;
 public interface CollectionRepository extends JpaRepository<Collection, Integer>, CollectionRepositoryCustom {
 	boolean existsByUserIdAndName(Integer userId, String name);
 
+	boolean existsByUserIdAndCollectionId(Integer userId, Integer collectionId);
+
 	Optional<Collection> findByCollectionIdAndUserId(Integer collectionId, Integer userId);
 
 	@Query("SELECT c.collectionId FROM Collection c WHERE c.userId = :userId")

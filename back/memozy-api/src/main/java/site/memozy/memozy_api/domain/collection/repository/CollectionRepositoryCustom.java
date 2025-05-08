@@ -10,6 +10,7 @@ import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
+import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
 
 public interface CollectionRepositoryCustom {
 	List<CollectionSummaryResponse> findCollectionSummariesByUserId(Integer userId);
@@ -29,4 +30,6 @@ public interface CollectionRepositoryCustom {
 	List<CollectionAccuracyResponse> findAccuracyByCollectionIds(List<Integer> collectionIds);
 
 	QuizCountAnalysisResponse getTopQuizCollectionsByIds(List<Integer> collectionIds);
+
+	List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId);
 }
