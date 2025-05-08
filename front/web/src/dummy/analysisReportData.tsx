@@ -45,10 +45,8 @@ export const analysisReportData: AnalysisReportResponse = {
     learningContribution: generateLearningContribution(),
     collectionAccuracy: [
       { collectionId: "html", name: "HTML", latestAccuracy: 10 },
+      { collectionId: "html", name: "HTML", latestAccuracy: 10 },
       { collectionId: "react", name: "React", latestAccuracy: 40 },
-      { collectionId: "cs", name: "CS", latestAccuracy: 70 },
-      { collectionId: "ts", name: "TypeScript", latestAccuracy: 80 },
-      { collectionId: "js", name: "JavaScript", latestAccuracy: 82 },
     ],
     topCollections: [
       { collectionId: "react", name: "React", problemCount: 25 },

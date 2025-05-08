@@ -184,7 +184,7 @@ function AnalysisReport() {
           <h3 className="text-lg font-semibold">학습 참여도</h3>
           {/* 보기 옵션 드롭박스 */}
           <select
-            className="border border-gray-300 rounded px-2 py-1 text-sm font-pre-regular"
+            className="border border-normal  rounded px-2 py-1 text-sm font-pre-regular"
             value={selectedView}
             onChange={(e) => setSelectedView(e.target.value)}
           >
@@ -237,19 +237,25 @@ function AnalysisReport() {
           <div className="overflow-x-auto">
             <div
               style={{
-                width: `${
-                  Math.max(reportData.collectionAccuracy.length, 5) * 96
-                }px`,
-                minWidth: "480px",
-                maxWidth: "480px",
+                width: `${Math.max(
+                  reportData.collectionAccuracy.length * 90,
+                  500
+                )}px`, // 최소 너비를 500px로 설정
                 height: "300px",
               }}
             >
               <Bar
-                data={barChartData}
+                data={{
+                  ...barChartData,
+                  datasets: barChartData.datasets.map((dataset) => ({
+                    ...dataset,
+                    barThickness: 80, // 각 막대의 너비를 80px로 고정
+                    categoryPercentage: 0.8, // 카테고리 간격을 0.8로 설정하여 간격 확보
+                  })),
+                }}
                 options={{
                   responsive: true,
-                  maintainAspectRatio: true,
+                  maintainAspectRatio: false,
                   plugins: {
                     legend: { display: false },
                   },
