@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -22,8 +21,7 @@ public class QuizSessionStore {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	// Quiz 세션 저장
-	public String saveQuizSession(int userId, List<String> quizList, int collectionId) {
-		String sessionId = generateShortUuid(8);
+	public String saveQuizSession(int userId, List<String> quizList, String sessionId, int collectionId) {
 		String redisKey = generateRedisKey(userId, sessionId);
 
 		try {
@@ -137,10 +135,5 @@ public class QuizSessionStore {
 	// Redis Key 생성 메서드
 	private String generateRedisKey(int userId, String sessionId) {
 		return userId + ":" + sessionId + ":quizData";
-	}
-
-	// 간단한 UUID 생성 (8자리)
-	public String generateShortUuid(int length) {
-		return UUID.randomUUID().toString().replace("-", "").substring(0, length);
 	}
 }

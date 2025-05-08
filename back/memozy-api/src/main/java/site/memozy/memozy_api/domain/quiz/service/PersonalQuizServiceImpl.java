@@ -2,6 +2,7 @@ package site.memozy.memozy_api.domain.quiz.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 			.orElseThrow(() -> new RuntimeException("Collection not found"));
 
 		// Redis에 퀴즈 정보 초기화
-		String sessionId = quizSessionStore.saveQuizSession(userId, quizList, collection.getCollectionId());
+		String sessionId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+		quizSessionStore.saveQuizSession(userId, quizList, sessionId, collection.getCollectionId());
 
 		return PersonalQuizAndSessionResponse.of(sessionId, personalQuizzes, personalQuizzes.size());
 	}
@@ -49,7 +51,6 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 	@Override
 	public void submitQuizAnswer(int userId, long quizId, PersonalQuizAnswerRequest request) {
 		String key = userId + ":" + request.getQuizSessionId() + ":quizData";
-		System.out.println("결과:" + request.getIsCorrect());
 		quizSessionStore.updateQuizStatus(userId, request.getQuizSessionId(), Long.toString(quizId),
 			request.getUserAnswer(),
 			request.getIsCorrect());
