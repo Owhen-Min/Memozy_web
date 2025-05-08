@@ -20,7 +20,7 @@ function MemozyCard({ memozyId, urlTitle, summary, quizCount, isEditMode, isSele
 
     return (
         <>
-            <div className="w-full bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
                 <div className="p-6">
                     <div className="flex justify-between items-start">
                         <div className="flex-1 flex items-start gap-4">
@@ -38,7 +38,7 @@ function MemozyCard({ memozyId, urlTitle, summary, quizCount, isEditMode, isSele
                                 </h2>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[14px] font-pre-regular text-gray200">
-                                        총 퀴즈 수
+                                        퀴즈 수
                                     </span>
                                     <span className="text-[14px] font-pre-medium text-normal">
                                         {quizCount}

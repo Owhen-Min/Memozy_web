@@ -13,7 +13,7 @@ function CreateQuizShowModal({ onClose, collectionId, quizCount: totalQuizCount 
 
     const handleQuizStart = () => {
         // TODO: 퀴즈 시작 로직 구현
-        console.log(collectionId, quizCount, isShared);
+        console.log('퀴즈쇼 생성 컬렉션 : ', collectionId, '퀴즈 수 : ', quizCount, '공유 여부 : ', isShared);
         onClose();
     };
 

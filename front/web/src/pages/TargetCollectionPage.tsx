@@ -42,8 +42,8 @@ function TargetCollectionPage() {
                 <div className="flex gap-2 mb-4 justify-between">
                     <div className="flex items-center gap-2">
                         <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
-                        <span className="text-16 font-pre-medium">Memozy</span>
-                        <span className="text-16 font-pre-medium">{memozyCount}</span>
+                        <span className="text-16 font-pre-semibold">Memozy 수</span>
+                        <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
                     </div>
                     <div className="flex gap-2">
                         <button 
@@ -61,7 +61,7 @@ function TargetCollectionPage() {
                             }}
                             className={`text-16 font-pre-medium ${isEditMode ? 'text-white bg-normal' : 'text-normal bg-white'} rounded-xl px-4 py-1 border border-normal`}
                         >
-                            {isEditMode ? '편집 완료' : 'Memozy 편집'}
+                            {isEditMode ? 'Memozy 편집 완료' : 'Memozy 편집'}
                         </button>
                     </div>
                 </div>

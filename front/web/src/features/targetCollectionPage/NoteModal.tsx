@@ -9,7 +9,7 @@ interface NoteModalProps {
 function NoteModal({ urlTitle, summary, onClose }: NoteModalProps) {
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 max-w-[600px] w-full mx-4 relative">
+            <div className="bg-white rounded-2xl p-6 max-w-[800px] w-full mx-4 relative">
                 <button 
                     onClick={onClose}
                     className="absolute top-4 right-4 z-60"

@@ -1,13 +1,13 @@
 import closeIcon from '../../assets/icons/closeIcon.svg';
 
-interface DeleteMemozyModalProps {
-    memozyIds: number[];
+interface DeleteQuizModalProps {
+    quizId: number[];
     onClose: () => void;
 }
 
-function DeleteMemozyModal({ memozyIds, onClose }: DeleteMemozyModalProps) {
+function DeleteQuizModal({ quizId, onClose }: DeleteQuizModalProps) {
     const handleDelete = () => {
-        console.log('삭제 memozy : ', memozyIds);
+        console.log('퀴즈 삭제', quizId);
         onClose();
     };
 
@@ -21,10 +21,10 @@ function DeleteMemozyModal({ memozyIds, onClose }: DeleteMemozyModalProps) {
                     <img src={closeIcon} alt="close" className="w-3 h-3" />
                 </button>
                 <h1 className="text-[20px] font-pre-bold text-center mb-4">
-                    <span className="font-pre-bold">Memozy 삭제하기</span>
+                    <span className="font-pre-bold">퀴즈 삭제하기</span>
                 </h1>
                 <p className="text-[16px] font-pre-medium text-center mb-8">
-                    해당 Memozy 와 퀴즈들을 삭제하시겠습니까
+                    해당 퀴즈를 삭제하시겠습니까?
                 </p>
                 <button
                     onClick={handleDelete}
@@ -37,4 +37,4 @@ function DeleteMemozyModal({ memozyIds, onClose }: DeleteMemozyModalProps) {
     );
 }
 
-export default DeleteMemozyModal;
+export default DeleteQuizModal;
