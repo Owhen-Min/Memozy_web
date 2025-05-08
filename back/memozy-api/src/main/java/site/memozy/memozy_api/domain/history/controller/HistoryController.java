@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.service.HistoryServiceImpl;
@@ -42,9 +43,20 @@ public class HistoryController {
 	@GetMapping("/quiz/stats")
 	public ApiResponse<QuizStatsResponse> getUserQuizStats(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		
+
 		QuizStatsResponse quizStats = historyService.getUserQuizStats(customOAuth2User.getUserId());
 
 		return ApiResponse.success(quizStats);
+	}
+
+	@Operation(summary = "오답 기록이 있는 컬렉션 리스트 반환", description = "오답 기록이 있는 컬렉션 리스트를 반환합니다.")
+	@GetMapping("/collection")
+	public ApiResponse<List<UnsolvedCollectionDtoResponse>> getHistoryCollection(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+		List<UnsolvedCollectionDtoResponse> history = historyService.getUnsolvedCollections(
+			customOAuth2User.getUserId());
+
+		return ApiResponse.success(history);
 	}
 }

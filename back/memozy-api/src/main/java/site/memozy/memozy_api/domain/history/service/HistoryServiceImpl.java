@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
@@ -57,6 +58,12 @@ public class HistoryServiceImpl implements HistoryService {
 		long solvedQuiz = historyRepository.countDistinctSolvedQuiz(collectionIds);
 
 		return new QuizStatsResponse(totalQuiz, solvedQuiz);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<UnsolvedCollectionDtoResponse> getUnsolvedCollections(Integer userId) {
+		return collectionRepository.findUnsolvedCollectionsByUserId(userId);
 	}
 
 }
