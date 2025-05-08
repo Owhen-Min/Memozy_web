@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
+import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
+import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 
 @Slf4j
 @Service
@@ -20,6 +22,7 @@ public class HistoryServiceImpl implements HistoryService {
 
 	private final HistoryRepository historyRepository;
 	private final CollectionRepository collectionRepository;
+	private final QuizRepository quizRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -43,6 +46,17 @@ public class HistoryServiceImpl implements HistoryService {
 		return historyRepository.findContributionsByCollectionIdsAndDateRange(
 			collectionIds, startDate, endDate
 		);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public QuizStatsResponse getUserQuizStats(Integer userId) {
+		List<Integer> collectionIds = collectionRepository.findCollectionIdsByUserId(userId);
+
+		long totalQuiz = quizRepository.countDistinctQuiz(collectionIds);
+		long solvedQuiz = historyRepository.countDistinctSolvedQuiz(collectionIds);
+
+		return new QuizStatsResponse(totalQuiz, solvedQuiz);
 	}
 
 }
