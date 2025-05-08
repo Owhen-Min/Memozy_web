@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.memozy.memozy_api.domain.quiz.dto.QuizItemResponse;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
 
 @Entity
@@ -45,7 +46,7 @@ public class Quiz extends BaseTimeEntity {
 	@Column(name = "quiz_option", columnDefinition = "TEXT")
 	private String option;
 
-	@Column(nullable = true)
+
 	private Integer collectionId;
 
 	@Column(nullable = false)
@@ -65,5 +66,17 @@ public class Quiz extends BaseTimeEntity {
 
 	public void updateCollectionId(Integer collectionId) {
 		this.collectionId = collectionId;
+	}
+
+	public static Quiz createQuiz(QuizItemResponse response, Integer sourceId) {
+		Quiz quiz = new Quiz();
+		quiz.content = response.question();
+		quiz.type = QuizType.fromCode(response.quizType());
+		quiz.answer = response.answer();
+		quiz.commentary = response.explanation();
+		quiz.option = String.join(",", response.options());
+		quiz.sourceId = sourceId;
+
+		return quiz;
 	}
 }

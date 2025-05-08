@@ -50,17 +50,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
-		String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/"; // 실제 ID로 교체 필요
+		// String redirectUri = "https://edkigpibifokljeefiomnfadenbfcchj.chromiumapp.org/";
+		String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/";
 		String tokenParam = "access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
-		String finalRedirectUrl = redirectUri + "#" + tokenParam; // 해시 사용 예시
-		response.setStatus(HttpServletResponse.SC_FOUND); // 302 Found
+		String finalRedirectUrl = redirectUri + "#" + tokenParam;
+		response.setStatus(HttpServletResponse.SC_FOUND);
 		response.setHeader("Location", finalRedirectUrl);
-		response.getWriter().write("Redirecting..."); // 본문은 크게 중요하지 않음
+		response.getWriter().write("Redirecting...");
 	}
 
 	private void respondToWeb(HttpServletResponse response, String token) throws IOException {
 		String redirectUrl = "http://localhost:5173/?token=" + token;
-		// String redirectUrl = "http://localhost:8080/?token=" + token;
 		response.sendRedirect(redirectUrl);
 	}
 }
