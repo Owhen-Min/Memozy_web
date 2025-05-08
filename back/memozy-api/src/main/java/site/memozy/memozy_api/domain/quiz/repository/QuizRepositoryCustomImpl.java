@@ -1,6 +1,6 @@
 package site.memozy.memozy_api.domain.quiz.repository;
 
-import static site.memozy.memozy_api.domain.history.QHistory.*;
+import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
 import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
 import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
