@@ -184,7 +184,7 @@ function AnalysisReport() {
           <h3 className="text-lg font-semibold">학습 참여도</h3>
           {/* 보기 옵션 드롭박스 */}
           <select
-            className="border border-gray-300 rounded px-2 py-1 text-sm font-pre-regular"
+            className="border border-normal  rounded px-2 py-1 text-sm font-pre-regular"
             value={selectedView}
             onChange={(e) => setSelectedView(e.target.value)}
           >
