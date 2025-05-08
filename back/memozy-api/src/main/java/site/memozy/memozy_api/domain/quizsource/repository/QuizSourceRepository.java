@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 
 public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer> {
@@ -25,4 +26,6 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 
 	boolean existsBySourceIdAndUserId(Integer sourceId, Integer userId);
 
+	@Query("SELECT DISTINCT q.userId FROM QuizSource q WHERE q.sourceId IN :sourceIds")
+	List<Integer> findDistinctUserIdsBySourceIds(@Param("sourceIds") List<Integer> sourceIds);
 }

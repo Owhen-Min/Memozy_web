@@ -1,7 +1,6 @@
 package site.memozy.memozy_api.domain.collection.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -115,24 +114,17 @@ public class CollectionServiceImpl implements CollectionService {
 			.distinct()
 			.toList();
 
-		// 3. 한 번에 소유자 정보 조회
-		Map<Integer, Integer> sourceIdToUserIdMap = quizSourceRepository.findAllBySourceIdIn(sourceIds).stream()
-			.collect(Collectors.toMap(QuizSource::getSourceId, QuizSource::getUserId));
-
-		// 4. 소유자 검증
-		boolean containsInvalidOwner = quizzes.stream()
-			.anyMatch(quiz -> {
-				Integer quizOwnerId = sourceIdToUserIdMap.get(quiz.getSourceId());
-				if (quizOwnerId == null) {
-					throw new IllegalStateException("해당 sourceId에 대한 userId를 찾을 수 없습니다: " + quiz.getSourceId());
-				}
-				return !userId.equals(quizOwnerId);
-			});
-		if (containsInvalidOwner) {
-			throw new RuntimeException("다른 사용자의 퀴즈를 수정할 수 없습니다.");
+		// 3. sourceId를 통해 User 확인하기
+		List<Integer> distinctUserIds = quizSourceRepository.findDistinctUserIdsBySourceIds(sourceIds);
+		if (distinctUserIds.size() != 1) {
+			throw new RuntimeException("유저 ID가 여러 개 존재합니다.");
+		}
+		Integer foundUserId = distinctUserIds.get(0);
+		if (!foundUserId.equals(userId)) {
+			throw new RuntimeException("요청한 유저 ID와 소스 ID 목록의 유저 ID가 일치하지 않습니다.");
 		}
 
-		// 5. 컬렉션 ID 업데이트
+		// 3. 컬렉션 ID 업데이트
 		quizzes.forEach(q -> q.updateCollectionId(collectionId));
 	}
 
