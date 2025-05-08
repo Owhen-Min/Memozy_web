@@ -1,20 +1,32 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import closeIcon from '../../assets/icons/closeIcon.svg';
+
 
 interface CreateQuizShowModalProps {
     onClose: () => void;
     collectionId: string | undefined;
+    collectionName: string;
     quizCount: number;
 }
 
-function CreateQuizShowModal({ onClose, collectionId, quizCount: totalQuizCount }: CreateQuizShowModalProps) {
+function CreateQuizShowModal({ onClose, collectionId, collectionName, quizCount: totalQuizCount }: CreateQuizShowModalProps) {
+    const navigate = useNavigate();
     const [isShared, setIsShared] = useState(false);
     const [quizCount, setQuizCount] = useState(1);
 
-    const handleQuizStart = () => {
+    const handleQuizShowCreate = () => {
         // TODO: 퀴즈 시작 로직 구현
-        console.log('퀴즈쇼 생성 컬렉션 : ', collectionId, '퀴즈 수 : ', quizCount, '공유 여부 : ', isShared);
+        console.log('퀴즈쇼 생성 컬렉션 이름 : ', collectionName, '퀴즈쇼 생성 컬렉션 id : ', collectionId, '퀴즈 수 : ', quizCount, '공유 여부 : ', isShared);
         onClose();
+        navigate('/quiz-show-entry', {
+            state: {
+                collectionName,
+                collectionId,
+                quizCount,
+                isShared
+            }
+        });
     };
 
     // 선택 가능한 퀴즈 수 배열 생성 (1부터 totalQuizCount까지)
@@ -80,10 +92,10 @@ function CreateQuizShowModal({ onClose, collectionId, quizCount: totalQuizCount 
                 </div>
 
                 <button
-                    onClick={handleQuizStart}
+                    onClick={handleQuizShowCreate}
                     className="w-full bg-normal text-white rounded-xl py-2 mt-8 font-pre-medium hover:bg-normal/90 transition-colors"
                 >
-                    퀴즈 시작
+                    퀴즈쇼 생성
                 </button>
             </div>
         </div>
