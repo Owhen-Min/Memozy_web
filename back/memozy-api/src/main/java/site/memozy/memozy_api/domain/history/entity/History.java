@@ -38,4 +38,7 @@ public class History extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private Integer collectionId;
+
+	@Column(nullable = false)
+	private Integer round;
 }
