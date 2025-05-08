@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.collection.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
@@ -59,4 +60,16 @@ public class HistoryController {
 
 		return ApiResponse.success(history);
 	}
+
+	@Operation(summary = "컬렉션 통계 조회", description = "컬렉션 통계를 조회할 수 있습니다.")
+	@GetMapping("/collection/stats")
+	public ApiResponse<List<CollectionAccuracyResponse>> getCollectionAccuracy(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+		List<CollectionAccuracyResponse> collectionAccuracy = historyService.getCollectionAccuracy(
+			customOAuth2User.getUserId());
+
+		return ApiResponse.success(collectionAccuracy);
+	}
+
 }

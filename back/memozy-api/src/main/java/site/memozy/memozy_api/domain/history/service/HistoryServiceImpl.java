@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.collection.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
@@ -64,6 +65,16 @@ public class HistoryServiceImpl implements HistoryService {
 	@Transactional(readOnly = true)
 	public List<UnsolvedCollectionDtoResponse> getUnsolvedCollections(Integer userId) {
 		return collectionRepository.findUnsolvedCollectionsByUserId(userId);
+	}
+
+	public List<CollectionAccuracyResponse> getCollectionAccuracy(Integer userId) {
+		List<Integer> collectionIds = collectionRepository.findCollectionIdsByUserId(userId);
+
+		//추가로 넣어야함
+		List<CollectionAccuracyResponse> accuracyByCollectionIds = collectionRepository.findAccuracyByCollectionIds(
+			collectionIds);
+
+		return accuracyByCollectionIds;
 	}
 
 }
