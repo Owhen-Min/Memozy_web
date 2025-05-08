@@ -50,8 +50,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
-		String redirectUri = "https://edkigpibifokljeefiomnfadenbfcchj.chromiumapp.org/";
-		// String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/";
+		// String redirectUri = "https://edkigpibifokljeefiomnfadenbfcchj.chromiumapp.org/";
+		String redirectUri = "https://dfghbgncpceajjhnkmfinhmdafmkglak.chromiumapp.org/";
 		String tokenParam = "access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 		String finalRedirectUrl = redirectUri + "#" + tokenParam;
 		response.setStatus(HttpServletResponse.SC_FOUND);
