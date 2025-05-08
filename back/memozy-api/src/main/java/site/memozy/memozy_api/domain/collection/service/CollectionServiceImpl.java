@@ -196,7 +196,7 @@ public class CollectionServiceImpl implements CollectionService {
 	@Override
 	@Transactional(readOnly = true)
 	public CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId,
-		int paze, int pageSize) {
+		int page, int pageSize) {
 		// 1. CollectionName 얻기
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(
@@ -204,7 +204,7 @@ public class CollectionServiceImpl implements CollectionService {
 			);
 
 		// 2. Pageable 생성
-		Pageable pageable = PageRequest.of(paze, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		// 3. content 조회
 		List<MemozyContentResponse> content = collectionRepository.findByCollectionIdWithPaging(collectionId,
