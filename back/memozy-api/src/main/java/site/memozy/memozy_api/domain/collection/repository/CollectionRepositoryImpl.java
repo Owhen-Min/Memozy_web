@@ -22,6 +22,8 @@ import site.memozy.memozy_api.domain.collection.dto.QQuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.QCollection;
 import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
+import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
+import site.memozy.memozy_api.domain.history.dto.TopCollectionResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.entity.QHistory;
 import site.memozy.memozy_api.domain.quiz.entity.QQuiz;
@@ -192,5 +194,45 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 		}
 
 		return result;
+	}
+
+	@Override
+	public QuizCountAnalysisResponse getTopQuizCollectionsByIds(List<Integer> collectionIds) {
+		QCollection collection = QCollection.collection;
+
+		if (collectionIds.isEmpty()) {
+			return new QuizCountAnalysisResponse(List.of(), 0);
+		}
+
+		List<Tuple> allCounts = queryFactory
+			.select(quiz.collectionId, quiz.count())
+			.from(quiz)
+			.where(quiz.collectionId.in(collectionIds))
+			.groupBy(quiz.collectionId)
+			.fetch();
+		
+		List<TopCollectionResponse> top3 = new ArrayList<>();
+		int otherCount = 0;
+
+		allCounts.sort((a, b) -> Long.compare(b.get(quiz.count()), a.get(quiz.count())));
+
+		for (int i = 0; i < allCounts.size(); i++) {
+			Integer colId = allCounts.get(i).get(quiz.collectionId);
+			Integer count = allCounts.get(i).get(quiz.count()).intValue();
+
+			String name = queryFactory
+				.select(collection.name)
+				.from(collection)
+				.where(collection.collectionId.eq(colId))
+				.fetchOne();
+
+			if (i < 3) {
+				top3.add(new TopCollectionResponse(colId, name, count));
+			} else {
+				otherCount += count;
+			}
+		}
+
+		return new QuizCountAnalysisResponse(top3, otherCount);
 	}
 }

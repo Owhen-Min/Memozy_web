@@ -8,6 +8,7 @@ import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
+import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 
 public interface CollectionRepositoryCustom {
@@ -26,4 +27,6 @@ public interface CollectionRepositoryCustom {
 	long countByCollectionId(Integer collectionId);
 
 	List<CollectionAccuracyResponse> findAccuracyByCollectionIds(List<Integer> collectionIds);
+
+	QuizCountAnalysisResponse getTopQuizCollectionsByIds(List<Integer> collectionIds);
 }
