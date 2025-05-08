@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
+import site.memozy.memozy_api.domain.history.dto.HistoryCollectionStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
+import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
@@ -67,14 +69,19 @@ public class HistoryServiceImpl implements HistoryService {
 		return collectionRepository.findUnsolvedCollectionsByUserId(userId);
 	}
 
-	public List<CollectionAccuracyResponse> getCollectionAccuracy(Integer userId) {
+	@Override
+	@Transactional(readOnly = true)
+	public HistoryCollectionStatsResponse getCollectionAccuracy(Integer userId) {
 		List<Integer> collectionIds = collectionRepository.findCollectionIdsByUserId(userId);
 
 		//추가로 넣어야함
 		List<CollectionAccuracyResponse> accuracyByCollectionIds = collectionRepository.findAccuracyByCollectionIds(
 			collectionIds);
 
-		return accuracyByCollectionIds;
+		QuizCountAnalysisResponse topQuizCollectionsByIds = collectionRepository.getTopQuizCollectionsByIds(
+			collectionIds);
+
+		return new HistoryCollectionStatsResponse(accuracyByCollectionIds, topQuizCollectionsByIds);
 	}
 
 }
