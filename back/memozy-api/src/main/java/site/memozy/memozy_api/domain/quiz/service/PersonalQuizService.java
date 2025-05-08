@@ -1,9 +1,13 @@
 package site.memozy.memozy_api.domain.quiz.service;
 
-import java.util.List;
-
-import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
+import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizAndSessionResponse;
+import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizAnswerRequest;
+import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResultResponse;
 
 public interface PersonalQuizService {
-	List<PersonalQuizResponse> getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly);
+	PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly);
+
+	void submitQuizAnswer(int userId, long quizId, PersonalQuizAnswerRequest request);
+
+	PersonalQuizResultResponse getPersonalQuizResult(int userId, int collectionId, String quizSessionId);
 }
