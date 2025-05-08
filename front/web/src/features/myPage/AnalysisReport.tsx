@@ -237,19 +237,26 @@ function AnalysisReport() {
           <div className="overflow-x-auto">
             <div
               style={{
-                width: `${
-                  Math.max(reportData.collectionAccuracy.length, 5) * 96
-                }px`,
-                minWidth: "480px",
-                maxWidth: "480px",
+                width: `${Math.max(
+                  reportData.collectionAccuracy.length * 90,
+                  500
+                )}px`, // 최소 너비를 500px로 설정
                 height: "300px",
               }}
             >
               <Bar
-                data={barChartData}
+                data={{
+                  ...barChartData,
+                  datasets: barChartData.datasets.map((dataset) => ({
+                    ...dataset,
+                    barThickness: 90, // 각 막대의 너비를 90px로 고정
+                    barPercentage: 0.9, // 막대의 너비 비율을 고정
+                    categoryPercentage: 1.0, // 카테고리 간격을 고정
+                  })),
+                }}
                 options={{
                   responsive: true,
-                  maintainAspectRatio: true,
+                  maintainAspectRatio: false,
                   plugins: {
                     legend: { display: false },
                   },
