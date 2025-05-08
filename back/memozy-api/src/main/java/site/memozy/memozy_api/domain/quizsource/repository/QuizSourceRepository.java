@@ -10,6 +10,12 @@ import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 
 public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer> {
 
+	List<QuizSource> findAllBySourceIdIn(List<Integer> sourceIds);
+
+	void deleteBySourceIdIn(List<Integer> sourceIds);
+
+	List<QuizSource> findBySourceIdInAndUserId(List<Integer> sourceIds, Integer userId);
+
 	boolean existsByUrlAndUserId(String url, Integer userId);
 
 	Optional<QuizSource> findBySourceIdAndUserId(Integer sourceId, Integer userId);
@@ -19,9 +25,4 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 
 	boolean existsBySourceIdAndUserId(Integer sourceId, Integer userId);
 
-	List<QuizSource> findAllBySourceIdIn(List<Integer> sourceIds);
-
-	void deleteBySourceIdIn(List<Integer> sourceIds);
-
-	List<QuizSource> findBySourceIdInAndUserId(List<Integer> sourceIds, Integer userId);
 }

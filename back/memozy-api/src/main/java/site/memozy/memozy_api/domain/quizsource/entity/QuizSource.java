@@ -43,6 +43,15 @@ public class QuizSource extends BaseTimeEntity {
 
 	private Integer collectionId;
 
+	@Builder
+	public QuizSource(String title, String summary, String url, Integer userId, Integer collectionId) {
+		this.title = title;
+		this.summary = summary;
+		this.url = url;
+		this.userId = userId;
+		this.collectionId = collectionId;
+	}
+
 	public static QuizSource toEntity(QuizSourceCreateRequest request, Integer userId) {
 		QuizSource quizSource = new QuizSource();
 		quizSource.title = request.getTitle();
@@ -51,14 +60,6 @@ public class QuizSource extends BaseTimeEntity {
 		quizSource.userId = userId;
 
 		return quizSource;
-	}
-	@Builder
-	public QuizSource(String title, String summary, String url, Integer userId, Integer collectionId) {
-		this.title = title;
-		this.summary = summary;
-		this.url = url;
-		this.userId = userId;
-		this.collectionId = collectionId;
 	}
 
 }
