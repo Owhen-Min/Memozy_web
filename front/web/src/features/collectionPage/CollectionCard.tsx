@@ -81,11 +81,11 @@ function CollectionCard({ id, name, memozyCount, quizCount }: CollectionCardProp
                 <div className="flex items-center gap-5">
                     <div className="flex items-center gap-2">
                         <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
-                        <span className="text-16 font-pre-semibold">Memozy 수</span>
+                        <span className="text-16 font-pre-semibold">Memozy</span>
                         <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-16 font-pre-semibold">퀴즈 수</span>
+                        <span className="text-16 font-pre-semibold">퀴즈</span>
                         <span className="text-16 font-pre-semibold text-normal">{quizCount}</span>
                     </div>
                 </div>
