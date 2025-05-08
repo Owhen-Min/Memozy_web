@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.history.service;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.COLLECTION_NOT_FOUND;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +18,10 @@ import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
+import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
 @Service
@@ -82,6 +86,19 @@ public class HistoryServiceImpl implements HistoryService {
 			collectionIds);
 
 		return new HistoryCollectionStatsResponse(accuracyByCollectionIds, topQuizCollectionsByIds);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CollectionHistoryDetailResponse> getCollectionHistoryDetail(Integer userId, Integer collectionId) {
+
+		log.info("userId {}, collectionId {}", userId, collectionId);
+
+		if (!collectionRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
+			throw new GeneralException(COLLECTION_NOT_FOUND);
+		}
+
+		return collectionRepository.findCollectionHistoryWithQuizzes(collectionId);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import site.memozy.memozy_api.domain.history.dto.HistoryCollectionStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
+import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
 import site.memozy.memozy_api.domain.history.service.HistoryService;
 import site.memozy.memozy_api.global.payload.ApiResponse;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
@@ -70,6 +72,19 @@ public class HistoryController {
 			customOAuth2User.getUserId());
 
 		return ApiResponse.success(collectionAccuracy);
+	}
+
+	@Operation(summary = "컬렉션 상세 조회", description = "컬렉션 상세 조회")
+	@GetMapping("/collection/{collectionId}")
+	public ApiResponse<List<CollectionHistoryDetailResponse>> getCollectionHistoryDetail(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+		@Parameter(description = "컬렉션 ID") @PathVariable(value = "collectionId") Integer collectionId
+	) {
+
+		List<CollectionHistoryDetailResponse> collectionHistoryDetail = historyService
+			.getCollectionHistoryDetail(customOAuth2User.getUserId(), collectionId);
+
+		return ApiResponse.success(collectionHistoryDetail);
 	}
 
 }
