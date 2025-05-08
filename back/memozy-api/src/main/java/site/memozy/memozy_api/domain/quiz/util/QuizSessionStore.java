@@ -20,13 +20,17 @@ public class QuizSessionStore {
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
+	private static final String QUIZ_LIST_KEY = "quizList";
+	private static final String QUIZ_STATUS_KEY = "quizStatus";
+	private static final String METADATA_KEY = "metadata";
+
 	// Quiz 세션 저장
 	public String saveQuizSession(int userId, List<String> quizList, String sessionId, int collectionId) {
 		String redisKey = generateRedisKey(userId, sessionId);
 
 		try {
 			// quizList 저장
-			redisTemplate.opsForHash().put(redisKey, "quizList", objectMapper.writeValueAsString(quizList));
+			redisTemplate.opsForHash().put(redisKey, QUIZ_LIST_KEY, objectMapper.writeValueAsString(quizList));
 
 			// quizStatus 초기화 후 저장
 			Map<String, Map<String, String>> quizStatus = new HashMap<>();
@@ -37,7 +41,7 @@ public class QuizSessionStore {
 				status.put("answer", "");
 				quizStatus.put(quizId, status);
 			}
-			redisTemplate.opsForHash().put(redisKey, "quizStatus", objectMapper.writeValueAsString(quizStatus));
+			redisTemplate.opsForHash().put(redisKey, QUIZ_STATUS_KEY, objectMapper.writeValueAsString(quizStatus));
 
 			// quizMetadata 초기화 후 저장
 			Map<String, String> metadata = Map.of(
@@ -46,7 +50,7 @@ public class QuizSessionStore {
 				"currentIndex", "0",
 				"collectionId", Integer.toString(collectionId)
 			);
-			redisTemplate.opsForHash().put(redisKey, "metadata", objectMapper.writeValueAsString(metadata));
+			redisTemplate.opsForHash().put(redisKey, METADATA_KEY, objectMapper.writeValueAsString(metadata));
 
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("퀴즈 게임 레디스 저장 예외");
@@ -61,7 +65,7 @@ public class QuizSessionStore {
 
 		try {
 			// quizStatus 가져오기
-			String quizStatusJson = (String)redisTemplate.opsForHash().get(redisKey, "quizStatus");
+			String quizStatusJson = (String)redisTemplate.opsForHash().get(redisKey, QUIZ_STATUS_KEY);
 			Map<String, Map<String, String>> quizStatus = objectMapper.readValue(quizStatusJson, Map.class);
 			// 상태 갱신
 			Map<String, String> quizState = quizStatus.get(quizId);
@@ -74,14 +78,14 @@ public class QuizSessionStore {
 			quizStatus.put(quizId, quizState);
 
 			// 갱신된 상태 저장
-			redisTemplate.opsForHash().put(redisKey, "quizStatus", objectMapper.writeValueAsString(quizStatus));
+			redisTemplate.opsForHash().put(redisKey, QUIZ_STATUS_KEY, objectMapper.writeValueAsString(quizStatus));
 
 			// 메타데이터 업데이트 (currentIndex 증가)
-			String metadataJson = (String)redisTemplate.opsForHash().get(redisKey, "metadata");
+			String metadataJson = (String)redisTemplate.opsForHash().get(redisKey, METADATA_KEY);
 			Map<String, String> metadata = objectMapper.readValue(metadataJson, Map.class);
 			int currentIndex = Integer.parseInt(metadata.get("currentIndex"));
 			metadata.put("currentIndex", String.valueOf(currentIndex + 1));
-			redisTemplate.opsForHash().put(redisKey, "metadata", objectMapper.writeValueAsString(metadata));
+			redisTemplate.opsForHash().put(redisKey, METADATA_KEY, objectMapper.writeValueAsString(metadata));
 
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to update quiz status in Redis", e);
@@ -96,28 +100,28 @@ public class QuizSessionStore {
 			Map<String, Object> sessionData = new HashMap<>();
 
 			// quizList 가져오기
-			String quizListJson = (String)redisTemplate.opsForHash().get(redisKey, "quizList");
+			String quizListJson = (String)redisTemplate.opsForHash().get(redisKey, QUIZ_LIST_KEY);
 			if (quizListJson == null || quizListJson.isEmpty()) {
 				throw new RuntimeException("Quiz list not found for session: " + sessionId);
 			}
 			List<String> quizList = objectMapper.readValue(quizListJson, List.class);
-			sessionData.put("quizList", quizList);
+			sessionData.put(QUIZ_LIST_KEY, quizList);
 
 			// quizStatus 가져오기
-			String quizStatusJson = (String)redisTemplate.opsForHash().get(redisKey, "quizStatus");
+			String quizStatusJson = (String)redisTemplate.opsForHash().get(redisKey, QUIZ_STATUS_KEY);
 			if (quizStatusJson == null || quizStatusJson.isEmpty()) {
 				throw new RuntimeException("Quiz status not found for session: " + sessionId);
 			}
 			Map<String, Map<String, String>> quizStatus = objectMapper.readValue(quizStatusJson, Map.class);
-			sessionData.put("quizStatus", quizStatus);
+			sessionData.put(QUIZ_STATUS_KEY, quizStatus);
 
 			// metadata 가져오기
-			String metadataJson = (String)redisTemplate.opsForHash().get(redisKey, "metadata");
+			String metadataJson = (String)redisTemplate.opsForHash().get(redisKey, METADATA_KEY);
 			if (metadataJson == null || metadataJson.isEmpty()) {
 				throw new RuntimeException("Metadata not found for session: " + sessionId);
 			}
 			Map<String, String> metadata = objectMapper.readValue(metadataJson, Map.class);
-			sessionData.put("metadata", metadata);
+			sessionData.put(METADATA_KEY, metadata);
 
 			return sessionData;
 
