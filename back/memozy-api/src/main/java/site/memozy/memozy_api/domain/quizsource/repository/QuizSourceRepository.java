@@ -1,10 +1,6 @@
 package site.memozy.memozy_api.domain.quizsource.repository;
 
-<<<<<<< back/memozy-api/src/main/java/site/memozy/memozy_api/domain/quizsource/repository/QuizSourceRepository.java
 import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
