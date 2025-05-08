@@ -24,7 +24,7 @@ export interface QuizDetail {
 
 export interface QuizHistory {
   historyId: number;
-  회차: string;
+  round: number;
   failCount: number;
   date: string;
   quizDatas: QuizDetail[];

@@ -48,14 +48,12 @@ function Modal({ isOpen, onClose, data }: ModalProps) {
           <div
             key={history.historyId}
             className="mb-4 p-4 bg-white rounded-lg shadow-md"
+            onClick={() => toggleDropDown(history.historyId)}
           >
             <div className="flex justify-between items-center">
-              <h3 className="font-pre-bold text-lg">{history.회차}</h3>
+              <h3 className="font-pre-bold text-lg">{history.round}회차</h3>
               <div className="flex items-center">
-                <button
-                  onClick={() => toggleDropDown(history.historyId)}
-                  className="p-2 hover:bg-light rounded-lg transition-colors"
-                >
+                <button className="p-2 hover:bg-light rounded-lg transition-colors">
                   <img
                     src={dropDownIcon}
                     alt="드롭다운 아이콘"
@@ -84,7 +82,14 @@ function Modal({ isOpen, onClose, data }: ModalProps) {
                     {quiz.type === "MULTIPLE_CHOICE" && quiz.choice && (
                       <div className="pl-5">
                         {quiz.choice.map((option, index) => (
-                          <p key={index}>
+                          <p
+                            key={index}
+                            className={
+                              quiz.userSelect && option === quiz.userSelect
+                                ? "text-red"
+                                : ""
+                            }
+                          >
                             {index + 1}) {option}
                           </p>
                         ))}
@@ -95,14 +100,9 @@ function Modal({ isOpen, onClose, data }: ModalProps) {
                       <div className="p-2 bg-green-100 rounded-md">
                         <p className="text-12 ">정답: {quiz.answer}</p>
                       </div>
-                      <div className="p-2 bg-red-100 rounded-md">
-                        <p className="text-12">내 오답: {quiz.userSelect}</p>
-                      </div>
                     </div>
                     <div className="mt-2 p-2 bg-[#FEE9EB] rounded-md">
-                      <p className="text-12 text-red-700">
-                        해설: {quiz.commentary}
-                      </p>
+                      <p className="text-12">해설: {quiz.commentary}</p>
                     </div>
                   </div>
                 ))}

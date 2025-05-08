@@ -7,7 +7,7 @@ export const quizHistoryData: QuizHistoryData[] = [
     data: [
       {
         historyId: 1,
-        회차: "1회차",
+        round: 2,
         failCount: 5,
         date: "2025.04.12",
         quizDatas: [
@@ -43,7 +43,7 @@ export const quizHistoryData: QuizHistoryData[] = [
       },
       {
         historyId: 2,
-        회차: "2회차",
+        round: 2,
         failCount: 3,
         date: "2025.04.20",
         quizDatas: [
