@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import AddCollection from '../features/collectionPage/collectionPageModal/AddCollection';
 import { useState } from 'react';
 import small_logo from '../assets/images/small_logo.png';
+import { motion } from 'framer-motion';
 
 function CollectionPage() {
   const navigate = useNavigate();
@@ -27,15 +28,36 @@ function CollectionPage() {
     setIsAddCollectionModalOpen(false);
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="content">
       <h1 className="text-[28px] font-pre-semibold mb-8 text-main200 flex items-center gap-2">
         <img src={small_logo} alt="logo" className="w-10 h-10" />
         컬렉션 리스트
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <motion.div 
+        className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
         {/* 컬렉션 모두보기 */}
-        <div 
+        <motion.div 
+          variants={item}
           className="w-full p-5 border border-normal rounded-xl bg-white relative cursor-pointer hover:bg-lighthover shadow-md"
           onClick={handleAllCollectionsClick}
         >
@@ -43,33 +65,36 @@ function CollectionPage() {
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-2">
               <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
-              <span className="text-16 font-pre-semibold">Memozy 수</span>
+              <span className="text-16 font-pre-semibold">Memozy</span>
               <span className="text-16 font-pre-semibold text-normal">{totalMemozyCount}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-16 font-pre-semibold">퀴즈 수</span>
+              <span className="text-16 font-pre-semibold">퀴즈</span>
               <span className="text-16 font-pre-semibold text-normal">{totalQuizCount}</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {collectionData.data.map(({id, name, memozyCount, quizCount}) => (
-          <CollectionCard 
-            key={id} 
-            id={id}
-            name={name}
-            memozyCount={memozyCount}
-            quizCount={quizCount}
-          />
+          <motion.div key={id} variants={item}>
+            <CollectionCard 
+              id={id}
+              name={name}
+              memozyCount={memozyCount}
+              quizCount={quizCount}
+            />
+          </motion.div>
         ))}
 
         {/* 새 컬렉션 추가 카드 */}
-        <div className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC] shadow-md"
+        <motion.div 
+          variants={item}
+          className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC] shadow-md"
           onClick={handleAddCollectionClick}
         >
           <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <AddCollection 
         isOpen={isAddCollectionModalOpen} 

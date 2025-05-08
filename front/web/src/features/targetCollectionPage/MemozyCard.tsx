@@ -66,11 +66,11 @@ function MemozyCard({ memozyId, urlTitle, summary, quizCount, isEditMode, isSele
                         </div>
                     </div>
                 </div>
-                {isDropDownOpen && (
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropDownOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
                     <DropDownBox 
                         memozyId={memozyId}
                     />
-                )}
+                </div>
             </div>
             <div className="h-4" /> {/* 카드 사이 간격 */}
             {isModalOpen && (
