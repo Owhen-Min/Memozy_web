@@ -25,6 +25,7 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_VALID_SUMMARY(HttpStatus.BAD_REQUEST, "QUIZ400", "퀴즈 요약이 유효하지 않습니다."),
 	QUIZ_NOT_CREATE(HttpStatus.BAD_REQUEST, "QUIZ401", "퀴즈를 생성할 수 없습니다."),
 	QUIZ_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ402", "이미 퀴즈가 존재합니다."),
+	QUIZ_CREATE_ERROR(HttpStatus.BAD_REQUEST, "QUIZ403", "퀴즈 생성에 일시적 오류가 있습니다. 잠시 후 다시 시도해주세요."),
 
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
