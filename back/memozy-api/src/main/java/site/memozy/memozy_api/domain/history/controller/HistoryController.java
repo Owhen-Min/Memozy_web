@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
+import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.service.HistoryServiceImpl;
 import site.memozy.memozy_api.global.payload.ApiResponse;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
@@ -35,5 +36,15 @@ public class HistoryController {
 	) {
 		List<HistoryContributeResponse> history = historyService.getUserStreaks(customOAuth2User.getUserId(), year);
 		return ApiResponse.success(history);
+	}
+
+	@Operation(summary = "개인 퀴즈 통계 조회", description = "퀴즈 통계를 조회할 수 있습니다.")
+	@GetMapping("/quiz/stats")
+	public ApiResponse<QuizStatsResponse> getUserQuizStats(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		
+		QuizStatsResponse quizStats = historyService.getUserQuizStats(customOAuth2User.getUserId());
+
+		return ApiResponse.success(quizStats);
 	}
 }
