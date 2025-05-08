@@ -249,9 +249,8 @@ function AnalysisReport() {
                   ...barChartData,
                   datasets: barChartData.datasets.map((dataset) => ({
                     ...dataset,
-                    barThickness: 90, // 각 막대의 너비를 90px로 고정
-                    barPercentage: 0.9, // 막대의 너비 비율을 고정
-                    categoryPercentage: 1.0, // 카테고리 간격을 고정
+                    barThickness: 80, // 각 막대의 너비를 80px로 고정
+                    categoryPercentage: 0.8, // 카테고리 간격을 0.8로 설정하여 간격 확보
                   })),
                 }}
                 options={{
