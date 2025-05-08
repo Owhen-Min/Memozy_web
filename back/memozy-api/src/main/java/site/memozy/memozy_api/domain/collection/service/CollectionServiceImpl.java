@@ -54,10 +54,6 @@ public class CollectionServiceImpl implements CollectionService {
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 컬렉션이 존재하지 않습니다."));
 
-		if (!collection.getUserId().equals(userId)) {
-			throw new IllegalArgumentException("해당 컬렉션이 존재하지 않습니다.");
-		}
-
 		collectionRepository.delete(collection);
 	}
 
