@@ -19,7 +19,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     }, []);
 
     const handleCopy = () => {
-        console.log({ memozyIds, collectionId: selectedCollectionId });
+        console.log('복제 대상 memozy : ', memozyIds, '복제 도착 컬렉션 : ', selectedCollectionId);
         onClose();
     };
 

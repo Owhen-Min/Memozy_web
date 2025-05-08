@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Quiz } from '../../types/quiz';
 import { quizData } from '../../dummy/quizData';
+import trashIcon from '../../assets/icons/trashIcon.png';
+import DeleteQuizModal from './DeleteQuizModal';
 
 interface DropDownBoxProps {
     memozyId: number;
@@ -9,6 +11,8 @@ interface DropDownBoxProps {
 
 function DropDownBox({ memozyId }: DropDownBoxProps) {
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [deleteQuizId, setDeleteQuizId] = useState<number | null>(null);
 
     useEffect(() => {
         // 실제 API 연동 시 아래 주석을 해제하고 더미 데이터 부분을 제거
@@ -37,17 +41,35 @@ function DropDownBox({ memozyId }: DropDownBoxProps) {
                         key={quiz.quizId} 
                         className="p-4 hover:bg-light border-b border-light last:border-0"
                     >
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-center justify-between gap-4">
                             <span className="text-[14px] font-pre-medium text-main200 flex-1 break-words">
                                 {quiz.quizContent}
                             </span>
-                            <span className="text-[12px] font-pre-regular text-gray200 whitespace-nowrap mt-1">
+                            <span className="text-[12px] font-pre-regular text-gray200 whitespace-nowrap">
                                 {quiz.quizType === "MULTIPLE_CHOICE" ? "객관식" : quiz.quizType === "OBJECTIVE" ? "주관식" : "O/X"}
+                            </span>
+                            <span 
+                                className="flex items-center hover:cursor-pointer"
+                                onClick={() => {
+                                    setDeleteQuizId(quiz.quizId);
+                                    setIsDeleteModalOpen(true);
+                                }}
+                            >
+                                <img src={trashIcon} alt="trash" className="w-3 h-3" />
                             </span>
                         </div>
                     </div>
                 ))}
             </div>
+            {isDeleteModalOpen && (
+                <DeleteQuizModal
+                    quizId={[deleteQuizId!]}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setDeleteQuizId(null);
+                    }}
+                />
+            )}
         </div>
     );
 }
