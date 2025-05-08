@@ -45,7 +45,7 @@ public class SecurityConfig {
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
 		"/ws-connect", "/ws-connect/**", "/swagger-ui/**",
-		"/", "/index.html"
+		"/", "/index.html", "/test.html", "/ws", "/ws/**", "/quiz/show"
 	);
 
 	@Bean

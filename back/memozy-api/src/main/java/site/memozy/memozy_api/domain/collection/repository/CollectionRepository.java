@@ -17,4 +17,6 @@ public interface CollectionRepository extends JpaRepository<Collection, Integer>
 
 	@Query("SELECT c.collectionId FROM Collection c WHERE c.userId = :userId")
 	List<Integer> findCollectionIdsByUserId(Integer userId);
+
+	boolean existsByCode(String code);
 }

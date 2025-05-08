@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi Quiz Show Test</title>
+</head>
+<body>
+<h2>Multi Quiz Show 테스트 (WebSocket + JWT Optional)</h2>
+
+<label>Show ID: </label>
+<input id="showId" value="EURO2025">
+<br><br>
+
+<button>Connect & Join</button>
+
+<div id="status" style="margin-top: 10px;"></div>
+
+<div id="broadcasts" style="margin-top: 20px; border: 1px solid gray; padding: 10px;">
+    <strong>📢 Broadcast 메시지 로그</strong>
+    <ul id="broadcastList" style="list-style: none; padding-left: 0;"></ul>
+</div>
+
+<div id="participants" style="margin-top: 20px; border: 1px solid gray; padding: 10px;">
+    <strong>🧑‍🤝‍🧑 현재 참가자 목록</strong>
+    <ul id="participantList" style="list-style: none; padding-left: 0;"></ul>
+</div>
+
+<script type="module">
+    import {Client} from 'https://cdn.jsdelivr.net/npm/@stomp/stompjs/+esm';
+
+    function connect() {
+        const showId = document.getElementById("showId").value;
+        const token = localStorage.getItem("jwtToken");
+        const headers = token ? {Authorization: "Bearer " + token} : {};
+
+        console.log("🛠️ 연결 시도: showId =", showId);
+        if (token) {
+            console.log("🔐 JWT Token 감지됨 (prefix 포함):", headers.Authorization);
+        } else {
+            console.log("🧑‍🤝‍🧑 JWT Token 없음, 게스트로 연결");
+        }
+
+        const client = new Client({
+            brokerURL: "ws://localhost:8080/ws",
+            connectHeaders: headers,
+            debug: (str) => console.log("[STOMP DEBUG]", str),
+            reconnectDelay: 5000,
+
+            onConnect: () => {
+                console.log("✅ WebSocket 연결 성공");
+                document.getElementById("status").innerText = "✔ 연결됨";
+
+                const subscribePath = `/sub/quiz/show/${showId}`;
+                console.log("📡 Subscribing to", subscribePath);
+
+                client.subscribe(subscribePath, (message) => {
+                    console.log("📥 수신 메시지:", message.body);
+
+                    const li = document.createElement("li");
+
+                    try {
+                        const body = JSON.parse(message.body);
+
+                        if (body.type === "JOIN" && body.nickname) {
+                            li.textContent = `👋 ${body.nickname}님이 입장하셨습니다`;
+                            document.getElementById("broadcastList").prepend(li);
+                        } else if (body.type === "PARTICIPANT_LIST" && Array.isArray(body.participants)) {
+                            const list = document.getElementById("participantList");
+                            list.innerHTML = ""; // 기존 목록 초기화
+                            body.participants.forEach(nickname => {
+                                const participantItem = document.createElement("li");
+                                participantItem.textContent = nickname;
+                                list.appendChild(participantItem);
+                            });
+                        } else {
+                            li.textContent = `📨 type: ${body.type}, userId: ${body.userId}, nickname: ${body.nickname}`;
+                            document.getElementById("broadcastList").prepend(li);
+                        }
+                    } catch (e) {
+                        li.textContent = `📨 (raw): ${message.body}`;
+                        document.getElementById("broadcastList").prepend(li);
+                    }
+                });
+
+                const payload = {
+                    nickname: "Guest957",
+                    isMember: false
+                };
+
+                console.log("🚀 참가 요청 전송:", payload);
+                client.publish({
+                    destination: `/pub/quiz/show/${showId}`,
+                    body: JSON.stringify(payload)
+                });
+
+                const li = document.createElement("li");
+                li.textContent = "🚀 참가 요청 전송됨";
+                document.getElementById("broadcastList").prepend(li);
+            },
+
+            onStompError: (frame) => {
+                console.error("❌ Broker 에러:", frame.headers['message']);
+                console.error("❌ 본문:", frame.body);
+                document.getElementById("status").innerText = "❌ 연결 실패 (STOMP 에러)";
+            }
+        });
+
+        client.activate();
+    }
+
+    document.querySelector("button").addEventListener("click", connect);
+</script>
+
+</body>
+</html>
