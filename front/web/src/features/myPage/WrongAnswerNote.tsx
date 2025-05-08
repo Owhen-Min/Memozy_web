@@ -8,6 +8,7 @@ import { wrongAnswerData } from "../../dummy/wrongAnswerData";
 
 function WrongAnswerNote() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // 모달에 전달할 데이터를 관리하는 state
   const [modalData, setModalData] = useState<QuizHistoryData | null>(null);
   const [collectionList, setCollectionList] = useState<WrongAnswer[]>([]);
 
@@ -19,9 +20,12 @@ function WrongAnswerNote() {
     }
   }, []);
 
+  // 폴더 아이템을 클릭했을 때 호출되는 함수
   const handleFolderClick = (id: number) => {
+    // 클릭한 아이템의 id를 사용하여 quizHistoryData에서 해당 데이터를 찾습니다.
     const data = quizHistoryData.find((item) => item.id === id);
     if (data) {
+      // 찾은 데이터를 모달에 전달할 데이터로 설정하고 모달을 엽니다.
       setModalData(data);
       setIsModalOpen(true);
     }
