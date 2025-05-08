@@ -48,7 +48,9 @@ function WrongAnswerNote() {
             <img src={folder} alt="폴더" className="w-full" />
             <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <h3 className="text-16 font-pre-medium whitespace-nowrap">
-                {item.name}
+                {item.name.length > 9
+                  ? `${item.name.slice(0, 9)}...`
+                  : item.name}
               </h3>
             </div>
           </div>
