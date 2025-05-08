@@ -1,10 +1,35 @@
-import { wrongAnswerData } from "../../dummy/wrongAnswerData";
+import { useState, useEffect } from "react";
+import { quizHistoryData } from "../../dummy/quizHistoryData";
 import small_logo from "../../assets/images/small_logo.png";
 import folder from "../../assets/images/folder.png";
+import Modal from "./WrongAnswerModal";
+import { QuizHistoryData, WrongAnswer } from "../../types/wrongAnswer";
+import { wrongAnswerData } from "../../dummy/wrongAnswerData";
 
 function WrongAnswerNote() {
-  // 더미 데이터에서 오답노트 데이터 가져오기
-  const wrongAnswers = wrongAnswerData[0].data || [];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // 모달에 전달할 데이터를 관리하는 state
+  const [modalData, setModalData] = useState<QuizHistoryData | null>(null);
+  const [collectionList, setCollectionList] = useState<WrongAnswer[]>([]);
+
+  useEffect(() => {
+    // 더미 데이터를 사용하여 컬렉션 리스트 설정
+    const data = wrongAnswerData[0];
+    if (data.success) {
+      setCollectionList(data.data);
+    }
+  }, []);
+
+  // 폴더 아이템을 클릭했을 때 호출되는 함수
+  const handleFolderClick = (id: number) => {
+    // 클릭한 아이템의 id를 사용하여 quizHistoryData에서 해당 데이터를 찾습니다.
+    const data = quizHistoryData.find((item) => item.id === id);
+    if (data) {
+      // 찾은 데이터를 모달에 전달할 데이터로 설정하고 모달을 엽니다.
+      setModalData(data);
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <div>
@@ -14,10 +39,11 @@ function WrongAnswerNote() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-        {wrongAnswers.map((item) => (
+        {collectionList.map((item) => (
           <div
             key={item.id}
             className="relative cursor-pointer transition-transform hover:scale-105 w-[164px] mx-auto"
+            onClick={() => handleFolderClick(item.id)}
           >
             <img src={folder} alt="폴더" className="w-full" />
             <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
@@ -28,6 +54,12 @@ function WrongAnswerNote() {
           </div>
         ))}
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={modalData}
+      />
     </div>
   );
 }
