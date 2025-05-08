@@ -14,15 +14,15 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import site.memozy.memozy_api.domain.collection.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QCollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QMemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QQuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
-import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.collection.entity.QCollection;
+import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
+import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.entity.QHistory;
 import site.memozy.memozy_api.domain.quiz.entity.QQuiz;
 import site.memozy.memozy_api.domain.quizsource.entity.QQuizSource;

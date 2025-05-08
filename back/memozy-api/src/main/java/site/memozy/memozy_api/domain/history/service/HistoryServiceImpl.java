@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.memozy.memozy_api.domain.collection.dto.CollectionAccuracyResponse;
-import site.memozy.memozy_api.domain.collection.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
+import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 
