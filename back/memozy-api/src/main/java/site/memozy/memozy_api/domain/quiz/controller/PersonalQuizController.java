@@ -39,7 +39,8 @@ public class PersonalQuizController {
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@PathVariable Integer collectionId,
 		@RequestParam(defaultValue = "10") int count,
-		@Parameter(description = "새로 푼 문제만 가져올지 여부 (기본값: false)", example = "false") @RequestParam(defaultValue = "false") boolean newOnly) {
+		@Parameter(description = "새로 푼 문제만 가져올지 여부 (기본값: false)", example = "false")
+		@RequestParam(defaultValue = "false") boolean newOnly) {
 
 		PersonalQuizAndSessionResponse responses = personalQuizService.getPersonalQuizzes(user.getUserId(),
 			collectionId,
