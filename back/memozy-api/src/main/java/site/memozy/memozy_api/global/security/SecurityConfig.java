@@ -44,7 +44,8 @@ public class SecurityConfig {
 	private static final List<String> PERMIT_URLS = List.of(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**", "/swagger-ui/**",
+		"/ws-connect", "/ws-connect/**",
+		"/swagger-ui/**", "/v3/api-docs/**",
 		"/", "/index.html"
 	);
 
