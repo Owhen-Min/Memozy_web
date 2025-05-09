@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router";
+import { useParams } from "react-router";
 import { memozyData } from "../dummy/memozyData";
 import MemozyCard from "../features/targetCollectionPage/MemozyCard";
 import { useState } from 'react';
@@ -7,16 +7,11 @@ import memozyIcon from '../assets/icons/memozyIcon.png';
 import DeleteMemozyModal from '../features/targetCollectionPage/DeleteMemozyModal';
 import CopyMemozyModal from '../features/targetCollectionPage/CopyMemozyModal';
 
-interface LocationState {
-    collectionName: string;
-    memozyCount: number;
-    quizCount: number;
-}
-
 function TargetCollectionPage() {
     const { collectionId } = useParams();
-    const location = useLocation();
-    const { collectionName, memozyCount, quizCount } = location.state as LocationState;
+    const { collectionName } = memozyData.data;
+    const memozyCount = memozyData.data.content.length;
+    const quizCount = memozyData.data.content.reduce((sum, item) => sum + item.quizCount, 0);
     const [isQuizShowModalOpen, setIsQuizShowModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [selectedMemozyIds, setSelectedMemozyIds] = useState<number[]>([]);
