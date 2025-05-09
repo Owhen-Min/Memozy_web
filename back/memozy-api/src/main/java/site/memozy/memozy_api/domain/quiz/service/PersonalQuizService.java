@@ -9,5 +9,5 @@ public interface PersonalQuizService {
 
 	void submitQuizAnswer(int userId, long quizId, PersonalQuizAnswerRequest request);
 
-	PersonalQuizResultResponse getPersonalQuizResult(int userId, int collectionId, String quizSessionId);
+	PersonalQuizResultResponse getPersonalQuizResult(int userId, String quizSessionId);
 }

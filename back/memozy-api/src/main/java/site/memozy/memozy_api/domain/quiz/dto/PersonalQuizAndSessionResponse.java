@@ -9,13 +9,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonalQuizAndSessionResponse {
+	String collectionName;
 	String quizSessionId;
 	List<PersonalQuizResponse> quizList;
 	int totalQuizCount;
 
-	public static PersonalQuizAndSessionResponse of(String quizSessionId, List<PersonalQuizResponse> quizList,
+	public static PersonalQuizAndSessionResponse of(String collectionName, String quizSessionId,
+		List<PersonalQuizResponse> quizList,
 		int totalQuizCount) {
 		PersonalQuizAndSessionResponse response = new PersonalQuizAndSessionResponse();
+		response.collectionName = collectionName;
 		response.quizSessionId = quizSessionId;
 		response.quizList = quizList;
 		response.totalQuizCount = totalQuizCount;

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemozyCopyRequest {
-	@NotEmpty
+	@NotEmpty(message = "타이틀은 비어 있을 수 없습니다.")
 	private List<Integer> sourceId;
 }
