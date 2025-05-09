@@ -96,7 +96,7 @@ public class SecurityConfig {
 			"http://memozy.site",
 			"https://memozy.site"
 		));
-		configuration.setAllowedMethods(Collections.singletonList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 
