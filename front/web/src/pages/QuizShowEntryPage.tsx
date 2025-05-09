@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import Memozy_logo from "../assets/images/Memozylogo.svg";
 import monster1 from "../assets/images/monster1.png";
 

@@ -1,11 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 import MyPage from "./pages/MyPage";
 import LoginPage from "./pages/LoginPage";
 import CollectionPage from "./pages/CollectionPage";
 import Header from "./layout/Header"; // 헤더 컴포넌트 추가
 import TargetCollectionPage from "./pages/TargetCollectionPage";
 import ErrorPage from "./pages/ErrorPage";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import QuizShowEntryPage from "./pages/QuizShowEntryPage";
 
 function App() {
