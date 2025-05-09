@@ -51,14 +51,13 @@ public class PersonalQuizController {
 		return ApiResponse.success();
 	}
 
-	@PostMapping("/result/{collectionId}")
+	@PostMapping("/result")
 	public ApiResponse<PersonalQuizResultResponse> getPersonalQuizResult(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
-		@PathVariable Integer collectionId,
 		@RequestBody PersonalQuizResultRequest request) {
 
 		PersonalQuizResultResponse response = personalQuizService.getPersonalQuizResult(user.getUserId(),
-			collectionId, request.getQuizSessionId());
+			request.getQuizSessionId());
 		return ApiResponse.success(response);
 	}
 
