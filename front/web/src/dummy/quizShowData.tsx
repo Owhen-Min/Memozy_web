@@ -5,8 +5,9 @@ export const quizShowData: QuizShowResponse = {
     errorMsg: null,
     errorCode: null,
     data: {
+        collectionName: "컬렉션 이름",
         quizSessionId: "session123",
-        data: [
+        quizList: [
             {
                 quizId: 1,
                 content: "프랑스의 수도는 파리인가?",

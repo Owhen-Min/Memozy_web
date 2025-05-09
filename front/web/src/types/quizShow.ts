@@ -14,7 +14,8 @@ export interface QuizShowResponse {
     errorMsg: string | null;
     errorCode: string | null;
     data: {
+        collectionName: string;
         quizSessionId: string;
-        data: Quiz[];
+        quizList: Quiz[];
     };
 }

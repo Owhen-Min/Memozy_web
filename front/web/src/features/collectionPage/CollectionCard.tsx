@@ -20,13 +20,7 @@ function CollectionCard({ id, name, memozyCount, quizCount }: CollectionCardProp
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const handleClick = () => {
-        navigate(`/collection/${id}`, {
-            state: {
-                collectionName: name,
-                memozyCount,
-                quizCount
-            }
-        });
+        navigate(`/collection/${id}`);
     };
 
     const handleEditClick = (e: React.MouseEvent) => {
