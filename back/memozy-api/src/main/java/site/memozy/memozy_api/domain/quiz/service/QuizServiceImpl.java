@@ -1,7 +1,6 @@
 package site.memozy.memozy_api.domain.quiz.service;
 
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.QUIZ_ALREADY_EXISTS;
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.QUIZ_SOURCE_NOT_FOUND;
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
 
 import java.util.List;
 
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.QuizCreateRequest;
+import site.memozy.memozy_api.domain.quiz.dto.QuizRebuildRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizSelectResponse;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
@@ -71,5 +71,28 @@ public class QuizServiceImpl implements QuizService {
 
 		return quizRepository.findAllQuizBySourceId(sourceId);
 	}
-	
+
+	@Override
+	@Transactional
+	public List<QuizSelectResponse> rebuildQuiz(Integer userId, Integer sourceId, QuizRebuildRequest request) {
+		String summary = quizSourceRepository.findSummary(sourceId, userId)
+			.orElseThrow(() -> new GeneralException(QUIZ_SOURCE_NOT_FOUND));
+
+		int deleteQuizCount = (int)quizRepository.deleteQuizNotInQuizId(request.quizIdList(), sourceId);
+
+		if (deleteQuizCount == 0) {
+			throw new GeneralException(QUIZ_ALREADY_CREATE_COUNT);
+		}
+
+		QuizResponse quizItems = openAiService.createQuiz(deleteQuizCount, request.quizTypes(), summary);
+
+		List<Quiz> entities = quizItems.content().stream()
+			.map(item -> item.toEntity(sourceId))
+			.toList();
+
+		quizRepository.saveAll(entities);
+
+		return quizRepository.findAllQuizBySourceId(sourceId);
+	}
+
 }

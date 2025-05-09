@@ -1,8 +1,8 @@
 package site.memozy.memozy_api.domain.quiz.repository;
 
-import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+import static site.memozy.memozy_api.domain.history.entity.QHistory.history;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
 
 import java.util.List;
 
@@ -75,5 +75,14 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
 			.limit(count)
 			.fetch();
+	}
+
+	@Override
+	public long deleteQuizNotInQuizId(List<Long> quizIds, Integer sourceId) {
+		QQuiz quiz = QQuiz.quiz;
+		return jpaQueryFactory.delete(quiz)
+			.where(quiz.sourceId.eq(sourceId)
+				.and(quiz.quizId.notIn(quizIds)))
+			.execute();
 	}
 }
