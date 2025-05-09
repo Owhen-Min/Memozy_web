@@ -104,6 +104,10 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 
 		quizSessionStore.deleteQuizSession(userId, quizSessionId);
 
-		return PersonalQuizResultResponse.of(totalQuizCount, incorrectQuizCount, nextRound);
+		int correctCount = totalQuizCount - incorrectQuizCount;
+		int point = (int)Math.round(((double)correctCount / totalQuizCount) * 100);
+
+		return PersonalQuizResultResponse.of(totalQuizCount, incorrectQuizCount, nextRound, point);
+
 	}
 }
