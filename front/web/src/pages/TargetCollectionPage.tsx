@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { memozyData } from "../dummy/memozyData";
 import MemozyCard from "../features/targetCollectionPage/MemozyCard";
 import { useState } from 'react';

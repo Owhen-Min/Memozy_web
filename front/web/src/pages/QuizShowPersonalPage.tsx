@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import small_logo from '../assets/images/small_logo.png';
 // import { Quiz } from '../types/quizShow';
 
