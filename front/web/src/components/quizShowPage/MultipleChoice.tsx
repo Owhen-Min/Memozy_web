@@ -8,7 +8,7 @@ interface MultipleChoiceProps {
     quizSessionId: string;
 }
 
-const MultipleChoice = ({ content, choice, answer, commentary, quizSessionId }: MultipleChoiceProps) => {
+const MultipleChoice = ({ content, choice }: MultipleChoiceProps) => {
     const [selected, setSelected] = useState<number | null>(null);
     return(
         <div>

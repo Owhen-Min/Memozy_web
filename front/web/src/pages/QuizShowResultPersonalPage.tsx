@@ -7,7 +7,7 @@ interface QuizShowResultPersonalPageProps {
 
 function QuizShowResultPersonalPage() {
   const location = useLocation();
-  const { quizSessionId } = location.state as QuizShowResultPersonalPageProps;
+  const {  } = location.state as QuizShowResultPersonalPageProps;
   return (
     <div className="content">
       <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">

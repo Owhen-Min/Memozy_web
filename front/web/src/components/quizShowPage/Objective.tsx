@@ -6,7 +6,7 @@ interface ObjectiveProps {
     quizSessionId: string;
 }   
 
-const Objective = ({ content, answer, commentary, quizSessionId }: ObjectiveProps) => {
+const Objective = ({ content, answer, commentary }: ObjectiveProps) => {
     return(
         <div>
             <div>문제 내용 : {content}</div>
