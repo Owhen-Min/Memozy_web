@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
-// TODO: Redis TTL 설정하기
 @Component
 @RequiredArgsConstructor
 public class QuizSessionStore {
