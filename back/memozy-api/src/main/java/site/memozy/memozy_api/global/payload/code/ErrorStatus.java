@@ -35,7 +35,21 @@ public enum ErrorStatus implements BaseErrorCode {
 	// History 에러 (HISTORY)
 
 	// Collection 에러 (COLLECTION)
-	COLLECTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "COLLECTION400", "해당 컬렉션이 없습니다.");
+	COLLECTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "COLLECTION400", "해당 컬렉션이 없습니다."),
+	COLLECTION_DUPLICATE_NAME(HttpStatus.BAD_REQUEST, "COLLECTION401", "이미 같은 이름의 컬렉션이 존재합니다."),
+	COLLECTION_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "COLLECTION402", "해당 컬렉션을 수정할 권한이 없습니다."),
+	COLLECTION_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "COLLECTION403", "해당 컬렉션을 삭제할 권한이 없습니다."),
+	COLLECTION_INVALID_USER(HttpStatus.BAD_REQUEST, "COLLECTION404", "유효하지 않은 사용자입니다."),
+	MISSING_REQUIRED_PARAMETERS(HttpStatus.BAD_REQUEST, "COLLECTION405", "quizId 또는 sourceId 중 하나는 필수입니다."),
+	QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "COLLECTION406", "해당 퀴즈가 존재하지 않습니다."),
+
+	// Redis 에러 (REDIS)
+	QUIZ_COUNT_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "REDIS500", "요청한 수보다 퀴즈 개수가 적습니다"),
+	REDIS_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS501", "퀴즈 세션을 저장하는 중 오류가 발생했습니다."),
+	REDIS_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS502", "퀴즈 상태를 갱신하는 중 오류가 발생했습니다."),
+	REDIS_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS503", "퀴즈 세션이 존재하지 않습니다."),
+	REDIS_QUIZ_ALREADY_ATTEMPTED(HttpStatus.BAD_REQUEST, "REDIS504", "이미 푼 문제에 대해서 재요청 시 처리할 수 없습니다."),
+	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "잘못된 메타데이터 형식입니다.");
 
 	private final HttpStatus httpStatusCode;
 	private final String errorCode;

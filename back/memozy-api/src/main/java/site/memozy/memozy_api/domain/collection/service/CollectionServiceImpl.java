@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.collection.service;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 // TODO: 컬렉션 삭제 시, Memozy 및 퀴즈도 삭제하는 로직 추가하기
 @Service
@@ -39,7 +42,7 @@ public class CollectionServiceImpl implements CollectionService {
 		String name = request.getTitle();
 
 		if (collectionRepository.existsByUserIdAndName(userId, name)) {
-			throw new IllegalArgumentException("이미 같은 이름의 컬렉션이 존재합니다.");
+			throw new GeneralException(COLLECTION_DUPLICATE_NAME);
 		}
 
 		Collection collection = Collection.create(name, userId);
@@ -52,7 +55,7 @@ public class CollectionServiceImpl implements CollectionService {
 		Integer collectionId = request.getCollectionId();
 
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 컬렉션이 존재하지 않습니다."));
+			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
 
 		collectionRepository.delete(collection);
 	}
@@ -63,16 +66,16 @@ public class CollectionServiceImpl implements CollectionService {
 		String newName = request.getTitle();
 
 		Collection collection = collectionRepository.findById(collectionId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 컬렉션이 존재하지 않습니다."));
+			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
 
 		if (!collection.getUserId().equals(userId)) {
-			throw new IllegalArgumentException("해당 컬렉션을 수정할 권한이 없습니다.");
+			throw new GeneralException(COLLECTION_UPDATE_FORBIDDEN);
 		}
 
 		// 동일한 이름으로 수정하려고 하면 그건 인정해주기!
 		if (!collection.getName().equals(newName)
 			&& collectionRepository.existsByUserIdAndName(userId, newName)) {
-			throw new IllegalArgumentException("이미 같은 이름의 컬렉션이 존재합니다.");
+			throw new GeneralException(COLLECTION_DUPLICATE_NAME);
 		}
 
 		collection.updateName(newName);
@@ -88,7 +91,7 @@ public class CollectionServiceImpl implements CollectionService {
 	@Transactional(readOnly = true)
 	public List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId) {
 		if (!quizSourceRepository.existsBySourceIdAndUserId(sourceId, userId)) {
-			throw new IllegalArgumentException("해당 user가 요청할 수 없는 sourceId.");
+			throw new GeneralException(COLLECTION_INVALID_USER);
 		}
 
 		return collectionRepository.findQuizSummariesBySourceIdAndUserId(sourceId, userId);
@@ -101,7 +104,7 @@ public class CollectionServiceImpl implements CollectionService {
 		// 1. 퀴즈 목록 조회
 		List<Quiz> quizzes = quizRepository.findByQuizIdIn(quizIds);
 		if (quizzes.isEmpty()) {
-			throw new IllegalArgumentException("요청한 퀴즈가 존재하지 않습니다.");
+			throw new GeneralException(QUIZ_NOT_FOUND);
 		}
 
 		// 2. quiz들의 sourceId 목록 추출
@@ -113,11 +116,11 @@ public class CollectionServiceImpl implements CollectionService {
 		// 3. sourceId를 통해 User 확인하기
 		List<Integer> distinctUserIds = quizSourceRepository.findDistinctUserIdsBySourceIds(sourceIds);
 		if (distinctUserIds.size() != 1) {
-			throw new RuntimeException("유저 ID가 여러 개 존재합니다.");
+			throw new GeneralException(COLLECTION_INVALID_USER);
 		}
 		Integer foundUserId = distinctUserIds.get(0);
 		if (!foundUserId.equals(userId)) {
-			throw new RuntimeException("요청한 유저 ID와 소스 ID 목록의 유저 ID가 일치하지 않습니다.");
+			throw new GeneralException(COLLECTION_INVALID_USER);
 		}
 
 		// 3. 컬렉션 ID 업데이트
@@ -140,7 +143,7 @@ public class CollectionServiceImpl implements CollectionService {
 			List<Integer> validSourceIds = collectionRepository.findValidSourceIdsByUser(request.getSourceId(), userId);
 			quizSourceRepository.deleteBySourceIdIn(validSourceIds);
 		} else {
-			throw new IllegalArgumentException("quizId 또는 sourceId 중 하나는 필수입니다.");
+			throw new GeneralException(MISSING_REQUIRED_PARAMETERS);
 		}
 	}
 
@@ -188,7 +191,7 @@ public class CollectionServiceImpl implements CollectionService {
 		// 1. CollectionName 얻기
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(
-				() -> new RuntimeException("예외처리")
+				() -> new GeneralException(COLLECTION_NOT_FOUND)
 			);
 
 		// 2. Pageable 생성
