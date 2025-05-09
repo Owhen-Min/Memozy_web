@@ -14,20 +14,20 @@ const OX = ({ content }: OXProps) => {
 
     return(
         <div>
-            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-8 text-20 font-pre-medium">
+            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium">
                 문제 내용 : {content}
             </div>
             <div className="w-full flex justify-center gap-32">
                 <button
                     className={`transition-transform duration-200 hover:scale-110 rounded-xl p-4
-                        ${selected === 'O' ? 'bg-lighthover' : ''}`}
+                        ${selected === 'O' ? 'bg-light' : ''}`}
                     onClick={() => setSelected('O')}
                 >
                     <img className="w-[150px] h-[150px]" src={OIcon} alt="OIcon" />
                 </button>
                 <button
                     className={`transition-transform duration-200 hover:scale-110 rounded-xl p-4
-                        ${selected === 'X' ? 'bg-lighthover' : ''}`}
+                        ${selected === 'X' ? 'bg-light' : ''}`}
                     onClick={() => setSelected('X')}
                 >
                     <img className="w-[150px] h-[150px]" src={XIcon} alt="XIcon" />

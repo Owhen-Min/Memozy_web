@@ -9,7 +9,7 @@ function QuizShowResultPersonalPage() {
   const location = useLocation();
   const {  } = location.state as QuizShowResultPersonalPageProps;
   return (
-    <div className="content">
+    <div className="content-quiz">
       <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
         <img src={small_logo} alt="logo" className="w-10 h-10" />
         Quiz :
