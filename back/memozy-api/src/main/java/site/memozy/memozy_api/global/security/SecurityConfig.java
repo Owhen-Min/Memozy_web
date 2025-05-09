@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.user.repository.UserRepository;
@@ -73,9 +72,8 @@ public class SecurityConfig {
 				.failureHandler(oAuth2AuthenticationFailureHandler)
 			)
 			.authorizeHttpRequests(auth -> auth
-				// .requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
-				// .anyRequest().authenticated()
-				.anyRequest().permitAll()
+				.requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
+				.anyRequest().authenticated()
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -103,22 +101,6 @@ public class SecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
-	}
-
-	@Bean
-	public CorsFilter corsFilter() {
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.setAllowedOrigins(Arrays.asList(
-			"http://localhost:5173", "https://localhost:5173",
-			"https://memozy.site"
-		));
-		config.setAllowedHeaders(Collections.singletonList("*"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
 	}
 
 }
