@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import groovy.util.logging.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,16 @@ import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 public class PersonalQuizController {
 	private final PersonalQuizService personalQuizService;
 
+	@Operation(
+		summary = "개인 퀴즈 생성하기",
+		description = "특정 컬렉션의 개인 퀴즈 생성"
+	)
 	@GetMapping("/{collectionId}")
 	public ApiResponse<PersonalQuizAndSessionResponse> getPersonalQuizzes(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@PathVariable Integer collectionId,
 		@RequestParam(defaultValue = "10") int count,
-		@RequestParam(defaultValue = "false") boolean newOnly) {
+		@Parameter(description = "새로 푼 문제만 가져올지 여부 (기본값: false)", example = "false") @RequestParam(defaultValue = "false") boolean newOnly) {
 
 		PersonalQuizAndSessionResponse responses = personalQuizService.getPersonalQuizzes(user.getUserId(),
 			collectionId,
@@ -42,6 +47,10 @@ public class PersonalQuizController {
 		return ApiResponse.success(responses);
 	}
 
+	@Operation(
+		summary = "퀴즈 답안 제출",
+		description = "특정 퀴즈에 대한 사용자의 답안을 제출"
+	)
 	@PostMapping("/{quiz_id}")
 	public ApiResponse<Void> submitPersonalQuiz(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
@@ -51,6 +60,10 @@ public class PersonalQuizController {
 		return ApiResponse.success();
 	}
 
+	@Operation(
+		summary = "퀴즈 결과 조회",
+		description = "퀴즈 세션 ID를 기반으로 사용자의 개인 퀴즈 결과 조회"
+	)
 	@PostMapping("/result")
 	public ApiResponse<PersonalQuizResultResponse> getPersonalQuizResult(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
