@@ -5,7 +5,7 @@ export const quizShowData: QuizShowResponse = {
     errorMsg: null,
     errorCode: null,
     data: {
-        collectionName: "컬렉션 이름",
+        collectionName: "컬렉션컬렉션컬렉션컬렉션 이름",
         quizSessionId: "session123",
         quizList: [
             {
