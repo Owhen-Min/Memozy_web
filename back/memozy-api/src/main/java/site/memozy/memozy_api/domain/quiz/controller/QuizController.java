@@ -70,7 +70,7 @@ public class QuizController {
 	}
 
 	@Operation(summary = "퀴즈 재생성", description = "해당 요약 데이터에 대한 퀴즈를 재생성합니다.")
-	@PostMapping("/quiz/questions/{sourceId}/renew")
+	@PostMapping("/questions/{sourceId}/renew")
 	public ApiResponse<List<QuizSelectResponse>> reBuildQuiz(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@Parameter(description = "퀴즈 재생성할려는 요약 데이터 Id", example = "1") @PathVariable Integer sourceId,
