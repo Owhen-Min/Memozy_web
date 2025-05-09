@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import site.memozy.memozy_api.domain.quiz.dto.QuizCreateRequest;
+import site.memozy.memozy_api.domain.quiz.dto.QuizRebuildRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizSelectResponse;
 import site.memozy.memozy_api.domain.quiz.service.QuizService;
@@ -66,6 +67,18 @@ public class QuizController {
 		List<QuizSelectResponse> quizList = quizService.getQuizList(user.getUserId(), sourceId);
 
 		return ApiResponse.success(quizList);
+	}
+
+	@Operation(summary = "퀴즈 재생성", description = "해당 요약 데이터에 대한 퀴즈를 재생성합니다.")
+	@PostMapping("/quiz/questions/{sourceId}/renew")
+	public ApiResponse<List<QuizSelectResponse>> reBuildQuiz(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@Parameter(description = "퀴즈 재생성할려는 요약 데이터 Id", example = "1") @PathVariable Integer sourceId,
+		@Parameter(description = "남길려는 quizId 리스트", example = "[3, 5, 7]") @RequestBody QuizRebuildRequest request) {
+
+		List<QuizSelectResponse> quizSelectResponses = quizService.rebuildQuiz(user.getUserId(), sourceId, request);
+
+		return ApiResponse.success(quizSelectResponses);
 	}
 
 }
