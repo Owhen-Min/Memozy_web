@@ -19,14 +19,7 @@ function CreateQuizShowModal({ onClose, collectionId, collectionName, quizCount:
         // TODO: 퀴즈 시작 로직 구현
         console.log('퀴즈쇼 생성 컬렉션 이름 : ', collectionName, '퀴즈쇼 생성 컬렉션 id : ', collectionId, '퀴즈 수 : ', quizCount, '공유 여부 : ', isShared);
         onClose();
-        navigate('/quiz-show-entry', {
-            state: {
-                collectionName,
-                collectionId,
-                quizCount,
-                isShared
-            }
-        });
+        navigate(isShared ? `/quiz-entry/shared/${collectionId}` : `/quiz-entry/personal/${collectionId}`);
     };
 
     // 선택 가능한 퀴즈 수 배열 생성 (1부터 totalQuizCount까지)

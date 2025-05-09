@@ -6,7 +6,10 @@ import Header from "./layout/Header"; // 헤더 컴포넌트 추가
 import TargetCollectionPage from "./pages/TargetCollectionPage";
 import ErrorPage from "./pages/ErrorPage";
 import { Outlet } from "react-router-dom";
-import QuizShowEntryPage from "./pages/QuizShowEntryPage";
+import QuizShowEntryPersonalPage from "./pages/QuizShowEntryPersonalPage";
+import QuizShowEntrySharedPage from "./pages/QuizShowEntrySharedPage";
+import QuizShowPersonalPage from "./pages/QuizShowPersonalPage";
+import QuizShowSharedPage from "./pages/QuizShowSharedPage";
 
 function App() {
   return (
@@ -17,7 +20,10 @@ function App() {
           <Route path="/my" element={<MyPage />} />
           <Route path="/collection" element={<CollectionPage />} />
           <Route path="/collection/:collectionId" element={<TargetCollectionPage />} />
-          <Route path="/quiz-show-entry" element={<QuizShowEntryPage />} />
+          <Route path="/quiz-entry/personal/:collectionId" element={<QuizShowEntryPersonalPage />} />
+          <Route path="/quiz-entry/shared/:collectionId" element={<QuizShowEntrySharedPage />} />
+          <Route path="/quiz-show/personal/:collectionId" element={<QuizShowPersonalPage />} />
+          <Route path="/quiz-show/shared/:collectionId" element={<QuizShowSharedPage />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
