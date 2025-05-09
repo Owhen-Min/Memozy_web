@@ -249,7 +249,10 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 		List<Integer> rounds = queryFactory
 			.select(history.round)
 			.from(history)
-			.where(history.collectionId.eq(collectionId))
+			.where(
+				history.collectionId.eq(collectionId),
+				history.isSolved.eq(false)
+			)
 			.groupBy(history.round)
 			.orderBy(history.round.desc())
 			.fetch();

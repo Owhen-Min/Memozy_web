@@ -19,8 +19,8 @@ public enum QuizType {
 	public static QuizType fromCode(int code) {
 		return switch (code) {
 			case 1 -> MULTIPLE_CHOICE;
-			case 2 -> OBJECTIVE;
-			case 3 -> OX;
+			case 2 -> OX;
+			case 3 -> OBJECTIVE;
 			default -> throw new GeneralException(QUIZ_NOT_CREATE);
 		};
 	}
