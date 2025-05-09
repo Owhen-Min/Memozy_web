@@ -2,7 +2,7 @@ import { collectionData } from '../dummy/collectionData';
 import CollectionCard from '../features/collectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import AddCollection from '../features/collectionPage/collectionPageModal/AddCollection';
 import { useState } from 'react';
 import small_logo from '../assets/images/small_logo.png';
