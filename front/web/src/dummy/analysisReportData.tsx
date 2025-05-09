@@ -1,39 +1,35 @@
 import { AnalysisReportResponse } from "../types/analysisReport";
 
-// 학습 참여도 데이터 생성 함수
-const generateLearningContribution =
-  (): AnalysisReportResponse["data"]["learningContribution"] => {
-    const today = new Date();
-    const oneYearAgo = new Date(today);
-    oneYearAgo.setFullYear(today.getFullYear() - 1);
+// 학습 참여도 데이터 생성 함수 제거
+// const generateLearningContribution = (): AnalysisReportResponse['data']['learningContribution'] => {
+//   const today = new Date();
+//   const oneYearAgo = new Date(today);
+//   oneYearAgo.setFullYear(today.getFullYear() - 1);
 
-    const contributions = [];
-    const currentDate = new Date(oneYearAgo);
+//   const contributions = [];
+//   const currentDate = new Date(oneYearAgo);
 
-    while (currentDate <= today) {
-      if (Math.random() > 0.7) {
-        // 문제 개수를 랜덤하게 생성 (0-20 사이)
-        const count = Math.floor(Math.random() * 21);
+//   while (currentDate <= today) {
+//     if (Math.random() > 0.7) {
+//       const count = Math.floor(Math.random() * 21);
+//       let level = 0;
+//       if (count === 0) level = 0;
+//       else if (count >= 1 && count <= 4) level = 1;
+//       else if (count >= 5 && count <= 9) level = 2;
+//       else if (count >= 10 && count <= 14) level = 3;
+//       else if (count >= 15) level = 4;
 
-        // 문제 개수에 따라 레벨 설정
-        let level = 0;
-        if (count === 0) level = 0;
-        else if (count >= 1 && count <= 4) level = 1;
-        else if (count >= 5 && count <= 9) level = 2;
-        else if (count >= 10 && count <= 14) level = 3;
-        else if (count >= 15) level = 4;
+//       contributions.push({
+//         date: currentDate.toISOString().split('T')[0],
+//         count: count,
+//         level,
+//       });
+//     }
+//     currentDate.setDate(currentDate.getDate() + 1);
+//   }
 
-        contributions.push({
-          date: currentDate.toISOString().split("T")[0],
-          count: count,
-          level,
-        });
-      }
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    return contributions;
-  };
+//   return contributions;
+// };
 
 export const analysisReportData: AnalysisReportResponse = {
   success: true,
@@ -42,7 +38,9 @@ export const analysisReportData: AnalysisReportResponse = {
   data: {
     totalQuizCount: 13,
     solvedQuizCount: 6,
-    learningContribution: generateLearningContribution(),
+    // 학습 참여도 더미 데이터 제거
+    // learningContribution: generateLearningContribution(),
+    learningContribution: [], // 빈 배열로 설정하여 linter 오류 수정
     collectionAccuracy: [
       { collectionId: "html", name: "HTML", latestAccuracy: 10 },
       { collectionId: "html", name: "HTML", latestAccuracy: 10 },
