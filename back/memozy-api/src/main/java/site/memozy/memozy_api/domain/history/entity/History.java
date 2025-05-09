@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.memozy.memozy_api.global.audit.BaseTimeEntity;
@@ -15,6 +17,8 @@ import site.memozy.memozy_api.global.audit.BaseTimeEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)  // 빌더용
+@Builder
 @Table(name = "histories",
 	indexes = {
 		@Index(name = "idx_collection_id", columnList = "collection_id"),

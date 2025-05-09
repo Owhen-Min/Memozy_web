@@ -1,6 +1,7 @@
 package site.memozy.memozy_api.domain.history.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 	@Query("SELECT COUNT(DISTINCT h.quizId) FROM History h WHERE h.collectionId IN :collectionIds")
 	long countDistinctSolvedQuiz(@Param("collectionIds") List<Integer> collectionIds);
 
+	@Query("SELECT MAX(h.historyId) FROM History h WHERE h.collectionId = :collectionId")
+	Optional<Integer> findMaxHistoryIdByCollectionId(@Param("collectionId") Integer collectionId);
 }
