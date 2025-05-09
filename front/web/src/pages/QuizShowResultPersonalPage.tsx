@@ -4,10 +4,19 @@ import { quizResultData } from "../dummy/quizResultData";
 import rightmonster from "../assets/images/rightmonster.png";
 import openbook from "../assets/icons/blackopenbook.svg";
 import book from "../assets/icons/summaryIcon.svg";
-// import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
-import { useNavigate } from "react-router";
+import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
+import { useNavigate, useParams } from "react-router";
+// import { useNavigate, useParams, useLocation } from "react-router";
+
+// interface QuizShowResultPersonalPageProps {
+//   quizSessionId: string;
+// }
 
 function QuizShowResultPersonalPage() {
+  // const location = useLocation();
+  // const { } = location.state as QuizShowResultPersonalPageProps;
+  const collectionId = useParams().collectionId;
+
   const { point, totalQuizCount, myWrongQuizCount, round } =
     quizResultData.data;
 
@@ -51,7 +60,7 @@ function QuizShowResultPersonalPage() {
             <span className="ml-6 mb-[2px] font-pre-medium">{round}회차</span>
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <p className="font-pre-medium">총 퀴즈 수 : {totalQuizCount}퀴즈</p>
             <p className="font-pre-medium">
               틀린 퀴즈 수 : {myWrongQuizCount}퀴즈
@@ -59,7 +68,7 @@ function QuizShowResultPersonalPage() {
 
             <button
               onClick={handleWrongNoteClick}
-              className="flex items-center mt-4 font-pre-medium hover:text-blue-600"
+              className="flex items-center mt-8 font-pre-medium hover:text-blue-600"
             >
               오답노트 바로가기
               <img src={book} alt="책아이콘" className="w-4 ml-1" />
@@ -79,13 +88,9 @@ function QuizShowResultPersonalPage() {
         <div className="flex justify-center">
           <button
             className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
-            onClick={() => navigate(``)}
+            onClick={() => navigate(`/collection/${collectionId}`)}
           >
-            <img
-              // src={outQuizShowIcon}
-              alt="outQuizShowIcon"
-              className="w-6 h-6"
-            />
+            <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6" />
             컬렉션 리스트로 돌아가기
           </button>
         </div>
