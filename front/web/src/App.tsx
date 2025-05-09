@@ -5,16 +5,11 @@ import CollectionPage from "./pages/CollectionPage";
 import Header from "./layout/Header"; // 헤더 컴포넌트 추가
 import TargetCollectionPage from "./pages/TargetCollectionPage";
 import ErrorPage from "./pages/ErrorPage";
-<<<<<<< HEAD
 import { Outlet } from "react-router-dom";
 import QuizShowEntryPersonalPage from "./pages/QuizShowEntryPersonalPage";
 import QuizShowEntrySharedPage from "./pages/QuizShowEntrySharedPage";
 import QuizShowPersonalPage from "./pages/QuizShowPersonalPage";
 import QuizShowSharedPage from "./pages/QuizShowSharedPage";
-=======
-import { Outlet } from "react-router";
-import QuizShowEntryPage from "./pages/QuizShowEntryPage";
->>>>>>> 66bc517e80ad08bbca0dd0d52f10fdc4eb780b88
 
 function App() {
   return (
