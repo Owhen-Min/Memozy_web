@@ -53,7 +53,8 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 		String sessionId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 		quizSessionStore.saveQuizSession(userId, quizList, sessionId, collection.getCollectionId());
 
-		return PersonalQuizAndSessionResponse.of(sessionId, personalQuizzes, personalQuizzes.size());
+		return PersonalQuizAndSessionResponse.of(collection.getName(), sessionId, personalQuizzes,
+			personalQuizzes.size());
 	}
 
 	@Override
