@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import small_logo from "../../assets/images/small_logo.png";
 import { analysisReportData } from "../../dummy/analysisReportData";
 import { AnalysisReportData } from "../../types/analysisReport";
 import bookicon from "../../assets/icons/book.svg";
 import openbookicon from "../../assets/icons/openbook.svg";
+import { fetchLearningContribution } from "../../apis/historyApi";
 
 // 학습 참여도 캘린더 히트맵을 위한 라이브러리
 import CalendarHeatmap from "react-calendar-heatmap";
@@ -35,7 +36,10 @@ ChartJS.register(
 );
 
 function AnalysisReport() {
-  const [reportData, setReportData] = useState<AnalysisReportData | null>(null);
+  const [reportData, setReportData] = useState<AnalysisReportData | null>(
+    analysisReportData.data
+  );
+  const apiRequestMade = useRef<boolean>(false);
 
   // 현재 날짜 정보
   const today = new Date();
@@ -72,9 +76,28 @@ function AnalysisReport() {
   const { startDate, endDate } = getDateRange();
 
   useEffect(() => {
-    // 더미 데이터 사용 (API 요청 대신)
-    // 실제 구현에서는 날짜 범위에 따라 API 요청
-    setReportData(analysisReportData.data);
+    const loadReportData = async () => {
+      // StrictMode에서 중복 요청을 방지
+      if (apiRequestMade.current) return;
+      apiRequestMade.current = true;
+
+      try {
+        const data = await fetchLearningContribution(
+          selectedView === "last12months" ? undefined : parseInt(selectedView)
+        );
+        setReportData((prevData) =>
+          prevData ? { ...prevData, learningContribution: data } : null
+        );
+      } catch (error) {
+        console.error("데이터를 불러오는 중 오류 발생:", error);
+      } finally {
+        // 다음 선택 변경 시 다시 요청할 수 있도록 setTimeout으로 초기화
+        setTimeout(() => {
+          apiRequestMade.current = false;
+        }, 100);
+      }
+    };
+    loadReportData();
   }, [selectedView]);
 
   // 데이터 로딩 중인 경우

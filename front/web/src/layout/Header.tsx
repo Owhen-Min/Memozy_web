@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import { useEffect } from "react";
-import logo from "../../public/favicon.png";
+import logo from "/favicon.png";
 import { useAuthStore } from "../stores/authStore";
 
 function Header() {
