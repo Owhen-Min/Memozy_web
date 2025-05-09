@@ -1,8 +1,8 @@
 package site.memozy.memozy_api.domain.quiz.repository;
 
-import static site.memozy.memozy_api.domain.history.entity.QHistory.history;
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
+import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.List;
 
@@ -55,9 +55,9 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 				quiz.quizId,
 				quiz.content,
 				quiz.type,
+				quiz.option,
 				quiz.answer,
-				quiz.commentary,
-				quiz.option
+				quiz.commentary
 			))
 			.from(quiz)
 			.where(
