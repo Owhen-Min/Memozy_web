@@ -29,11 +29,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
-	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다.");
+	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),
 
 	// History 에러 (HISTORY)
 
 	// Collection 에러 (COLLECTION)
+	COLLECTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "COLLECTION400", "해당 컬렉션이 없습니다.");
 
 	private final HttpStatus httpStatusCode;
 	private final String errorCode;
