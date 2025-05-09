@@ -16,7 +16,7 @@ export const wrongAnswerData: WrongAnswerResponse[] = [
       },
       {
         id: 3,
-        name: "타입스크립트",
+        name: "타입스크립트아에이오우",
       },
     ],
   },

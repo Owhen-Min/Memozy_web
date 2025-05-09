@@ -2,7 +2,7 @@ import memozyIcon from '../../assets/icons/memozyIcon.png';
 import editIcon from '../../assets/icons/editIcon.png';
 import trashIcon from '../../assets/icons/trashIcon.png';
 // import { Collection } from '../../types/collection';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import DeleteCollection from './collectionPageModal/DeleteCollection';
 import EditCollectionName from './collectionPageModal/EditCollectionName';

@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { useEffect } from "react";
-import logo from "../assets/logo.svg";
+import logo from "../../public/favicon.png";
 import { useAuthStore } from "../stores/authStore";
 
 function Header() {
@@ -44,7 +44,7 @@ function Header() {
       {/* 로고 - 항상 표시 */}
       <Link to="/">
         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <img src={logo} alt="Memozy 로고" className="h-10" />
+          <img src={logo} alt="Memozy 로고" className="h-8" />
         </div>
       </Link>
 
