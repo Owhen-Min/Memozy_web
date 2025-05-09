@@ -112,12 +112,12 @@ body {
 /* 메인 콘텐츠 패딩 설정 (헤더와 푸터 고려) */
 .content {
   flex-grow: 1; /* 콘텐츠 영역이 남은 공간을 차지하도록 설정 */
-  padding-top: 60px; /* 헤더의 높이만큼 패딩을 추가 */
-  padding-bottom: 60px; /* 푸터의 높이만큼 패딩을 추가 */
+  padding-top: 60px; /* 컨텐츠 위 패딩 */
+  padding-bottom: 60px; /* 컨텐츠 아래 패딩 */
   padding-left: 20px; /* 모바일용 좌측 패딩 */
   padding-right: 20px; /* 모바일용 우측 패딩 */
   width: 100%; /* 너비 100% */
-  max-width: 1440px; /* 최대 너비를 420px로 설정 */
+  max-width: 1440px; /* 최대 너비를 1440px로 설정 */
   box-sizing: border-box; /* 패딩과 보더를 포함한 크기 계산 */
   color: #1e1e1e;
 
@@ -131,5 +131,29 @@ body {
   @media (min-width: 1024px) {
     padding-left: 150px;
     padding-right: 150px;
+  }
+}
+
+.content-quiz {
+  flex-grow: 1; /* 콘텐츠 영역이 남은 공간을 차지하도록 설정 */
+  padding-top: 60px; /* 컨텐츠 위 패딩 */
+  padding-bottom: 60px; /* 컨텐츠 아래 패딩 */
+  padding-left: 20px; /* 모바일용 좌측 패딩 */
+  padding-right: 20px; /* 모바일용 우측 패딩 */
+  width: 100%; /* 너비 100% */
+  max-width: 1440px; /* 최대 너비를 1440px로 설정 */
+  box-sizing: border-box; /* 패딩과 보더를 포함한 크기 계산 */
+  color: #1e1e1e;
+
+  /* 태블릿 크기 이상일 때 */
+  @media (min-width: 768px) {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+
+  /* 데스크탑 크기 이상일 때 */
+  @media (min-width: 1024px) {
+    padding-left: 240px;
+    padding-right: 240px;
   }
 }

@@ -1,25 +1,101 @@
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import small_logo from '../assets/images/small_logo.png';
-// import { Quiz } from '../types/quizShow';
-
+import { Quiz } from '../types/quizShow';
+import { useState, useEffect } from 'react';
+import MultipleChoice from '../components/quizShowPage/MultipleChoice';
+import OX from '../components/quizShowPage/OX';
+import Objective from '../components/quizShowPage/Objective';
+import Progress from '../components/quizShowPage/Progress';
+import outQuizShowIcon from '../assets/icons/outQuizShowIcon.svg';
+import nextIcon from '../assets/icons/nextIcon.svg';
 interface QuizShowPersonalPageProps {
     collectionName: string;
-    // quizCount: number;
-    // quizList: Quiz[];
+    quizList: Quiz[];
+    quizSessionId: string;
 }
 
 function QuizShowPersonalPage() {
     const location = useLocation();
-    const { collectionName } = location.state as QuizShowPersonalPageProps;
+    const navigate = useNavigate();
+    const collectionId = useParams().collectionId;
+    const { collectionName, quizList, quizSessionId } = location.state as QuizShowPersonalPageProps;
+    const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+    const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
+
+    useEffect(() => {
+        if (quizList.length > 0) {
+            setCurrentQuiz(quizList[0]);
+        }
+    }, [quizList]);
+
+    const renderQuizComponent = (currentQuiz: Quiz) => {
+        if (!currentQuiz) return null;
+
+        switch (currentQuiz.type) {
+            case 'MULTIPLE_CHOICE':
+                return <MultipleChoice
+                    content={currentQuiz.content}
+                    choice={currentQuiz.choice}
+                    answer={currentQuiz.answer}
+                    commentary={currentQuiz.commentary}
+                    quizSessionId={quizSessionId}
+                />;
+            case 'OX':
+                return <OX 
+                    content={currentQuiz.content}
+                    answer={currentQuiz.answer}
+                    commentary={currentQuiz.commentary}
+                    quizSessionId={quizSessionId}
+                />;
+            case 'OBJECTIVE':
+                return <Objective
+                    content={currentQuiz.content}
+                    answer={currentQuiz.answer}
+                    commentary={currentQuiz.commentary}
+                    quizSessionId={quizSessionId}
+                />;
+            default:
+                return <div>지원하지 않는 퀴즈 타입입니다.</div>;
+        }
+    };
+
+    const handleNextQuiz = () => {
+        setCurrentQuizIndex(currentQuizIndex + 1);
+        setCurrentQuiz(quizList[currentQuizIndex + 1]);
+        if (currentQuizIndex === quizList.length - 1) {
+            navigate(`/quiz-result/personal/${collectionId}`,{state:{
+                quizSessionId:quizSessionId
+            }});
+        }
+    };
 
     return (
-        <div className="content">
-            <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-                <img src={small_logo} alt="logo" className="w-10 h-10" />
-                Quiz : <span className="text-normalactive">{collectionName}</span>
-            </h1>
-            <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
-                문제 나오는 자리
+        <div className="content-quiz">
+            <div className="flex items-center justify-between">
+                <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
+                    <img src={small_logo} alt="logo" className="w-10 h-10" />
+                    Quiz : <span className="text-normalactive">{collectionName}</span>
+                </h1>
+                <button
+                    className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
+                    onClick={() => navigate(`/collection/${collectionId}`)}
+                >
+                    <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
+                    컬렉션 리스트로 돌아가기
+                </button>
+            </div>
+            <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl p-8 relative">
+                <div className="flex items-center justify-center">
+                    <Progress
+                        currentQuizIndex={currentQuizIndex}
+                        totalQuizCount={quizList.length}
+                    />
+                </div>
+                {currentQuiz && renderQuizComponent(currentQuiz)}
+                <button className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1" onClick={handleNextQuiz}>
+                    <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+                    다음문제
+                </button>
             </div>
         </div>
     );
