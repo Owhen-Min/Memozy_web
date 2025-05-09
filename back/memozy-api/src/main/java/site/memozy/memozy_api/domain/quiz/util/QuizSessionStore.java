@@ -1,5 +1,6 @@
 package site.memozy.memozy_api.domain.quiz.util;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
+// TODO: Redis TTL 설정하기
 @Component
 @RequiredArgsConstructor
 public class QuizSessionStore {
@@ -51,7 +53,7 @@ public class QuizSessionStore {
 				"collectionId", Integer.toString(collectionId)
 			);
 			redisTemplate.opsForHash().put(redisKey, METADATA_KEY, objectMapper.writeValueAsString(metadata));
-
+			redisTemplate.expire(redisKey, Duration.ofDays(1));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("비상 비상 퀴즈 게임 레디스 저장 예외");
 		}
