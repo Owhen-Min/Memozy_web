@@ -3,6 +3,7 @@ import small_logo from "../assets/images/small_logo.png";
 import Memozy_logo from "../assets/images/Memozylogo.svg";
 import monster1 from "../assets/images/monster1.png";
 import { quizShowData } from "../dummy/quizShowData";
+import outQuizShowIcon from '../assets/icons/outQuizShowIcon.svg';
 
 const QuizShowEntryPersonalPage = () => {
     const { collectionId } = useParams();
@@ -11,17 +12,27 @@ const QuizShowEntryPersonalPage = () => {
         navigate(`/quiz-show/personal/${collectionId}`,
             {state:{
                 collectionName:quizShowData.data.collectionName,
-                quizList:quizShowData.data.quizList
+                quizList:quizShowData.data.quizList,
+                quizSessionId:quizShowData.data.quizSessionId
             }});
 
     }
 
     return (
-        <div className="content">
-            <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-                <img src={small_logo} alt="logo" className="w-10 h-10" />
-                Quiz : <span className="text-normalactive">{quizShowData.data.collectionName}</span>
-            </h1>
+        <div className="content-quiz">
+            <div className="flex items-center justify-between">
+                <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
+                    <img src={small_logo} alt="logo" className="w-10 h-10" />
+                        Quiz : <span className="text-normalactive">{quizShowData.data.collectionName}</span>
+                </h1>
+                <button
+                    className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
+                    onClick={() => navigate(`/collection/${collectionId}`)}
+                >
+                    <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
+                    컬렉션 리스트로 돌아가기
+                </button>
+            </div>
             <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
                 <div className="flex flex-col items-center pt-12">
                     <div className="mb-8 w-52 self-start ml-1 md:ml-16">
@@ -29,7 +40,7 @@ const QuizShowEntryPersonalPage = () => {
                     </div>
 
                     <div className="w-full relative mb-6">
-                        <div className="absolute right-4 md:right-32 -top-28 z-20">
+                        <div className="absolute right-4 md:right-20 -top-28 z-20">
                             <img src={monster1} alt="몬스터1" className="w-16 md:w-32" />
                         </div>
 
@@ -44,7 +55,7 @@ const QuizShowEntryPersonalPage = () => {
                             </div>
                         </div>
 
-                        <div className="absolute right-4 md:right-40 top-[70px] z-30">
+                        <div className="absolute right-4 md:right-10 top-[70px] z-30">
                             <div className="bg-white shadow-lg rounded-xl p-6 font-pre-medium">
                                 <p>컬렉션 : <span className="text-16 font-pre-bold">{quizShowData.data.collectionName}</span></p>
                                 <p>퀴즈 수 : <span className="text-16 font-pre-bold">{quizShowData.data.quizList.length} 문항</span></p>

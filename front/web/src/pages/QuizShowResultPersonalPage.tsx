@@ -1,6 +1,13 @@
 import small_logo from "../assets/images/small_logo.png";
 import { quizShowData } from "../dummy/quizShowData";
+import { useLocation } from "react-router";
+interface QuizShowResultPersonalPageProps {
+  quizSessionId: string;
+}
+
 function QuizShowResultPersonalPage() {
+  const location = useLocation();
+  const { quizSessionId } = location.state as QuizShowResultPersonalPageProps;
   return (
     <div className="content">
       <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
