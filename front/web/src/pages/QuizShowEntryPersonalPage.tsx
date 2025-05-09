@@ -11,8 +11,7 @@ const QuizShowEntryPersonalPage = () => {
         navigate(`/quiz-show/personal/${collectionId}`,
             {state:{
                 collectionName:quizShowData.data.collectionName,
-                // quizCount:quizShowData.data.quizList.length,
-                // quizList:quizShowData.data.quizList
+                quizList:quizShowData.data.quizList
             }});
 
     }
