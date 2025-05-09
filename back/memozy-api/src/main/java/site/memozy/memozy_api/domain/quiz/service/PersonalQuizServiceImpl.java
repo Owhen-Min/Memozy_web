@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.quiz.service;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,7 @@ import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResultResponse;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quiz.util.QuizSessionStore;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 			newOnly);
 
 		if (personalQuizzes.isEmpty() || personalQuizzes.size() < count) {
-			throw new RuntimeException("비상 비상 요청한 수보다 퀴즈 개수가 적다!!!");
+			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
 
 		// quizList 초기화
@@ -47,7 +50,7 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 			.toList();
 
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
-			.orElseThrow(() -> new RuntimeException("비상 비상 Collection not found"));
+			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
 
 		// Redis에 퀴즈 정보 초기화
 		String sessionId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
