@@ -55,9 +55,9 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 				quiz.quizId,
 				quiz.content,
 				quiz.type,
+				quiz.option,
 				quiz.answer,
-				quiz.commentary,
-				quiz.option
+				quiz.commentary
 			))
 			.from(quiz)
 			.where(
@@ -75,5 +75,14 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
 			.limit(count)
 			.fetch();
+	}
+
+	@Override
+	public long deleteQuizNotInQuizId(List<Long> quizIds, Integer sourceId) {
+		QQuiz quiz = QQuiz.quiz;
+		return jpaQueryFactory.delete(quiz)
+			.where(quiz.sourceId.eq(sourceId)
+				.and(quiz.quizId.notIn(quizIds)))
+			.execute();
 	}
 }

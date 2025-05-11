@@ -44,8 +44,9 @@ public class SecurityConfig {
 	private static final List<String> PERMIT_URLS = List.of(
 		"/favicon.ico", "/css/**", "/js/**", "/images/**",
 		"/oauth2/**", "/login/oauth2/**", "/login",
-		"/ws-connect", "/ws-connect/**", "/swagger-ui/**",
-		"/", "/index.html", "/test.html", "/ws", "/ws/**", "/quiz/show"
+		"/ws-connect", "/ws-connect/**",
+		"/swagger-ui/**", "/v3/api-docs/**",
+		"/", "/index.html"
 	);
 
 	@Bean
@@ -72,9 +73,8 @@ public class SecurityConfig {
 				.failureHandler(oAuth2AuthenticationFailureHandler)
 			)
 			.authorizeHttpRequests(auth -> auth
-				// .requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
-				// .anyRequest().authenticated()
-				.anyRequest().permitAll()
+				.requestMatchers(PERMIT_URLS.toArray(new String[0])).permitAll()
+				.anyRequest().authenticated()
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -93,10 +93,9 @@ public class SecurityConfig {
 			"chrome-extension://edkigpibifokljeefiomnfadenbfcchj",
 			"http://localhost:5173",
 			"https://localhost:5173",
-			"http://memozy.site",
 			"https://memozy.site"
 		));
-		configuration.setAllowedMethods(Collections.singletonList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 

@@ -1,5 +1,8 @@
 package site.memozy.memozy_api.domain.quiz.entity;
 
+import java.util.List;
+import java.util.Optional;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,7 +49,6 @@ public class Quiz extends BaseTimeEntity {
 	@Column(name = "quiz_option", columnDefinition = "TEXT")
 	private String option;
 
-
 	private Integer collectionId;
 
 	@Column(nullable = false)
@@ -74,7 +76,7 @@ public class Quiz extends BaseTimeEntity {
 		quiz.type = QuizType.fromCode(response.quizType());
 		quiz.answer = response.answer();
 		quiz.commentary = response.explanation();
-		quiz.option = String.join(",", response.options());
+		quiz.option = String.join(",", Optional.ofNullable(response.options()).orElse(List.of()));
 		quiz.sourceId = sourceId;
 
 		return quiz;

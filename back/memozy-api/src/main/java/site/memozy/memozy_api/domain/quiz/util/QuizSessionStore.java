@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.quiz.util;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Component
 @RequiredArgsConstructor
@@ -54,7 +57,7 @@ public class QuizSessionStore {
 			redisTemplate.opsForHash().put(redisKey, METADATA_KEY, objectMapper.writeValueAsString(metadata));
 			redisTemplate.expire(redisKey, Duration.ofDays(1));
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("비상 비상 퀴즈 게임 레디스 저장 예외");
+			throw new GeneralException(REDIS_SAVE_ERROR);
 		}
 	}
 
@@ -71,7 +74,7 @@ public class QuizSessionStore {
 			// 상태 갱신
 			Map<String, String> quizState = quizStatus.get(quizId);
 			if (quizState == null || "true".equals(quizState.get("attempted"))) {
-				throw new RuntimeException("비상 비상 이미 푼 문제에 대해서 재요청 시 처리");
+				throw new GeneralException(REDIS_QUIZ_ALREADY_ATTEMPTED);
 			}
 			quizState.put("correct", String.valueOf(isCorrect));
 			quizState.put("attempted", "true");
@@ -90,7 +93,7 @@ public class QuizSessionStore {
 			redisTemplate.opsForHash().put(redisKey, METADATA_KEY, objectMapper.writeValueAsString(metadata));
 
 		} catch (Exception e) {
-			throw new RuntimeException("비상 비상 업데이트 시, 퀴즈 게임 레디스 저장  예외");
+			throw new GeneralException(REDIS_SAVE_ERROR);
 		}
 	}
 
@@ -104,7 +107,7 @@ public class QuizSessionStore {
 			// quizList 가져오기
 			String quizListJson = (String)redisTemplate.opsForHash().get(redisKey, QUIZ_LIST_KEY);
 			if (quizListJson == null || quizListJson.isEmpty()) {
-				throw new RuntimeException("비상 비상 가져올 데이터가 없음1");
+				throw new GeneralException(REDIS_UPDATE_ERROR);
 			}
 			@SuppressWarnings("unchecked")
 			List<String> quizList = objectMapper.readValue(quizListJson, List.class);
@@ -113,7 +116,7 @@ public class QuizSessionStore {
 			// quizStatus 가져오기
 			String quizStatusJson = (String)redisTemplate.opsForHash().get(redisKey, QUIZ_STATUS_KEY);
 			if (quizStatusJson == null || quizStatusJson.isEmpty()) {
-				throw new RuntimeException("비상 비상 가져올 데이터가 없음2");
+				throw new GeneralException(REDIS_UPDATE_ERROR);
 			}
 			@SuppressWarnings("unchecked")
 			Map<String, Map<String, String>> quizStatus = objectMapper.readValue(quizStatusJson, Map.class);
@@ -122,7 +125,7 @@ public class QuizSessionStore {
 			// metadata 가져오기
 			String metadataJson = (String)redisTemplate.opsForHash().get(redisKey, METADATA_KEY);
 			if (metadataJson == null || metadataJson.isEmpty()) {
-				throw new RuntimeException("비상 비상 가져올 데이터가 없음3");
+				throw new GeneralException(REDIS_UPDATE_ERROR);
 			}
 			@SuppressWarnings("unchecked")
 			Map<String, String> metadata = objectMapper.readValue(metadataJson, Map.class);
@@ -131,7 +134,7 @@ public class QuizSessionStore {
 			return sessionData;
 
 		} catch (Exception e) {
-			throw new RuntimeException("비상 비상 세션 조회 시 여외 발생!");
+			throw new GeneralException(REDIS_SESSION_NOT_FOUND);
 		}
 	}
 
