@@ -42,7 +42,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	COLLECTION_INVALID_USER(HttpStatus.BAD_REQUEST, "COLLECTION404", "유효하지 않은 사용자입니다."),
 	MISSING_REQUIRED_PARAMETERS(HttpStatus.BAD_REQUEST, "COLLECTION405", "quizId 또는 sourceId 중 하나는 필수입니다."),
 	QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "COLLECTION406", "해당 퀴즈가 존재하지 않습니다."),
-
+	COLLECTION_TOO_MANY_SOURCE_ID(HttpStatus.BAD_REQUEST, "COLLECTION407", "유효하지 않은 요청입니다."),
+	COLLECTION_INVALID_SOURCE_ID(HttpStatus.BAD_REQUEST, "COLLECTION407", "유효하지 않은 요청입니다."),
 	// Redis 에러 (REDIS)
 	QUIZ_COUNT_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "REDIS500", "요청한 수보다 퀴즈 개수가 적습니다"),
 	REDIS_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS501", "퀴즈 세션을 저장하는 중 오류가 발생했습니다."),

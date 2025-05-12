@@ -62,4 +62,7 @@ public class QuizSource extends BaseTimeEntity {
 		return quizSource;
 	}
 
+	public void updateCollectionId(int collectionId) {
+		this.collectionId = collectionId;
+	}
 }
