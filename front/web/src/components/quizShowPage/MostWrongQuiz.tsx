@@ -11,8 +11,8 @@ const MostWrongQuiz = ({ content, answer, commentary, wrongRate, onClose }: Most
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4 md:p-0">
       <div className="w-full max-w-[90vw] md:w-[40vw] md:max-w-none h-auto max-h-[90vh] md:max-h-[80vh] flex flex-col gap-3 md:gap-4 bg-white rounded-xl p-4 md:p-6 shadow-xl overflow-y-auto">
         <div className="flex justify-between items-center mb-1">
-          <h1 className="text-lg md:text-xl font-pre-medium text-main200">가장 많이 틀린 문제</h1>
-          <span className="text-red text-xs md:text-sm font-pre-medium">
+          <h1 className="text-16 md:text-20 font-pre-medium text-main200">가장 많이 틀린 문제</h1>
+          <span className="text-red text-12 md:text-14 font-pre-medium">
             오답률: {(wrongRate * 100).toFixed(0)}%
           </span>
         </div>

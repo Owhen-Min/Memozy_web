@@ -43,7 +43,7 @@ function Header() {
         <div className="hidden md:flex items-center space-x-6">
           <Link
             to="/collection"
-            className={`font-pre-medium text-[16px] transition-colors duration-200 ${
+            className={`font-pre-medium text-16 transition-colors duration-200 ${
               currentPath === "/collection"
                 ? "text-[#0F56B3]"
                 : "text-[#4285F4] hover:text-[#0F56B3]"
@@ -53,7 +53,7 @@ function Header() {
           </Link>
           <Link
             to="/my"
-            className={`font-pre-medium text-[16px] transition-colors duration-200 ${
+            className={`font-pre-medium text-16 transition-colors duration-200 ${
               currentPath === "/my" ? "text-[#0F56B3]" : "text-[#4285F4] hover:text-[#0F56B3]"
             }`}
           >
@@ -74,7 +74,7 @@ function Header() {
         <div className="hidden md:block">
           <Link
             to="/"
-            className="text-[#4285F4] font-pre-medium text-[16px] hover:text-[#0F56B3] transition-colors duration-200"
+            className="text-[#4285F4] font-pre-medium text-16 hover:text-[#0F56B3] transition-colors duration-200"
             onClick={() => useAuthStore.getState().logout()}
           >
             로그아웃
@@ -88,7 +88,7 @@ function Header() {
           {/* 모바일 메뉴 헤더 */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-200 mb-4">
             <div className="w-8"></div> {/* 왼쪽 여백 균형용 */}
-            <h1 className="text-center text-[24px] font-pre-bold text-normal">Memozy</h1>
+            <h1 className="text-center text-24 font-pre-bold text-normal">Memozy</h1>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="w-8 h-8 flex items-center justify-center"
@@ -101,7 +101,7 @@ function Header() {
           <div className="flex flex-col space-y-4 pt-4">
             <Link
               to="/collection"
-              className={`font-pre-medium text-[20px] p-2 transition-colors duration-200 ${
+              className={`font-pre-medium text-16 p-2 transition-colors duration-200 ${
                 currentPath === "/collection"
                   ? "text-[#0F56B3] bg-light rounded-md"
                   : "text-[#4285F4]"
@@ -111,7 +111,7 @@ function Header() {
             </Link>
             <Link
               to="/my"
-              className={`font-pre-medium text-[20px] p-2 transition-colors duration-200 ${
+              className={`font-pre-medium text-16 p-2 transition-colors duration-200 ${
                 currentPath === "/my" ? "text-[#0F56B3] bg-light rounded-md" : "text-[#4285F4]"
               }`}
             >
@@ -119,7 +119,7 @@ function Header() {
             </Link>
             <Link
               to="/"
-              className="font-pre-medium text-[20px] p-2 text-[#4285F4] mt-4 border-t border-gray-200 pt-4"
+              className="font-pre-medium text-16 p-2 text-[#4285F4] mt-4 border-t border-gray-200 pt-4"
               onClick={() => useAuthStore.getState().logout()}
             >
               로그아웃
