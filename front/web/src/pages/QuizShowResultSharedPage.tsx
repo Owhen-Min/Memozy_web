@@ -10,18 +10,14 @@ import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import MostWrongQuiz from "../components/quizShowPage/MostWrongQuiz";
-import {
-  quizShowResultData,
-  quizShowMyResultData,
-} from "../dummy/quizSharedResultData";
+import { quizShowResultData, quizShowMyResultData } from "../dummy/quizSharedResultData";
 
 function QuizShowResultSharedPage() {
   const navigate = useNavigate();
   const { collectionId } = useParams();
 
   // 개인 결과 데이터에서 필요한 정보 가져오기
-  const { myWrongQuizCount, totalQuizCount, myScore } =
-    quizShowMyResultData.data;
+  const { myWrongQuizCount, totalQuizCount, myScore } = quizShowMyResultData.data;
 
   // 단체 결과 데이터에서 가장 많이 틀린 퀴즈와 랭킹 정보 가져오기
   const { mostWrongQuiz, topRanking } = quizShowResultData.data;
@@ -54,21 +50,22 @@ function QuizShowResultSharedPage() {
 
   return (
     <div className="content-quiz">
-      <h1 className="text-20 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-        <img src={small_logo} alt="logo" className="w-8 h-8 md:w-10" />
-        Quiz :
-        <span className="text-normalactive">
-          {quizShowData.data.collectionName}
-        </span>
+      <h1 className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
+        <div className="flex items-center gap-1 md:gap-2 w-full overflow-hidden">
+          <img src={small_logo} alt="logo" className="w-6 md:w-10 flex-shrink-0" />
+          <span className="whitespace-nowrap flex-shrink-0">Quiz : </span>
+          <span
+            className="text-normalactive truncate md:overflow-visible md:whitespace-normal"
+            title={quizShowData.data.collectionName}
+          >
+            {quizShowData.data.collectionName}
+          </span>
+        </div>
       </h1>
       <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[80vh] md:h-[70vh] justify-between relative">
         {/* 캐릭터 이미지 - 모바일에서는 숨김 */}
         <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
-          <img
-            src={rightmonster}
-            alt="Memozy Character"
-            className="h-24 md:h-40 hidden sm:block"
-          />
+          <img src={rightmonster} alt="Memozy Character" className="h-24 md:h-40 hidden sm:block" />
         </div>
 
         {/* 상단 컨텐츠 영역 */}
@@ -84,11 +81,9 @@ function QuizShowResultSharedPage() {
           </div>
 
           <div className="flex flex-col gap-2 md:gap-3">
+            <p className="font-pre-medium text-14 md:text-20">총 퀴즈 수 : {totalQuizCount}개</p>
             <p className="font-pre-medium text-14 md:text-20">
-              총 퀴즈 수 : {totalQuizCount}퀴즈
-            </p>
-            <p className="font-pre-medium text-14 md:text-20">
-              틀린 퀴즈 수 : {myWrongQuizCount}퀴즈
+              틀린 퀴즈 수 : {myWrongQuizCount}개
             </p>
 
             <button
@@ -122,12 +117,8 @@ function QuizShowResultSharedPage() {
           {topRankers.map((ranker) => (
             <div key={ranker.rank} className="flex items-center mb-8">
               <img src={ranker.image} alt={`${ranker.rank}`} className="w-4" />
-              <span className="text-14 md:text-16 font-pre-semibold ml-3">
-                {ranker.name}
-              </span>
-              <span className="text-14 md:text-16 font-pre-semibold ml-3">
-                {ranker.score}
-              </span>
+              <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.name}</span>
+              <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.score}</span>
             </div>
           ))}
         </div>
@@ -135,14 +126,10 @@ function QuizShowResultSharedPage() {
         {/* 하단 버튼 영역 - 위로 올림 */}
         <div className="flex justify-center mt-6 md:mt-0">
           <button
-            className="border border-red text-red rounded-lg p-2 flex items-center gap-2 text-14 md:text-16"
+            className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
             onClick={() => navigate(`/collection/${collectionId}`)}
           >
-            <img
-              src={outQuizShowIcon}
-              alt="outQuizShowIcon"
-              className="w-5 md:w-6"
-            />
+            <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
             컬렉션 리스트로 돌아가기
           </button>
         </div>
