@@ -128,14 +128,14 @@ public class OpenAiService {
 				  - DevOps·CI/CD·모니터링: Jenkins, GitHub Actions, Prometheus 등
 				  - 알고리즘·자료구조·컴퓨터 구조
 				
-				+ ### 1.3 일반 정보 (General Info / Non-Quizable Content)
-				+ - **비-문제성 개념 정의는 허용**, 단 아래의 경우는 퀴즈 생성을 거부합니다:
-					- **단순 개요 설명**: 예) 코딩 테스트 개요, 회사 채용 절차 등
-					- **비-지식성 목록**: 예) 온라인 저지 사이트 모음, 개발 도구 리스트 등
-					- **기술 외 역사/배경**: 예) 특정 기업의 창립 이야기, 서비스 연혁 등
+				### 1.3 일반 정보 (General Info / Non-Quizable Content)
+				- **비-문제성 개념 정의는 허용**, 단 아래의 경우는 퀴즈 생성을 거부합니다:
+				  - **단순 개요 설명**: 예) 코딩 테스트 개요, 회사 채용 절차 등
+				  - **비-지식성 목록**: 예) 온라인 저지 사이트 모음, 개발 도구 리스트 등
+				  - **기술 외 역사/배경**: 예) 특정 기업의 창립 이야기, 서비스 연혁 등
 				- 단, **DB/네트워크/언어/프레임워크 등 IT 기술 개념 정의**는 퀴즈 출제 허용
-				+\s
-				+ 위 항목에 해당하면 → **거부**
+				
+				위 항목에 해당하면 → **거부**
 				
 				- **비-IT 예시**
 				  요리 레시피, 역사 사건, 스포츠 경기 결과, 여행지 추천 등
@@ -152,30 +152,40 @@ public class OpenAiService {
 				2. **퀴즈 생성**
 				   - **`num_questions`** 만큼 문제를 생성
 				   - **`question_type`** 에 따라 결과 포맷 분기
-				     - **multiple_choice**:
-				       {
-				         "quiz_type" : 1,
-				         "question": "...",
-				         "options": ["foo", "bar", "baz", "qux"],
-				         "answer": "bar",
-				         "explanation": "해설"
-				       }
-				     - **true_false** (OX 퀴즈):
-				       {
-				         "quiz_type" : 2,
-				         "question": "...",
-				         "options" : null,
-				         "answer": "O",  // 또는 "X"
-				         "explanation": "해설"
-				       }
-				     - **short_answer** (단답형):
-				       {
-				         "quiz_type" : 3,
-				         "question": "...",
-				         "options" : null,
-				         "answer": "정답(단답)",
-				         "explanation": "해설"
-				       }
+				
+				   - 퀴즈 생성 전, **이미 생성된 문제들과 의미적으로 중복되지 않는지 검사**합니다.
+				   - 다음과 같은 경우는 중복 퀴즈로 간주되어 생성하지 않습니다:
+				     1. 질문 문장만 다르고 **정답(answer)** 및 **해설(commentary)** 이 동일하거나 매우 유사한 경우
+				     2. **동일한 개념 또는 키워드(예: 기밀성, 무결성 등)** 을 반복적으로 출제한 경우
+				     3. 문제 유형은 달라도, 같은 개념을 정의하는 퀴즈가 이미 있다면 **출제를 생략**합니다.
+				   - 예시:
+				     - “기밀성은 무엇인가요?” → 출제됨
+				     - “인가되지 않은 접근을 방지하는 특성은?” → 동일 개념 → 출제 거부
+				
+				   - **multiple_choice**:
+				     {
+				       "quiz_type" : 1,
+				       "question": "...",
+				       "options": ["foo", "bar", "baz", "qux"],
+				       "answer": "bar",
+				       "explanation": "해설"
+				     }
+				   - **true_false** (OX 퀴즈):
+				     {
+				       "quiz_type" : 2,
+				       "question": "...",
+				       "options" : null,
+				       "answer": "O",  // 또는 "X"
+				       "explanation": "해설"
+				     }
+				   - **short_answer** (단답형):
+				     {
+				       "quiz_type" : 3,
+				       "question": "...",
+				       "options" : null,
+				       "answer": "정답(단답)",
+				       "explanation": "해설"
+				     }
 				
 				3. **응답 반환**
 				   - **거부 시**
@@ -221,7 +231,6 @@ public class OpenAiService {
 				.collect(Collectors.joining(", "))
 		) + "\n\n입력 데이터: " + inputData
 			+ "\n\n 최종 출력은 반드시 JSON 본문만 단독으로 출력하세요. 절대 ```json 이나 코드 블럭으로 감싸지 마세요.";
-
 	}
 
 }
