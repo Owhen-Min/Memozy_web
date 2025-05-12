@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.global.security;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +27,10 @@ public class ActuatorSecurityConfig {
 	@Order(1)
 	public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher("/api/prometheus")
+			.securityMatcher(request -> request.getRequestURI().startsWith("/api/prometheus"))
 			.authorizeHttpRequests(auth -> auth
 				.anyRequest().hasRole("ACTUATOR"))
-			.httpBasic(httpBasic -> {
-			})
+			.httpBasic(withDefaults())
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
