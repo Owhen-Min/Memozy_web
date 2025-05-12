@@ -21,13 +21,11 @@ function QuizShowResultPersonalPage() {
     quizResultData.data;
 
   const handleWrongNoteClick = () => {
-    // 오답노트 페이지로 이동
-    console.log("오답노트 바로가기 클릭");
+    console.log("오답노트 바로가기 클릭"); //아직 연결 안함
   };
 
   const handleMoreQuizClick = () => {
-    // 다음 퀴즈 풀기 또는 더 많은 퀴즈 보기 페이지로 이동
-    console.log("지금 컬렉션 퀴즈 더 풀어보기 클릭");
+    console.log("지금 컬렉션 퀴즈 더 풀어보기 클릭"); //아직 연결 안함
   };
 
   const navigate = useNavigate();

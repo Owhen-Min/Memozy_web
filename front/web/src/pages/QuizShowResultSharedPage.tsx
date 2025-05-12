@@ -38,10 +38,10 @@ function QuizShowResultSharedPage() {
   };
 
   const handleSaveQuizClick = () => {
-    console.log("나의 컬렉션에 저장하기 클릭"); //연결아직안함
+    console.log("나의 컬렉션에 저장하기 클릭"); //연결안함
   };
 
-  // 랭킹 데이터를 표시 형식에 맞게 변환
+  // 랭킹 데이터
   const topRankers = topRanking.map((ranker, index) => {
     const images = [first, second, third];
     return {
