@@ -18,6 +18,7 @@ function QuizShowResultPersonalPage() {
   const collectionId = useParams().collectionId;
 
   const { point, totalQuizCount, myWrongQuizCount, round } = quizResultData.data;
+  const { point, totalQuizCount, myWrongQuizCount, round } = quizResultData.data;
 
   const handleWrongNoteClick = () => {
     console.log("오답노트 바로가기 클릭"); //아직 연결 안함

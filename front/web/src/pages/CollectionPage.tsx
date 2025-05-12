@@ -1,23 +1,32 @@
-import { collectionData } from '../dummy/collectionData';
-import CollectionCard from '../features/collectionPage/CollectionCard';
-import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
-import memozyIcon from '../assets/icons/memozyIcon.png';
-import { useNavigate } from 'react-router';
-import AddCollection from '../features/collectionPage/collectionPageModal/AddCollection';
-import { useState } from 'react';
-import small_logo from '../assets/images/small_logo.png';
-import { motion } from 'framer-motion';
+import { useEffect } from "react";
+import CollectionCard from "../features/collectionPage/CollectionCard";
+import collectionPlusIcon from "../assets/icons/collectionPlusIcon.png";
+import memozyIcon from "../assets/icons/memozyIcon.png";
+import { useNavigate } from "react-router";
+import AddCollection from "../features/collectionPage/collectionPageModal/AddCollection";
+import { useState } from "react";
+import small_logo from "../assets/images/small_logo.png";
+import { motion } from "framer-motion";
+import { useCollectionStore } from "../stores/collection/collectionStore";
 
 function CollectionPage() {
   const navigate = useNavigate();
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
-  
+
+  // store에서 데이터와 함수 가져오기
+  const { collections, loading, error, fetchCollections } = useCollectionStore();
+
+  // 컴포넌트 마운트 시 컬렉션 데이터 가져오기
+  useEffect(() => {
+    fetchCollections();
+  }, [fetchCollections]);
+
   // 모든 컬렉션의 memozyCount와 quizCount 총합 계산
-  const totalMemozyCount = collectionData.data.reduce((sum, item) => sum + item.memozyCount, 0);
-  const totalQuizCount = collectionData.data.reduce((sum, item) => sum + item.quizCount, 0);
+  const totalMemozyCount = (collections || []).reduce((sum, item) => sum + item.memozyCount, 0);
+  const totalQuizCount = (collections || []).reduce((sum, item) => sum + item.quizCount, 0);
 
   const handleAllCollectionsClick = () => {
-    navigate('/collection/all');
+    navigate("/collection/all");
   };
 
   const handleAddCollectionClick = () => {
@@ -33,15 +42,19 @@ function CollectionPage() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05
-      }
-    }
+        staggerChildren: 0.05,
+      },
+    },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
+
+  // 로딩 중이거나 에러가 있을 때 처리
+  if (loading) return <div className="content">로딩 중...</div>;
+  if (error) return <div className="content">에러: {error}</div>;
 
   return (
     <div className="content">
@@ -49,14 +62,14 @@ function CollectionPage() {
         <img src={small_logo} alt="logo" className="w-10 h-10" />
         컬렉션 리스트
       </h1>
-      <motion.div 
+      <motion.div
         className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
         variants={container}
         initial="hidden"
         animate="show"
       >
         {/* 컬렉션 모두보기 */}
-        <motion.div 
+        <motion.div
           variants={item}
           className="w-full p-5 border border-normal rounded-xl bg-white relative cursor-pointer hover:bg-lighthover shadow-md"
           onClick={handleAllCollectionsClick}
@@ -75,19 +88,19 @@ function CollectionPage() {
           </div>
         </motion.div>
 
-        {collectionData.data.map(({id, name, memozyCount, quizCount}) => (
-          <motion.div key={id} variants={item}>
-            <CollectionCard 
-              id={id}
-              name={name}
-              memozyCount={memozyCount}
-              quizCount={quizCount}
+        {(collections || []).map((collection) => (
+          <motion.div key={collection.id} variants={item}>
+            <CollectionCard
+              id={collection.id}
+              name={collection.name}
+              memozyCount={collection.memozyCount}
+              quizCount={collection.quizCount}
             />
           </motion.div>
         ))}
 
         {/* 새 컬렉션 추가 카드 */}
-        <motion.div 
+        <motion.div
           variants={item}
           className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC] shadow-md"
           onClick={handleAddCollectionClick}
@@ -96,10 +109,7 @@ function CollectionPage() {
         </motion.div>
       </motion.div>
 
-      <AddCollection 
-        isOpen={isAddCollectionModalOpen} 
-        onClose={handleCloseModal} 
-      />
+      <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

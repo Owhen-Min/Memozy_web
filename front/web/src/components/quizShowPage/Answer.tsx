@@ -6,13 +6,7 @@ interface AnswerProps {
   isLastQuiz: boolean;
 }
 
-const Answer = ({
-  content,
-  answer,
-  commentary,
-  onNext,
-  isLastQuiz,
-}: AnswerProps) => {
+const Answer = ({ content, answer, commentary, onNext, isLastQuiz }: AnswerProps) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="w-[40vw] h-auto flex flex-col gap-4 bg-white rounded-xl p-6 shadow-xl">
