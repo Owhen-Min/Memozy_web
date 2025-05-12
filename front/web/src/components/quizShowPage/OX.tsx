@@ -24,8 +24,8 @@ const OX = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz, onAns
 
     return(
         <div>
-            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium">
-                문제 내용 : {content}
+            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
+                {content}
             </div>
             <div className="w-full flex justify-center gap-32">
                 <button
