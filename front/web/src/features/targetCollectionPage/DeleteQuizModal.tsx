@@ -1,14 +1,27 @@
 import closeIcon from "../../assets/icons/closeIcon.svg";
+import { useCollectionStore } from "../../stores/collection/collectionStore";
+import { useParams } from "react-router";
 
 interface DeleteQuizModalProps {
   quizId: number[];
+  sourceId: number[];
   onClose: () => void;
 }
 
-function DeleteQuizModal({ quizId, onClose }: DeleteQuizModalProps) {
-  const handleDelete = () => {
-    console.log("퀴즈 삭제", quizId);
-    onClose();
+function DeleteQuizModal({ quizId, sourceId, onClose }: DeleteQuizModalProps) {
+  const { deleteQuiz, fetchMemozyList } = useCollectionStore();
+  const { collectionId } = useParams();
+
+  const handleDelete = async () => {
+    try {
+      await deleteQuiz(quizId, sourceId);
+      if (collectionId) {
+        await fetchMemozyList(Number(collectionId));
+      }
+      onClose();
+    } catch (error) {
+      console.error("퀴즈 삭제 실패:", error);
+    }
   };
 
   return (
@@ -25,7 +38,7 @@ function DeleteQuizModal({ quizId, onClose }: DeleteQuizModalProps) {
         </p>
         <button
           onClick={handleDelete}
-          className="w-full bg-red text-white rounded-xl py-2 font-pre-medium text-[16px] hover:bg-red/90 transition-colors"
+          className="w-full bg-red text-white rounded-xl py-2 font-pre-medium text-[16px] hover:bg-redhover transition-colors"
         >
           삭제
         </button>
