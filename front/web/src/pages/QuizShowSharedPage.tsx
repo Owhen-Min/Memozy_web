@@ -1,7 +1,5 @@
 const QuizShowSharedPage = () => {
-    return <div>QuizShowSharedPage</div>;
-}
+  return <div>QuizShowSharedPage</div>;
+};
 
 export default QuizShowSharedPage;
-
-

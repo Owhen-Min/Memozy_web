@@ -1,21 +1,20 @@
 export interface CreateCollectionRequest {
-    title: string;
+  title: string;
 }
 
 export interface UpdateCollectionRequest {
-    title: string;
+  title: string;
 }
 
 export interface CopyMemozyRequest {
-    sourceId: number[];
+  sourceId: number[];
 }
 
 export interface DeleteQuizRequest {
-    quizId: number[];
-    sourceId: number[];
+  quizId: number[];
+  sourceId: number[];
 }
 
 export interface DeleteCollectionRequest {
-    collectionId: number;
+  collectionId: number;
 }
-
