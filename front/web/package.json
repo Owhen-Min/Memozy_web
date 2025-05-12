@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.1.1",
     "@types/react-chartjs-2": "^2.0.2",
     "autoprefixer": "^10.4.21",
     "axios": "^1.9.0",
@@ -21,6 +22,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.2.0",
     "react-router": "^7.6.0",
+    "sockjs-client": "^1.6.1",
     "tailwindcss": "^3.4.17",
     "zustand": "^5.0.4"
   },
