@@ -46,4 +46,7 @@ public class Collection extends BaseTimeEntityWithUpdatedAt {
 		this.name = newName;
 	}
 
+	public void setCode(String code) {
+		this.code = code;
+	}
 }

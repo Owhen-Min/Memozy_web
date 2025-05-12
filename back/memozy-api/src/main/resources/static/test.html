@@ -41,7 +41,7 @@
         }
 
         const client = new Client({
-            brokerURL: "ws://localhost:8080/ws",
+            brokerURL: "ws://localhost:8080/ws-connect",
             connectHeaders: headers,
             debug: (str) => console.log("[STOMP DEBUG]", str),
             reconnectDelay: 5000,
@@ -50,7 +50,7 @@
                 console.log("✅ WebSocket 연결 성공");
                 document.getElementById("status").innerText = "✔ 연결됨";
 
-                const subscribePath = `/sub/quiz/show/${showId}`;
+                const subscribePath = `/sub/quiz/show/${showId}/join`;
                 console.log("📡 Subscribing to", subscribePath);
 
                 client.subscribe(subscribePath, (message) => {
@@ -89,7 +89,7 @@
 
                 console.log("🚀 참가 요청 전송:", payload);
                 client.publish({
-                    destination: `/pub/quiz/show/${showId}`,
+                    destination: `/pub/quiz/show/${showId}/join`,
                     body: JSON.stringify(payload)
                 });
 
