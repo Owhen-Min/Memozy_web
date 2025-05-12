@@ -89,6 +89,7 @@ public class MultiQuizShowController {
 	}
 
 	@GetMapping()
+	@GetMapping("/quiz/show")
 	public String getMultiQuizShow() {
 		return "redirect:/test.html";
 	}
