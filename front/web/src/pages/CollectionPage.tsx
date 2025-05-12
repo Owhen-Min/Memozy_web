@@ -1,4 +1,4 @@
-import { collectionData } from '../dummy/collectionData';
+import { useEffect } from 'react';
 import CollectionCard from '../features/collectionPage/CollectionCard';
 import collectionPlusIcon from '../assets/icons/collectionPlusIcon.png';
 import memozyIcon from '../assets/icons/memozyIcon.png';
@@ -7,14 +7,28 @@ import AddCollection from '../features/collectionPage/collectionPageModal/AddCol
 import { useState } from 'react';
 import small_logo from '../assets/images/small_logo.png';
 import { motion } from 'framer-motion';
+import { useCollectionStore } from '../stores/collection/collectionStore';
 
 function CollectionPage() {
   const navigate = useNavigate();
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
   
+  // store에서 데이터와 함수 가져오기
+  const { 
+    collections, 
+    loading, 
+    error,
+    fetchCollections 
+  } = useCollectionStore();
+
+  // 컴포넌트 마운트 시 컬렉션 데이터 가져오기
+  useEffect(() => {
+    fetchCollections();
+  }, [fetchCollections]);
+  
   // 모든 컬렉션의 memozyCount와 quizCount 총합 계산
-  const totalMemozyCount = collectionData.data.reduce((sum, item) => sum + item.memozyCount, 0);
-  const totalQuizCount = collectionData.data.reduce((sum, item) => sum + item.quizCount, 0);
+  const totalMemozyCount = (collections || []).reduce((sum, item) => sum + item.memozyCount, 0);
+  const totalQuizCount = (collections || []).reduce((sum, item) => sum + item.quizCount, 0);
 
   const handleAllCollectionsClick = () => {
     navigate('/collection/all');
@@ -42,6 +56,10 @@ function CollectionPage() {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
+
+  // 로딩 중이거나 에러가 있을 때 처리
+  if (loading) return <div className="content">로딩 중...</div>;
+  if (error) return <div className="content">에러: {error}</div>;
 
   return (
     <div className="content">
@@ -75,13 +93,13 @@ function CollectionPage() {
           </div>
         </motion.div>
 
-        {collectionData.data.map(({id, name, memozyCount, quizCount}) => (
-          <motion.div key={id} variants={item}>
+        {(collections || []).map((collection) => (
+          <motion.div key={collection.id} variants={item}>
             <CollectionCard 
-              id={id}
-              name={name}
-              memozyCount={memozyCount}
-              quizCount={quizCount}
+              id={collection.id}
+              name={collection.name}
+              memozyCount={collection.memozyCount}
+              quizCount={collection.quizCount}
             />
           </motion.div>
         ))}
