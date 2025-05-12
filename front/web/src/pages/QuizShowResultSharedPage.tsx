@@ -1,28 +1,23 @@
 import small_logo from "../assets/images/small_logo.png";
 import { quizShowData } from "../dummy/quizShowData";
 import { quizResultData } from "../dummy/quizResultData";
-import rightmonster from "../assets/images/rightmonster.png";
-import openbook from "../assets/icons/blackopenbook.svg";
+import rightmonster from "../assets/images/quizshowImg.png";
+import save from "../assets/icons/save.svg";
 import book from "../assets/icons/summaryIcon.svg";
+import first from "../assets/images/first.png";
+import second from "../assets/images/second.png";
+import third from "../assets/images/third.png";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useNavigate, useParams } from "react-router";
-// import { useNavigate, useParams, useLocation } from "react-router";
 
-// interface QuizShowResultPersonalPageProps {
-//   quizSessionId: string;
-// }
-
-function QuizShowResultPersonalPage() {
-  // const location = useLocation();
-  // const { } = location.state as QuizShowResultPersonalPageProps;
-  const collectionId = useParams().collectionId;
-
+function QuizShowResultSharedPage() {
+  const navigate = useNavigate();
+  const { collectionId } = useParams();
   const { point, totalQuizCount, myWrongQuizCount, round } =
     quizResultData.data;
 
-  const handleWrongNoteClick = () => {
-    // 오답노트 페이지로 이동
-    console.log("오답노트 바로가기 클릭");
+  const handleMostWrongQuizClick = () => {
+    console.log("친구들이 가장 많이 틀린 퀴즈 클릭");
   };
 
   const handleMoreQuizClick = () => {
@@ -30,7 +25,12 @@ function QuizShowResultPersonalPage() {
     console.log("지금 컬렉션 퀴즈 더 풀어보기 클릭");
   };
 
-  const navigate = useNavigate();
+  // 상위 랭킹 데이터
+  const topRankers = [
+    { rank: 1, name: "이가희", score: "100점", image: first },
+    { rank: 2, name: "민경현", score: "97점", image: second },
+    { rank: 3, name: "이학준", score: "95점", image: third },
+  ];
 
   return (
     <div className="content-quiz">
@@ -75,10 +75,10 @@ function QuizShowResultPersonalPage() {
             </p>
 
             <button
-              onClick={handleWrongNoteClick}
+              onClick={handleMostWrongQuizClick}
               className="group flex items-center mt-6 md:mt-8 font-pre-medium hover:text-blue-600 text-14 md:text-20"
             >
-              오답노트 바로가기
+              친구들이 가장 많이 틀린 퀴즈
               <img
                 src={book}
                 alt="책아이콘"
@@ -90,14 +90,29 @@ function QuizShowResultPersonalPage() {
               onClick={handleMoreQuizClick}
               className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
             >
-              지금 컬렉션 퀴즈 더 풀어보기
+              나의 컬렉션에 저장하기
               <img
-                src={openbook}
-                alt="열린책아이콘"
+                src={save}
+                alt="저장아이콘"
                 className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
               />
             </button>
           </div>
+        </div>
+
+        {/* 랭킹 영역 - 모든 화면 크기 */}
+        <div className="block md:absolute md:right-24 md:top-16 mt-4 md:mt-0">
+          {topRankers.map((ranker) => (
+            <div key={ranker.rank} className="flex items-center mb-8">
+              <img src={ranker.image} alt={`${ranker.rank}`} className="w-4" />
+              <span className="text-14 md:text-16 font-pre-semibold ml-3">
+                {ranker.name}
+              </span>
+              <span className="text-14 md:text-16 font-pre-semibold ml-3">
+                {ranker.score}
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* 하단 버튼 영역 - 위로 올림 */}
@@ -119,4 +134,4 @@ function QuizShowResultPersonalPage() {
   );
 }
 
-export default QuizShowResultPersonalPage;
+export default QuizShowResultSharedPage;
