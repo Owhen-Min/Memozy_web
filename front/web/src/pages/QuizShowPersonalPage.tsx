@@ -22,6 +22,7 @@ function QuizShowPersonalPage() {
     const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
     const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
     const [showAnswer, setShowAnswer] = useState<boolean>(false);
+    const [userAnswer, setUserAnswer] = useState<string | number | { index: number; value: string } | null>(null);
 
     useEffect(() => {
         if (quizList.length > 0) {
@@ -29,11 +30,44 @@ function QuizShowPersonalPage() {
         }
     }, [quizList]);
 
+    const handleShowAnswer = () => {
+        if (userAnswer === null) {
+            alert('답을 선택해주세요!');
+            return;
+        }
+        
+        const currentQuizData = quizList[currentQuizIndex];
+        let isCorrect = false;
+        let answerValue = '';
+
+        if (typeof userAnswer === 'object' && 'value' in userAnswer) {
+            // 객관식 답변
+            answerValue = userAnswer.value;
+            // 정답이 보기 내용인 경우
+            isCorrect = currentQuizData.answer === answerValue;
+        } else {
+            // OX, 주관식 답변
+            answerValue = userAnswer.toString();
+            isCorrect = currentQuizData.answer === answerValue;
+        }
+        
+        console.log('퀴즈 정보:', {
+            quizId: currentQuizData.quizId,
+            quizSessionId: quizSessionId,
+            userAnswer: answerValue,
+            isCorrect: isCorrect,
+            correctAnswer: currentQuizData.answer
+        });
+        
+        setShowAnswer(true);
+    };
+
     const renderQuizComponent = (currentQuiz: Quiz) => {
         if (!currentQuiz) return null;
 
         const handleNextQuiz = () => {
             setShowAnswer(false);
+            setUserAnswer(null);
             setCurrentQuizIndex(currentQuizIndex + 1);
             setCurrentQuiz(quizList[currentQuizIndex + 1]);
             if (currentQuizIndex === quizList.length - 1) {
@@ -56,6 +90,7 @@ function QuizShowPersonalPage() {
                     showAnswer={showAnswer}
                     onNext={handleNextQuiz}
                     isLastQuiz={isLastQuiz}
+                    onAnswerSelect={(answer) => setUserAnswer(answer)}
                 />;
             case 'OX':
                 return <OX 
@@ -66,6 +101,7 @@ function QuizShowPersonalPage() {
                     showAnswer={showAnswer}
                     onNext={handleNextQuiz}
                     isLastQuiz={isLastQuiz}
+                    onAnswerSelect={(answer) => setUserAnswer(answer)}
                 />;
             case 'OBJECTIVE':
                 return <Objective
@@ -76,14 +112,11 @@ function QuizShowPersonalPage() {
                     showAnswer={showAnswer}
                     onNext={handleNextQuiz}
                     isLastQuiz={isLastQuiz}
+                    onAnswerSelect={(answer) => setUserAnswer(answer)}
                 />;
             default:
                 return <div>지원하지 않는 퀴즈 타입입니다.</div>;
         }
-    };
-
-    const handleShowAnswer = () => {
-        setShowAnswer(true);
     };
 
     return (

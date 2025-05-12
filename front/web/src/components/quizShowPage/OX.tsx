@@ -11,10 +11,16 @@ interface OXProps {
     showAnswer: boolean;
     onNext: () => void;
     isLastQuiz: boolean;
+    onAnswerSelect: (answer: 'O' | 'X') => void;
 }   
 
-const OX = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz }: OXProps) => {
+const OX = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz, onAnswerSelect }: OXProps) => {
     const [selected, setSelected] = useState<null | 'O' | 'X'>(null);
+
+    const handleSelect = (value: 'O' | 'X') => {
+        setSelected(value);
+        onAnswerSelect(value);
+    };
 
     return(
         <div>
@@ -25,14 +31,14 @@ const OX = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz }: OXP
                 <button
                     className={`transition-transform duration-200 hover:scale-110 rounded-xl p-4
                         ${selected === 'O' ? 'bg-light' : ''}`}
-                    onClick={() => setSelected('O')}
+                    onClick={() => handleSelect('O')}
                 >
                     <img className="w-[150px] h-[150px]" src={OIcon} alt="OIcon" />
                 </button>
                 <button
                     className={`transition-transform duration-200 hover:scale-110 rounded-xl p-4
                         ${selected === 'X' ? 'bg-light' : ''}`}
-                    onClick={() => setSelected('X')}
+                    onClick={() => handleSelect('X')}
                 >
                     <img className="w-[150px] h-[150px]" src={XIcon} alt="XIcon" />
                 </button>

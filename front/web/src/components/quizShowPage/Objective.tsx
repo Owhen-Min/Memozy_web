@@ -1,4 +1,5 @@
 import Answer from "./Answer";
+import { useState } from "react";
 
 interface ObjectiveProps {
     content: string;
@@ -8,9 +9,18 @@ interface ObjectiveProps {
     showAnswer: boolean;
     onNext: () => void;
     isLastQuiz: boolean;
+    onAnswerSelect: (answer: string) => void;
 }   
 
-const Objective = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz }: ObjectiveProps) => {
+const Objective = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz, onAnswerSelect }: ObjectiveProps) => {
+    const [inputValue, setInputValue] = useState<string>('');
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setInputValue(value);
+        onAnswerSelect(value);
+    };
+
     return(
         <div>
             <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium">
@@ -27,6 +37,8 @@ const Objective = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz
                 "
                 type="text"
                 placeholder="정답을 입력하세요..."
+                value={inputValue}
+                onChange={handleInputChange}
             />
             {showAnswer && (
                 <Answer
