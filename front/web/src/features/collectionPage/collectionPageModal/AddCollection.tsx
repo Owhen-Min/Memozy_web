@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { validateCollectionName } from '../../../utils/validation';
+import { useCollectionStore } from '../../../stores/collection/collectionStore';
 
 interface AddCollectionProps {
   isOpen: boolean;
@@ -9,10 +10,11 @@ interface AddCollectionProps {
 function AddCollection({ isOpen, onClose }: AddCollectionProps) {
   const [collectionName, setCollectionName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const createCollection = useCollectionStore(state => state.createCollection);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const validation = validateCollectionName(collectionName);
@@ -21,11 +23,15 @@ function AddCollection({ isOpen, onClose }: AddCollectionProps) {
       return;
     }
 
-    // 차후 컬렉션 생성 로직 추가
-    console.log('새 컬렉션 생성:', collectionName);
-    setCollectionName('');
-    setErrorMessage('');
-    onClose();
+    // 컬렉션 생성 로직(store 함수 호출)
+    try {
+      await createCollection(collectionName);
+      setCollectionName('');
+      setErrorMessage('');
+      onClose();
+    } catch (err) {
+      setErrorMessage('컬렉션 생성 중 오류가 발생했습니다.');
+    }
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {

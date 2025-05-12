@@ -134,7 +134,7 @@ function QuizShowPersonalPage() {
                     컬렉션 리스트로 돌아가기
                 </button>
             </div>
-            <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl p-8 relative">
+            <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
                 <div className="flex items-center justify-center">
                     <Progress
                         currentQuizIndex={currentQuizIndex}
