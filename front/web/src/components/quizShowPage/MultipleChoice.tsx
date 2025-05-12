@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Answer from "./Answer";
 
 interface MultipleChoiceProps {
     content: string;
@@ -6,10 +7,22 @@ interface MultipleChoiceProps {
     answer: string;
     commentary: string;
     quizSessionId: string;
+    showAnswer: boolean;
+    onNext: () => void;
+    isLastQuiz: boolean;
+    onAnswerSelect: (answer: { index: number; value: string }) => void;
 }
 
-const MultipleChoice = ({ content, choice }: MultipleChoiceProps) => {
+const MultipleChoice = ({ content, choice, answer, commentary, showAnswer, onNext, isLastQuiz, onAnswerSelect }: MultipleChoiceProps) => {
     const [selected, setSelected] = useState<number | null>(null);
+
+    const handleSelect = (index: number) => {
+        setSelected(index);
+        if (choice) {
+            onAnswerSelect({ index: index + 1, value: choice[index] });
+        }
+    };
+
     return(
         <div>
             <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium">
@@ -22,14 +35,21 @@ const MultipleChoice = ({ content, choice }: MultipleChoiceProps) => {
                         className={`w-full text-left px-6 py-2 rounded-lg border transition font-medium text-base
                             ${selected === index ? 'bg-light text-main200' : 'bg-white border-gray-200 text-gray-800'}
                             hover:border-lighthover hover:bg-lighthover`}
-                        onClick={() => setSelected(index)}
+                        onClick={() => handleSelect(index)}
                     >
                         {index + 1}. {item}
                     </button>
                 ))}
             </div>
-            {/* <div>정답 : {answer}</div>
-            <div>해설 : {commentary}</div> */}
+            {showAnswer && (
+                <Answer 
+                    content={content}
+                    answer={answer}
+                    commentary={commentary}
+                    onNext={onNext}
+                    isLastQuiz={isLastQuiz}
+                />
+            )}
         </div>
     );
 };
