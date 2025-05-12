@@ -181,19 +181,6 @@ public class OpenAiService {
 				       "answer": "O",  // 또는 "X"
 				       "explanation": "해설"
 				     }
-				   - **short_answer** (단답형):
-				     {
-				       "quiz_type" : 3,
-				       "question": "...",
-				       "options" : null,
-				       "answer": "정답(단답)",
-				       "explanation": "해설"
-				     }
-				
-				- `short_answer` 유형에서는 정답(`answer`)은 반드시 **짧은 명사형 키워드**나 **핵심 용어**만 사용하세요.
-				- 예: "업캐스팅", "캡슐화", "스레드", "트랜잭션"
-				- **설명(해설)은 `explanation`에 자세히 작성**하며, `answer`에는 핵심 단어만 남기세요.
-				 - 길거나 문장 형태의 답변은 단답형으로 간주하지 않으며 **출제하지 마세요.**
 				
 				3. **응답 반환**
 				   - **거부 시**
