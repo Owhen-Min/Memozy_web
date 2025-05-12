@@ -1,6 +1,5 @@
 import small_logo from "../assets/images/small_logo.png";
 import { quizShowData } from "../dummy/quizShowData";
-import { quizResultData } from "../dummy/quizResultData";
 import rightmonster from "../assets/images/quizshowImg.png";
 import save from "../assets/icons/save.svg";
 import book from "../assets/icons/summaryIcon.svg";
@@ -9,28 +8,49 @@ import second from "../assets/images/second.png";
 import third from "../assets/images/third.png";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useNavigate, useParams } from "react-router";
+import { useState } from "react";
+import MostWrongQuiz from "../components/quizShowPage/MostWrongQuiz";
+import {
+  quizShowResultData,
+  quizShowMyResultData,
+} from "../dummy/quizSharedResultData";
 
 function QuizShowResultSharedPage() {
   const navigate = useNavigate();
   const { collectionId } = useParams();
-  const { point, totalQuizCount, myWrongQuizCount, round } =
-    quizResultData.data;
+
+  // 개인 결과 데이터에서 필요한 정보 가져오기
+  const { myWrongQuizCount, totalQuizCount, myScore } =
+    quizShowMyResultData.data;
+
+  // 단체 결과 데이터에서 가장 많이 틀린 퀴즈와 랭킹 정보 가져오기
+  const { mostWrongQuiz, topRanking } = quizShowResultData.data;
+
+  // 모달 표시 상태
+  const [showMostWrongQuizModal, setShowMostWrongQuizModal] = useState(false);
 
   const handleMostWrongQuizClick = () => {
-    console.log("친구들이 가장 많이 틀린 퀴즈 클릭");
+    setShowMostWrongQuizModal(true);
   };
 
-  const handleMoreQuizClick = () => {
-    // 다음 퀴즈 풀기 또는 더 많은 퀴즈 보기 페이지로 이동
-    console.log("지금 컬렉션 퀴즈 더 풀어보기 클릭");
+  const handleCloseMostWrongQuiz = () => {
+    setShowMostWrongQuizModal(false);
   };
 
-  // 상위 랭킹 데이터
-  const topRankers = [
-    { rank: 1, name: "이가희", score: "100점", image: first },
-    { rank: 2, name: "민경현", score: "97점", image: second },
-    { rank: 3, name: "이학준", score: "95점", image: third },
-  ];
+  const handleSaveQuizClick = () => {
+    console.log("나의 컬렉션에 저장하기 클릭"); //연결아직안함
+  };
+
+  // 랭킹 데이터를 표시 형식에 맞게 변환
+  const topRankers = topRanking.map((ranker, index) => {
+    const images = [first, second, third];
+    return {
+      rank: ranker.rank,
+      name: ranker.name,
+      score: `${ranker.score}점`,
+      image: images[index] || images[2], // 기본은 3등 이미지
+    };
+  });
 
   return (
     <div className="content-quiz">
@@ -56,13 +76,10 @@ function QuizShowResultSharedPage() {
           <p className="font-pre-medium">나의 점수</p>
           <div className="flex items-end mt-2 mb-4 md:mb-6 pb-1 border-b-2 border-gray-300">
             <span className="text-[36px] md:text-[54px] leading-none text-normal font-pre-bold">
-              {point}
+              {myScore}
             </span>
             <span className="text-20 md:text-24 text-gray-600 ml-2 mb-[1px] font-pre-medium">
               점
-            </span>
-            <span className="ml-4 md:ml-6 mb-[2px] font-pre-medium">
-              {round}회차
             </span>
           </div>
 
@@ -87,7 +104,7 @@ function QuizShowResultSharedPage() {
             </button>
 
             <button
-              onClick={handleMoreQuizClick}
+              onClick={handleSaveQuizClick}
               className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
             >
               나의 컬렉션에 저장하기
@@ -129,6 +146,17 @@ function QuizShowResultSharedPage() {
             컬렉션 리스트로 돌아가기
           </button>
         </div>
+
+        {/* 가장 많이 틀린 퀴즈 모달 */}
+        {showMostWrongQuizModal && (
+          <MostWrongQuiz
+            content={mostWrongQuiz.content}
+            answer={mostWrongQuiz.answer}
+            commentary={mostWrongQuiz.commentary}
+            wrongRate={mostWrongQuiz.wrongRate}
+            onClose={handleCloseMostWrongQuiz}
+          />
+        )}
       </div>
     </div>
   );
