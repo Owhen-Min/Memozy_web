@@ -55,11 +55,12 @@ public class OpenAiService {
 			.content();
 	}
 
-	public QuizResponse createQuiz(Integer quizCount, List<String> quizTypes, String inputData) {
+	public QuizResponse createQuiz(Integer quizCount, List<String> quizTypes, String inputData,
+		List<String> existContents) {
 		if (quizCount > 10)
 			throw new GeneralException(VALIDATION_ERROR);
 
-		String promptText = fetchPromptText(quizCount, quizTypes, inputData);
+		String promptText = fetchPromptText(quizCount, quizTypes, inputData, existContents);
 
 		ChatClient gpt4oClient = chatClientBuilder
 			.defaultOptions(new MapChatOptions(Map.of("model", "gpt-4o")))
@@ -100,8 +101,10 @@ public class OpenAiService {
 		}
 	}
 
-	private static String fetchPromptText(Integer quizCount, List<String> quizTypes, String inputData) {
-		return String.format("""
+	private static String fetchPromptText(Integer quizCount, List<String> quizTypes, String inputData,
+		List<String> existContents) {
+
+		String basePrompt = String.format("""
 				당신의 임무는 투입된 데이터를 분석하여 **IT 관련 퀴즈**를 JSON 형식으로 생성하는 것입니다.
 				
 				---
@@ -229,8 +232,26 @@ public class OpenAiService {
 			quizTypes.stream()
 				.map(text -> "\"" + text + "\"")
 				.collect(Collectors.joining(", "))
-		) + "\n\n입력 데이터: " + inputData
-			+ "\n\n 최종 출력은 반드시 JSON 본문만 단독으로 출력하세요. 절대 ```json 이나 코드 블럭으로 감싸지 마세요.";
+		);
+
+		StringBuilder prompt = new StringBuilder(basePrompt);
+		prompt.append("\n\n입력 데이터: ").append(inputData);
+
+		if (!existContents.isEmpty()) {
+			String existingJoined = existContents.stream()
+				.map(s -> "- " + s)
+				.collect(Collectors.joining("\n"));
+
+			prompt.append("""
+				\n\n# 추가 제약사항
+				아래는 이미 존재하는 퀴즈 문장 목록입니다. 이 목록과 의미적으로 겹치는 퀴즈는 생성하지 마세요.
+				유사한 질문, 동일한 개념, 정답이 같은 경우 모두 제외 대상입니다.
+				""").append("\n").append(existingJoined);
+		}
+
+		prompt.append("\n\n최종 출력은 반드시 JSON 본문만 단독으로 출력하세요. 절대 ```json 이나 코드 블럭으로 감싸지 마세요.");
+
+		return prompt.toString();
 	}
 
 }

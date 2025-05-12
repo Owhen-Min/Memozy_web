@@ -40,7 +40,8 @@ public class QuizServiceImpl implements QuizService {
 			throw new GeneralException(QUIZ_ALREADY_EXISTS);
 		}
 
-		QuizResponse quizItems = openAiService.createQuiz(request.getQuizCount(), request.getQuizTypes(), summary);
+		QuizResponse quizItems = openAiService.createQuiz(request.getQuizCount(), request.getQuizTypes(), summary,
+			List.of());
 
 		List<Quiz> entities = quizItems.content().stream()
 			.map(item -> item.toEntity(sourceId))
@@ -84,7 +85,10 @@ public class QuizServiceImpl implements QuizService {
 			throw new GeneralException(QUIZ_ALREADY_CREATE_COUNT);
 		}
 
-		QuizResponse quizItems = openAiService.createQuiz(deleteQuizCount, request.quizTypes(), summary);
+		List<String> contentsBySourceId = quizRepository.findContentsBySourceId(sourceId);
+
+		QuizResponse quizItems = openAiService.createQuiz(deleteQuizCount, request.quizTypes(), summary,
+			contentsBySourceId);
 
 		List<Quiz> entities = quizItems.content().stream()
 			.map(item -> item.toEntity(sourceId))

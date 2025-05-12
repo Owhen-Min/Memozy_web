@@ -26,7 +26,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositor
 
 	List<Quiz> findBySourceId(Integer sourceId);
 
-
 	@Query("SELECT COUNT(q) FROM Quiz q WHERE q.sourceId = :sourceId AND q.collectionId IS NULL")
 	Long countBySource(Integer sourceId);
+
+	@Query("SELECT q.content FROM Quiz q WHERE q.sourceId = :sourceId")
+	List<String> findContentsBySourceId(Integer sourceId);
 }
