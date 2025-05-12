@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Answer from "./Answer";
 
 interface MultipleChoiceProps {
     content: string;
@@ -6,9 +7,12 @@ interface MultipleChoiceProps {
     answer: string;
     commentary: string;
     quizSessionId: string;
+    showAnswer: boolean;
+    onNext: () => void;
+    isLastQuiz: boolean;
 }
 
-const MultipleChoice = ({ content, choice }: MultipleChoiceProps) => {
+const MultipleChoice = ({ content, choice, answer, commentary, showAnswer, onNext, isLastQuiz }: MultipleChoiceProps) => {
     const [selected, setSelected] = useState<number | null>(null);
     return(
         <div>
@@ -28,8 +32,15 @@ const MultipleChoice = ({ content, choice }: MultipleChoiceProps) => {
                     </button>
                 ))}
             </div>
-            {/* <div>정답 : {answer}</div>
-            <div>해설 : {commentary}</div> */}
+            {showAnswer && (
+                <Answer 
+                    content={content}
+                    answer={answer}
+                    commentary={commentary}
+                    onNext={onNext}
+                    isLastQuiz={isLastQuiz}
+                />
+            )}
         </div>
     );
 };

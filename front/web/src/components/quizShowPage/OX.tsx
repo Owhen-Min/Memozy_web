@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import OIcon from '../../assets/icons/OIcon.svg';
 import XIcon from '../../assets/icons/XIcon.svg';
+import Answer from './Answer';
 
 interface OXProps {
     content: string;
     answer: string;
     commentary: string;
     quizSessionId: string;
+    showAnswer: boolean;
+    onNext: () => void;
+    isLastQuiz: boolean;
 }   
 
-const OX = ({ content }: OXProps) => {
+const OX = ({ content, answer, commentary, showAnswer, onNext, isLastQuiz }: OXProps) => {
     const [selected, setSelected] = useState<null | 'O' | 'X'>(null);
 
     return(
@@ -33,8 +37,15 @@ const OX = ({ content }: OXProps) => {
                     <img className="w-[150px] h-[150px]" src={XIcon} alt="XIcon" />
                 </button>
             </div>
-            {/* <div>정답 : {answer}</div>
-            <div>해설 : {commentary}</div> */}
+            {showAnswer && (
+                <Answer
+                    content={content}
+                    answer={answer}
+                    commentary={commentary}
+                    onNext={onNext}
+                    isLastQuiz={isLastQuiz}
+                />
+            )}
         </div>
     );
 };

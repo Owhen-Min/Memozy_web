@@ -21,6 +21,7 @@ function QuizShowPersonalPage() {
     const { collectionName, quizList, quizSessionId } = location.state as QuizShowPersonalPageProps;
     const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
     const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
+    const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
     useEffect(() => {
         if (quizList.length > 0) {
@@ -31,6 +32,19 @@ function QuizShowPersonalPage() {
     const renderQuizComponent = (currentQuiz: Quiz) => {
         if (!currentQuiz) return null;
 
+        const handleNextQuiz = () => {
+            setShowAnswer(false);
+            setCurrentQuizIndex(currentQuizIndex + 1);
+            setCurrentQuiz(quizList[currentQuizIndex + 1]);
+            if (currentQuizIndex === quizList.length - 1) {
+                navigate(`/quiz-result/personal/${collectionId}`,{state:{
+                    quizSessionId:quizSessionId
+                }});
+            }
+        };
+
+        const isLastQuiz = currentQuizIndex === quizList.length - 1;
+
         switch (currentQuiz.type) {
             case 'MULTIPLE_CHOICE':
                 return <MultipleChoice
@@ -39,6 +53,9 @@ function QuizShowPersonalPage() {
                     answer={currentQuiz.answer}
                     commentary={currentQuiz.commentary}
                     quizSessionId={quizSessionId}
+                    showAnswer={showAnswer}
+                    onNext={handleNextQuiz}
+                    isLastQuiz={isLastQuiz}
                 />;
             case 'OX':
                 return <OX 
@@ -46,6 +63,9 @@ function QuizShowPersonalPage() {
                     answer={currentQuiz.answer}
                     commentary={currentQuiz.commentary}
                     quizSessionId={quizSessionId}
+                    showAnswer={showAnswer}
+                    onNext={handleNextQuiz}
+                    isLastQuiz={isLastQuiz}
                 />;
             case 'OBJECTIVE':
                 return <Objective
@@ -53,20 +73,17 @@ function QuizShowPersonalPage() {
                     answer={currentQuiz.answer}
                     commentary={currentQuiz.commentary}
                     quizSessionId={quizSessionId}
+                    showAnswer={showAnswer}
+                    onNext={handleNextQuiz}
+                    isLastQuiz={isLastQuiz}
                 />;
             default:
                 return <div>지원하지 않는 퀴즈 타입입니다.</div>;
         }
     };
 
-    const handleNextQuiz = () => {
-        setCurrentQuizIndex(currentQuizIndex + 1);
-        setCurrentQuiz(quizList[currentQuizIndex + 1]);
-        if (currentQuizIndex === quizList.length - 1) {
-            navigate(`/quiz-result/personal/${collectionId}`,{state:{
-                quizSessionId:quizSessionId
-            }});
-        }
+    const handleShowAnswer = () => {
+        setShowAnswer(true);
     };
 
     return (
@@ -92,10 +109,15 @@ function QuizShowPersonalPage() {
                     />
                 </div>
                 {currentQuiz && renderQuizComponent(currentQuiz)}
-                <button className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1" onClick={handleNextQuiz}>
-                    <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
-                    다음문제
-                </button>
+                {!showAnswer && (
+                    <button 
+                        className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1" 
+                        onClick={handleShowAnswer}
+                    >
+                        <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+                        정답 보기
+                    </button>
+                )}
             </div>
         </div>
     );
