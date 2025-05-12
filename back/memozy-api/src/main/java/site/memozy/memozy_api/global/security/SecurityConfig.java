@@ -47,7 +47,8 @@ public class SecurityConfig {
 		"/oauth2/**", "/login/oauth2/**", "/login",
 		"/ws-connect", "/ws-connect/**",
 		"/swagger-ui/**", "/v3/api-docs/**",
-		"/", "/index.html"
+		"/", "/index.html",
+		"/api/prometheus"
 	);
 
 	@Bean

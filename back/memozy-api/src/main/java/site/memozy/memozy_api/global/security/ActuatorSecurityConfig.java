@@ -31,8 +31,7 @@ public class ActuatorSecurityConfig {
 	public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
 
 		RequestMatcher prometheusMatchers = new OrRequestMatcher(
-			new AntPathRequestMatcher("/api/prometheus"),
-			new AntPathRequestMatcher("/api/prometheus/**")
+			new AntPathRequestMatcher("/api/health")
 		);
 
 		http
