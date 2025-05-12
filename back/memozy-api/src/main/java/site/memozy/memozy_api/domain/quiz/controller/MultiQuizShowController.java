@@ -36,10 +36,8 @@ public class MultiQuizShowController {
 
 	@GetMapping("/{collectionId}")
 	@ResponseBody
-	public ApiResponse<MultiQuizShowCreateResponse> create(
-		@AuthenticationPrincipal CustomOAuth2User user,
-		@PathVariable Integer collectionId,
-		@RequestParam(defaultValue = "10") int count
+	public ApiResponse<MultiQuizShowCreateResponse> create(@AuthenticationPrincipal CustomOAuth2User user,
+		@PathVariable Integer collectionId, @RequestParam(defaultValue = "10") int count
 	) {
 		log.info("[Controller] create() called with collectionId: {}, count: {}", collectionId, count);
 		return ApiResponse.success(multiQuizShowService.createMultiQuizShow(user.getUserId(), collectionId, count));
@@ -62,20 +60,14 @@ public class MultiQuizShowController {
 
 	@MessageMapping("/quiz/show/{showId}/start")
 	public void startMultiQuizShow(
-		@DestinationVariable String showId,
-		Message<?> message,
-		Principal principal
-	) {
+		@DestinationVariable String showId, Message<?> message, Principal principal) {
 		log.info("[Controller] startMultiQuizShow() called with showId: {}", showId);
 		multiQuizShowRunner.startQuizShow(showId, 10000);
 	}
 
 	@MessageMapping("/quiz/show/{showId}/submit")
-	public void submitAnswer(
-		@DestinationVariable String showId,
-		@Payload QuizAnswerRequest request,
-		Message<?> message
-	) {
+	public void submitAnswer(@DestinationVariable String showId, @Payload QuizAnswerRequest request,
+		Message<?> message) {
 		log.info("[Controller] submitAnswer() called with showId: {}", showId);
 
 		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);

@@ -11,8 +11,7 @@
 
 <!-- 토큰 입력 -->
 <label>JWT 토큰:</label>
-<input id="jwtTokenInput" type="text" size="100" placeholder="Bearer ey..."/>
-<button onclick="saveToken()">저장</button>
+<button onclick="saveToken()">jwt 설정</button>
 <br><br>
 
 <!-- 퀴즈 코드 입력 -->
@@ -38,7 +37,7 @@
     let showId = null;
 
     function saveToken() {
-        const token = document.getElementById("jwtTokenInput").value;
+        const token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsInBlcnNvbmFsSWQiOiIxMjM0Iiwicm9sZSI6IlJPTEVfVVNFUiIsIm5hbWUiOiLthYzsiqTtirjqs4TsoJUiLCJlbWFpbCI6InRlc3RAbmF2ZXIuY29tIiwicHJvZmlsZUltYWdlIjoiaHR0cHM6Ly9yb2JvaGFzaC5vcmcvMTIzND9zZXQ9c2V0MiZzaXplPTE4MHgxODAiLCJpYXQiOjE3NDcwNDc2NzEsImV4cCI6MTc3ODU4MzY3MX0.v-ryjhFkB0OwFBvaQjNRjELvXXJlmgZTVPESXtkn46c";
         if (!token.startsWith("Bearer ")) {
             alert("⚠️ Bearer 포함해서 입력해 주세요.");
             return;

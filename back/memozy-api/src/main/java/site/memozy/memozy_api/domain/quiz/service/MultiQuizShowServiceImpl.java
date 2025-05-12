@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.domain.quiz.service;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +20,7 @@ import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
 @Service
@@ -42,7 +45,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		List<MultiQuizResponse> quizzes = quizRepository.getMultiQuizzes(userId, collectionId, count);
 		log.info("quizzes count: {}", quizzes.size());
 		if (quizzes.isEmpty() || quizzes.size() < count) {
-			throw new RuntimeException("요청한 개수보다 퀴즈 갯수가 적습니다.");
+			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
 
 		List<String> quizList = quizzes.stream()
@@ -55,8 +58,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	@Override
 	public void joinMultiQuizShow(String showId, String userId, String nickname, boolean isMember) {
-
 		log.info("[service] joinMultiQuizShow() called with showId: {}", showId);
+
 		if (!collectionRepository.existsByCode(showId)) {
 			throw new IllegalArgumentException("Invalid code" + showId);
 		}
@@ -73,8 +76,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		applicationEventPublisher.publishEvent(new QuizShowEvent(showId, userId, nickname));
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public void submitAnswer(String showId, String userId, QuizAnswerRequest request) {
 		if (!collectionRepository.existsByCode(showId)) {
 			throw new IllegalArgumentException("Invalid code" + showId);
