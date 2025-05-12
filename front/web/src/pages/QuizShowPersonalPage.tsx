@@ -127,7 +127,7 @@ function QuizShowPersonalPage() {
                     Quiz : <span className="text-normalactive">{collectionName}</span>
                 </h1>
                 <button
-                    className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
+                    className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
                     onClick={() => navigate(`/collection/${collectionId}`)}
                 >
                     <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
@@ -144,7 +144,7 @@ function QuizShowPersonalPage() {
                 {currentQuiz && renderQuizComponent(currentQuiz)}
                 {!showAnswer && (
                     <button 
-                        className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1" 
+                        className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110" 
                         onClick={handleShowAnswer}
                     >
                         <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
