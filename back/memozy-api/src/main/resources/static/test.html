@@ -1,115 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Multi Quiz Show Test</title>
+    <title>Multi Quiz Show</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 <body>
-<h2>Multi Quiz Show 테스트 (WebSocket + JWT Optional)</h2>
+<h2>Multi Quiz Show 테스트</h2>
 
-<label>Show ID: </label>
-<input id="showId" value="EURO2025">
+<!-- 토큰 입력 -->
+<label>JWT 토큰:</label>
+<input id="jwtTokenInput" type="text" size="100" placeholder="Bearer ey..."/>
+<button onclick="saveToken()">저장</button>
 <br><br>
 
-<button>Connect & Join</button>
+<!-- 퀴즈 코드 입력 -->
+<label>Show ID: </label>
+<input id="showId" value="YOUR_SHOW_ID"/>
+<br><br>
 
-<div id="status" style="margin-top: 10px;"></div>
+<button onclick="createQuizShow()">퀴즈 생성</button>
+<button onclick="connect()">Connect & Join</button>
+<button onclick="startQuiz()">Start Quiz</button>
 
-<div id="broadcasts" style="margin-top: 20px; border: 1px solid gray; padding: 10px;">
-    <strong>📢 Broadcast 메시지 로그</strong>
-    <ul id="broadcastList" style="list-style: none; padding-left: 0;"></ul>
-</div>
+<h3>퀴즈 문제</h3>
+<div id="quizQuestion">문제가 여기에 표시됩니다</div>
 
-<div id="participants" style="margin-top: 20px; border: 1px solid gray; padding: 10px;">
-    <strong>🧑‍🤝‍🧑 현재 참가자 목록</strong>
-    <ul id="participantList" style="list-style: none; padding-left: 0;"></ul>
-</div>
+<h3>참가자 목록</h3>
+<ul id="participantList"></ul>
 
-<script type="module">
-    import {Client} from 'https://cdn.jsdelivr.net/npm/@stomp/stompjs/+esm';
+<h3>결과 로그</h3>
+<ul id="resultLog"></ul>
 
-    function connect() {
-        const showId = document.getElementById("showId").value;
-        const token = localStorage.getItem("jwtToken");
-        const headers = token ? {Authorization: "Bearer " + token} : {};
+<script>
+    let stompClient = null;
+    let showId = null;
 
-        console.log("🛠️ 연결 시도: showId =", showId);
-        if (token) {
-            console.log("🔐 JWT Token 감지됨 (prefix 포함):", headers.Authorization);
-        } else {
-            console.log("🧑‍🤝‍🧑 JWT Token 없음, 게스트로 연결");
+    function saveToken() {
+        const token = document.getElementById("jwtTokenInput").value;
+        if (!token.startsWith("Bearer ")) {
+            alert("⚠️ Bearer 포함해서 입력해 주세요.");
+            return;
         }
-
-        const client = new Client({
-            brokerURL: "ws://localhost:8080/ws-connect",
-            connectHeaders: headers,
-            debug: (str) => console.log("[STOMP DEBUG]", str),
-            reconnectDelay: 5000,
-
-            onConnect: () => {
-                console.log("✅ WebSocket 연결 성공");
-                document.getElementById("status").innerText = "✔ 연결됨";
-
-                const subscribePath = `/sub/quiz/show/${showId}/join`;
-                console.log("📡 Subscribing to", subscribePath);
-
-                client.subscribe(subscribePath, (message) => {
-                    console.log("📥 수신 메시지:", message.body);
-
-                    const li = document.createElement("li");
-
-                    try {
-                        const body = JSON.parse(message.body);
-
-                        if (body.type === "JOIN" && body.nickname) {
-                            li.textContent = `👋 ${body.nickname}님이 입장하셨습니다`;
-                            document.getElementById("broadcastList").prepend(li);
-                        } else if (body.type === "PARTICIPANT_LIST" && Array.isArray(body.participants)) {
-                            const list = document.getElementById("participantList");
-                            list.innerHTML = ""; // 기존 목록 초기화
-                            body.participants.forEach(nickname => {
-                                const participantItem = document.createElement("li");
-                                participantItem.textContent = nickname;
-                                list.appendChild(participantItem);
-                            });
-                        } else {
-                            li.textContent = `📨 type: ${body.type}, userId: ${body.userId}, nickname: ${body.nickname}`;
-                            document.getElementById("broadcastList").prepend(li);
-                        }
-                    } catch (e) {
-                        li.textContent = `📨 (raw): ${message.body}`;
-                        document.getElementById("broadcastList").prepend(li);
-                    }
-                });
-
-                const payload = {
-                    nickname: "Guest957",
-                    isMember: false
-                };
-
-                console.log("🚀 참가 요청 전송:", payload);
-                client.publish({
-                    destination: `/pub/quiz/show/${showId}/join`,
-                    body: JSON.stringify(payload)
-                });
-
-                const li = document.createElement("li");
-                li.textContent = "🚀 참가 요청 전송됨";
-                document.getElementById("broadcastList").prepend(li);
-            },
-
-            onStompError: (frame) => {
-                console.error("❌ Broker 에러:", frame.headers['message']);
-                console.error("❌ 본문:", frame.body);
-                document.getElementById("status").innerText = "❌ 연결 실패 (STOMP 에러)";
-            }
-        });
-
-        client.activate();
+        localStorage.setItem("jwtToken", token);
+        alert("✅ 토큰 저장 완료");
     }
 
-    document.querySelector("button").addEventListener("click", connect);
-</script>
+    function createQuizShow() {
+        const jwtToken = localStorage.getItem("jwtToken");
+        const collectionId = prompt("컬렉션 ID를 입력하세요");
+        const count = 10;
 
+        fetch(`/api/quiz/show/${collectionId}?count=${count}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...(jwtToken && {Authorization: jwtToken})
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const result = data.data;
+                document.getElementById("showId").value = result.showId;
+                logResult(`✅ 퀴즈 생성 완료. showId: ${result.showId}`);
+            })
+            .catch(error => {
+                logResult(`❌ 퀴즈 생성 실패: ${error}`);
+            });
+    }
+
+    function connect() {
+        showId = document.getElementById("showId").value;
+        const socket = new SockJS("/ws-connect");
+        stompClient = Stomp.over(socket);
+
+        const jwtToken = localStorage.getItem("jwtToken");
+        const headers = jwtToken ? {Authorization: jwtToken} : {};
+
+        stompClient.connect(headers, () => {
+            logResult(`✔ WebSocket 연결됨 (showId: ${showId})`);
+
+            // 참가 요청
+            stompClient.send(`/pub/quiz/show/${showId}/join`, {}, JSON.stringify({}));
+
+            // 참가자 입장 알림
+            stompClient.subscribe(`/sub/quiz/show/${showId}/join`, (message) => {
+                const payload = JSON.parse(message.body);
+                logResult(`🟢 ${payload.nickname} 님 참가`);
+            });
+
+            // 참가자 목록
+            stompClient.subscribe(`/sub/quiz/show/${showId}/participants`, (message) => {
+                const data = JSON.parse(message.body);
+                const list = document.getElementById("participantList");
+                list.innerHTML = '';
+                data.participants.forEach(nickname => {
+                    const li = document.createElement("li");
+                    li.textContent = nickname;
+                    list.appendChild(li);
+                });
+            });
+
+            // ✅ 퀴즈 문제 수신
+            stompClient.subscribe(`/sub/quiz/show/${showId}/quiz`, (message) => {
+                const data = JSON.parse(message.body);
+                const index = data.index;
+                const quiz = data.quiz;
+                document.getElementById("quizQuestion").innerText = `🧠 [Q${index + 1}] ${quiz}`;
+                logResult(`📥 문제 수신 완료`);
+            });
+
+            // 전체 결과 수신
+            stompClient.subscribe(`/sub/quiz/show/${showId}/result`, (message) => {
+                const result = JSON.parse(message.body);
+                logResult(`🏁 결과: ${result.type}, 가장 많이 틀린 문제: ${result.wrongQuizResultResponse}`);
+            });
+
+        }, (error) => {
+            logResult("❌ WebSocket 연결 실패: " + error);
+        });
+    }
+
+    function startQuiz() {
+        if (!stompClient || !showId) {
+            alert("먼저 WebSocket 연결하세요.");
+            return;
+        }
+        stompClient.send(`/pub/quiz/show/${showId}/start`, {}, JSON.stringify({}));
+        logResult("🚀 퀴즈 시작 요청 전송");
+    }
+
+    function logResult(message) {
+        const logList = document.getElementById("resultLog");
+        const li = document.createElement("li");
+        li.textContent = message;
+        logList.appendChild(li);
+    }
+</script>
 </body>
 </html>

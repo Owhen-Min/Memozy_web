@@ -12,7 +12,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MultiQuizShowRedisRepository {
@@ -39,22 +41,29 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public void saveQuizzes(String showId, int collectionId, int hostUserId, int count, List<String> quizList) {
-		String metaDataKey = "show:" + showId + ":metadata";
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("hostUserId", String.valueOf(hostUserId));
-		metadata.put("collectionId", String.valueOf(collectionId));
-		metadata.put("quizCount", String.valueOf(count));
-		metadata.put("startTime", LocalDateTime.now().toString());
+		log.info("[Redis] saveQuizzes() called with showId: {}, collectionId: {}, hostUserId: {}, count: {}",
+			showId, collectionId, hostUserId, count);
+		try {
+			String metaDataKey = "show:" + showId + ":metadata";
+			Map<String, String> metadata = new HashMap<>();
+			metadata.put("hostUserId", String.valueOf(hostUserId));
+			metadata.put("collectionId", String.valueOf(collectionId));
+			metadata.put("quizCount", String.valueOf(count));
+			metadata.put("startTime", LocalDateTime.now().toString());
 
-		redisTemplate.opsForHash().putAll(metaDataKey, metadata);
-		redisTemplate.expire(metaDataKey, 1, TimeUnit.DAYS);
+			redisTemplate.opsForHash().putAll(metaDataKey, metadata);
+			redisTemplate.expire(metaDataKey, 1, TimeUnit.DAYS);
 
-		String quizListKey = "show:" + showId + ":quiz";
-		for (int i = 0; i < quizList.size(); i++) {
-			String quizIndex = String.valueOf(i); // 순차 index 기반
-			redisTemplate.opsForHash().put(quizListKey, quizIndex, quizList.get(i));
+			String quizListKey = "show:" + showId + ":quiz";
+			for (int i = 0; i < quizList.size(); i++) {
+				String quizIndex = String.valueOf(i); // 순차 index 기반
+				redisTemplate.opsForHash().put(quizListKey, quizIndex, quizList.get(i));
+			}
+			redisTemplate.expire(quizListKey, 1, TimeUnit.DAYS);
+		} catch (Exception e) {
+			log.error("Error saving quizzes to Redis: {}", e.getMessage());
+			throw new RuntimeException("Failed to save quizzes to Redis");
 		}
-		redisTemplate.expire(quizListKey, 1, TimeUnit.DAYS);
 	}
 
 	public String getQuizByIndex(String showId, int index) {

@@ -41,6 +41,7 @@ public class MultiQuizShowController {
 		@PathVariable Integer collectionId,
 		@RequestParam(defaultValue = "10") int count
 	) {
+		log.info("[Controller] create() called with collectionId: {}, count: {}", collectionId, count);
 		return ApiResponse.success(multiQuizShowService.createMultiQuizShow(user.getUserId(), collectionId, count));
 	}
 
@@ -84,11 +85,6 @@ public class MultiQuizShowController {
 		multiQuizShowService.submitAnswer(showId, userId, request);
 	}
 
-	public void sendResult() {
-
-	}
-
-	@GetMapping()
 	@GetMapping("/quiz/show")
 	public String getMultiQuizShow() {
 		return "redirect:/test.html";

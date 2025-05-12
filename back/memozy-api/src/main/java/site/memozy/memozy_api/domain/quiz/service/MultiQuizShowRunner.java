@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowResultEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 
 @Service
@@ -48,6 +49,6 @@ public class MultiQuizShowRunner {
 			Map.of("message", "퀴즈가 종료되었습니다.")
 		);
 
-		//quizShowEventListener.handleQuizShowResultEvent(new )
+		quizShowEventListener.handleQuizShowResult(new QuizShowResultEvent(showId));
 	}
 }
