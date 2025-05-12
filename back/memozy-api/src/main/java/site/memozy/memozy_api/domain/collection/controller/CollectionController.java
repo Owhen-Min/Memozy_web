@@ -120,7 +120,7 @@ public class CollectionController {
 	}
 
 	@Operation(summary = "컬렉션 내 memozy 목록 조회", description = "page는 0번 부터 순차적으로 1,2,3 늘려주면서 호출해주면 됨")
-	@GetMapping("/collection/url")
+	@GetMapping("/url")
 	public ApiResponse<CollectionMemozyListResponse> getUrlsInCollection(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
 		@RequestParam("collectionId") Integer collectionId,
