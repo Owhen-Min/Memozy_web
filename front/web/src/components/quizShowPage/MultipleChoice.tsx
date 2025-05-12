@@ -25,8 +25,8 @@ const MultipleChoice = ({ content, choice, answer, commentary, showAnswer, onNex
 
     return(
         <div>
-            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium">
-                문제 내용 : {content}
+            <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
+                {content}
             </div>
             <div className="w-full flex flex-col gap-2">
                 {choice?.map((item, index) => (

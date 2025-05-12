@@ -10,7 +10,7 @@ export const quizShowData: QuizShowResponse = {
         quizList: [
             {
                 quizId: 1,
-                content: "프랑스의 수도는 파리인가?",
+                content: "프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  프랑스의 수도는 어디인가?  ",
                 type: "MULTIPLE_CHOICE",
                 choice: ["로마", "서울", "도쿄", "파리"],
                 answer: "파리",
