@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import DeleteCollection from './collectionPageModal/DeleteCollection';
 import EditCollectionName from './collectionPageModal/EditCollectionName';
+import { useCollectionStore } from '../../stores/collection/collectionStore';
 
 interface CollectionCardProps {
     id: number;
@@ -18,6 +19,8 @@ function CollectionCard({ id, name, memozyCount, quizCount }: CollectionCardProp
     const navigate = useNavigate();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const deleteCollection = useCollectionStore(state => state.deleteCollection);
+    const updateCollection = useCollectionStore(state => state.updateCollection);
 
     const handleClick = () => {
         navigate(`/collection/${id}`);
@@ -34,15 +37,13 @@ function CollectionCard({ id, name, memozyCount, quizCount }: CollectionCardProp
     };
     
 
-    const handleDeleteConfirm = () => {
-        // TODO: 삭제 API 호출
-        console.log('컬렉션 삭제:', id);
+    const handleDeleteConfirm = async () => {
+        await deleteCollection(id);
         setIsDeleteModalOpen(false);
     };
 
-    const handleEditConfirm = () => {
-        // TODO: 수정 API 호출
-        console.log('컬렉션 수정:', id);
+    const handleEditConfirm = async (newName: string) => {
+        await updateCollection(id, newName);
         setIsEditModalOpen(false);
     };
 

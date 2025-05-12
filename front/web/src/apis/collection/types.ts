@@ -14,3 +14,8 @@ export interface DeleteQuizRequest {
     quizId: number[];
     sourceId: number[];
 }
+
+export interface DeleteCollectionRequest {
+    collectionId: number;
+}
+

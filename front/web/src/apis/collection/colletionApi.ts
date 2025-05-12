@@ -1,5 +1,5 @@
 import httpClient from "../httpClient";
-import {CreateCollectionRequest, UpdateCollectionRequest, CopyMemozyRequest, DeleteQuizRequest } from "./types";
+import {CreateCollectionRequest, UpdateCollectionRequest, CopyMemozyRequest, DeleteQuizRequest, DeleteCollectionRequest } from "./types";
 
 
 
@@ -22,7 +22,10 @@ export const collectionApi = {
 
     //컬렉션 삭제
     deleteCollection: async (collectionId: number) => {
-        const response = await httpClient.delete(`/collection/${collectionId}`);
+        const requestData: DeleteCollectionRequest = {
+            "collectionId" : collectionId
+        }
+        const response = await httpClient.delete("/collection",{data: requestData});
         return response;
     },
 
