@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 public class ActuatorSecurityConfig {
@@ -26,8 +29,14 @@ public class ActuatorSecurityConfig {
 	@Bean
 	@Order(1)
 	public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
+
+		RequestMatcher prometheusMatchers = new OrRequestMatcher(
+			new AntPathRequestMatcher("/api/prometheus"),
+			new AntPathRequestMatcher("/api/prometheus/**")
+		);
+
 		http
-			.securityMatcher(request -> request.getRequestURI().startsWith("/api/prometheus"))
+			.securityMatcher(prometheusMatchers)
 			.authorizeHttpRequests(auth -> auth
 				.anyRequest().hasRole("ACTUATOR"))
 			.httpBasic(withDefaults())
