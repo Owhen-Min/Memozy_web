@@ -28,4 +28,7 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 
 	@Query("SELECT DISTINCT q.userId FROM QuizSource q WHERE q.sourceId IN :sourceIds")
 	List<Integer> findDistinctUserIdsBySourceIds(@Param("sourceIds") List<Integer> sourceIds);
+
+	Optional<QuizSource> findBySourceId(Integer sourceId);
+
 }

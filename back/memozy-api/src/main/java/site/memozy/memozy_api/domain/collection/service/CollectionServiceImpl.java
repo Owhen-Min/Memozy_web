@@ -114,6 +114,9 @@ public class CollectionServiceImpl implements CollectionService {
 			.toList();
 
 		// 3. sourceId를 통해 User 확인하기
+		if (sourceIds.size() != 1) {
+			throw new GeneralException(COLLECTION_TOO_MANY_SOURCE_ID);
+		}
 		List<Integer> distinctUserIds = quizSourceRepository.findDistinctUserIdsBySourceIds(sourceIds);
 		if (distinctUserIds.size() != 1) {
 			throw new GeneralException(COLLECTION_INVALID_USER);
@@ -125,6 +128,11 @@ public class CollectionServiceImpl implements CollectionService {
 
 		// 3. 컬렉션 ID 업데이트
 		quizzes.forEach(q -> q.updateCollectionId(collectionId));
+
+		// 4. QuizSource의 컬렉션 ID 업데이트하기
+		QuizSource quizSource = quizSourceRepository.findBySourceId(sourceIds.get(0))
+			.orElseThrow(() -> new GeneralException(COLLECTION_INVALID_SOURCE_ID));
+		quizSource.updateCollectionId(collectionId);
 	}
 
 	@Override
