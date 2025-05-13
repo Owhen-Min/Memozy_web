@@ -194,6 +194,7 @@ function AnalysisReport() {
     },
     scales: {
       x: {
+        offset: true,
         ticks: {
           autoSkip: false,
           font: {
@@ -202,7 +203,7 @@ function AnalysisReport() {
           },
         },
         grid: {
-          offset: false,
+          offset: true,
         },
       },
       y: {
@@ -393,7 +394,9 @@ function AnalysisReport() {
                     ...barChartData,
                     datasets: barChartData.datasets.map((dataset) => ({
                       ...dataset,
-                      barThickness: window.innerWidth < 768 ? 40 : 80, // 모바일에서는 더 작게
+                      barThickness: undefined,
+                      categoryPercentage: 0.8,
+                      barPercentage: 0.9,
                     })),
                   }}
                   options={barChartOptions}
