@@ -8,6 +8,11 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   quizzes: [],
   loading: false,
   error: null,
+  collectionName: null,
+  // 페이지네이션 초기 상태
+  currentPage: 0,
+  pageSize: 10,
+  hasMore: true,
 
   // 컬렉션 조회
   fetchCollections: async () => {
@@ -60,15 +65,43 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   },
 
   // 메모지 목록 조회
-  fetchMemozyList: async (collectionId: number) => {
+  fetchMemozyList: async (collectionId: number, page?: number, pageSize?: number) => {
     try {
       set({ loading: true, error: null });
-      const response = await collectionApi.getMemozyList(collectionId);
-      set({ memozies: response.data, loading: false });
+      const currentPage = page ?? get().currentPage;
+      const currentPageSize = pageSize ?? get().pageSize;
+
+      const response = await collectionApi.getMemozyList(
+        collectionId,
+        currentPage,
+        currentPageSize
+      );
+
+      set({
+        memozies:
+          currentPage === 0
+            ? response.data.data.content
+            : [...get().memozies, ...response.data.data.content],
+        collectionName: response.data.data.collectionName,
+        currentPage: currentPage,
+        pageSize: currentPageSize,
+        hasMore: !response.data.data.last,
+        loading: false,
+      });
     } catch (error) {
       set({ error: "메모지 목록을 불러오는데 실패했습니다.", loading: false });
       console.error("메모지 목록 조회 오류:", error);
     }
+  },
+
+  // 페이지 변경
+  setPage: (page: number) => {
+    set({ currentPage: page });
+  },
+
+  // 페이지 크기 변경
+  setPageSize: (pageSize: number) => {
+    set({ pageSize, currentPage: 0 }); // 페이지 크기가 변경되면 첫 페이지로 리셋
   },
 
   // 메모지 복제
@@ -84,11 +117,11 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   },
 
   // 퀴즈 목록 조회
-  fetchQuizList: async (memozyId: number) => {
+  fetchQuizList: async (sourceId: number) => {
     try {
       set({ loading: true, error: null });
-      const response = await collectionApi.getQuizList(memozyId);
-      set({ quizzes: response.data, loading: false });
+      const response = await collectionApi.getQuizList(sourceId);
+      set({ quizzes: response.data.data || [], loading: false });
     } catch (error) {
       set({ error: "퀴즈 목록을 불러오는데 실패했습니다.", loading: false });
       console.error("퀴즈 목록 조회 오류:", error);

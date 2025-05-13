@@ -5,8 +5,8 @@ import NoteModal from "./NoteModal";
 import DropDownBox from "./DropDownBox";
 
 interface MemozyCardProps {
-  memozyId: number;
-  urlTitle: string;
+  sourceId: number;
+  sourceTitle: string;
   summary: string;
   quizCount: number;
   isEditMode: boolean;
@@ -15,8 +15,8 @@ interface MemozyCardProps {
 }
 
 function MemozyCard({
-  memozyId,
-  urlTitle,
+  sourceId,
+  sourceTitle,
   summary,
   quizCount,
   isEditMode,
@@ -41,12 +41,12 @@ function MemozyCard({
                 />
               )}
               <div>
-                <h2 className="text-[20px] font-pre-semibold text-main200 mb-2 line-clamp-1">
-                  {urlTitle}
+                <h2 className="text-20 font-pre-semibold text-main200 mb-2 line-clamp-1">
+                  {sourceTitle}
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-pre-regular text-gray200">퀴즈 수</span>
-                  <span className="text-[14px] font-pre-medium text-normal">{quizCount}</span>
+                  <span className="text-14 font-pre-regular text-gray200">퀴즈 수</span>
+                  <span className="text-14 font-pre-medium text-normal">{quizCount}</span>
                 </div>
               </div>
             </div>
@@ -73,12 +73,16 @@ function MemozyCard({
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropDownOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
         >
-          <DropDownBox memozyId={memozyId} />
+          <DropDownBox sourceId={sourceId} />
         </div>
       </div>
-      <div className="h-4" /> {/* 카드 사이 간격 */}
+      <div className="h-4" />
       {isModalOpen && (
-        <NoteModal urlTitle={urlTitle} summary={summary} onClose={() => setIsModalOpen(false)} />
+        <NoteModal
+          sourceTitle={sourceTitle}
+          summary={summary}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
     </>
   );
