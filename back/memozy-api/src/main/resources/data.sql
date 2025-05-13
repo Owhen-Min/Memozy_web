@@ -1,15 +1,15 @@
 -- 1. Users (1명)
--- INSERT INTO Users (user_id, name, email, profile_image, created_at, personal_id)
--- VALUES (1, '홍길동', 'hong@example.com', 'https://image.example.com/hong.jpg', NOW(), 123456);
+INSERT INTO users (user_id, name, email, profile_image, created_at, personal_id)
+VALUES (1, '홍길동', 'hong@example.com', 'https://image.example.com/hong.jpg', NOW(), 123456);
 
 -- 2. Collections (3개)
-INSERT INTO Collections (collection_id, user_id, name, created_at, updated_at, code)
+INSERT INTO collections (collection_id, user_id, name, created_at, updated_at, code)
 VALUES (1, 1, '유럽 여행', NOW(), NOW(), 'EURO2025'),
        (2, 1, '세계사 퀴즈', NOW(), NOW(), 'WORLDHIS'),
        (3, 1, '예술작품 퀴즈', NOW(), NOW(), 'ART2025');
 
 -- 3. Quiz_sources (8개)
-INSERT INTO Quiz_sources (source_id, title, summary, url, created_at, user_id, collection_id)
+INSERT INTO quiz_sources (source_id, title, summary, url, created_at, user_id, collection_id)
 VALUES (1, '루브르 박물관 개요', '세계 최대의 미술관 중 하나', 'https://museum.example.com/louvre', NOW(), 1, 3),
        (2, '세계 2차 대전 개요', '1939년부터 시작된 세계 대전', 'https://history.example.com/ww2', NOW(), 1, 2),
        (3, '파리 여행 가이드', '에펠탑 등 파리 명소 소개', 'https://travel.example.com/paris', NOW(), 1, 1),
@@ -19,7 +19,7 @@ VALUES (1, '루브르 박물관 개요', '세계 최대의 미술관 중 하나'
        (7, '빈센트 반 고흐', '고흐의 삶과 작품', 'https://artist.example.com/van-gogh', NOW(), 1, 3),
        (8, '프랑스 혁명', '1789년 프랑스 혁명의 배경과 결과', 'https://history.example.com/revolution', NOW(), 1, 2);
 
-INSERT INTO Quizzes (quiz_id, content, type, answer, commentary, created_at, collection_id, source_id)
+INSERT INTO quizzes (quiz_id, content, type, answer, commentary, created_at, collection_id, source_id)
 VALUES
 -- source 1 (3개)
 (1, '루브르 박물관이 위치한 도시는?', 'MULTIPLE_CHOICE', '파리', '루브르는 파리에 있습니다.', NOW(), 3, 1),

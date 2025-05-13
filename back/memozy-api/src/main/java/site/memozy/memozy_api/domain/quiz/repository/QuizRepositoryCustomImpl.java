@@ -11,7 +11,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
+import site.memozy.memozy_api.domain.quiz.dto.QMultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QPersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QQuizSelectResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizSelectResponse;
@@ -71,6 +73,36 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 							history.quizId.isNotNull()
 						)
 				) : null // newOnly가 false일 때는 조건 생략
+			)
+			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
+			.limit(count)
+			.fetch();
+	}
+
+	@Override
+	public List<MultiQuizResponse> getMultiQuizzes(int userId, int collectionId, int count) {
+		List<Integer> sourceIds = jpaQueryFactory
+			.select(quizSource.sourceId)
+			.from(quizSource)
+			.where(
+				quizSource.collectionId.eq(collectionId),
+				quizSource.userId.eq(userId)
+			)
+			.fetch();
+
+		// 2. 랜덤 퀴즈 조회
+		return jpaQueryFactory
+			.select(new QMultiQuizResponse(
+				quiz.quizId,
+				quiz.content,
+				quiz.type,
+				quiz.answer,
+				quiz.commentary,
+				quiz.option
+			))
+			.from(quiz)
+			.where(
+				quiz.sourceId.in(sourceIds)
 			)
 			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
 			.limit(count)
