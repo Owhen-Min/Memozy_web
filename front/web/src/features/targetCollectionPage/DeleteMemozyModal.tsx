@@ -1,14 +1,26 @@
 import closeIcon from "../../assets/icons/closeIcon.svg";
-
+import { useCollectionStore } from "../../stores/collection/collectionStore";
+import { useParams } from "react-router";
 interface DeleteMemozyModalProps {
-  memozyIds: number[];
+  quizId: number[] | null;
+  sourceId: number[] | null;
   onClose: () => void;
 }
 
-function DeleteMemozyModal({ memozyIds, onClose }: DeleteMemozyModalProps) {
-  const handleDelete = () => {
-    console.log("삭제 memozy : ", memozyIds);
-    onClose();
+function DeleteMemozyModal({ quizId, sourceId, onClose }: DeleteMemozyModalProps) {
+  const { deleteQuiz, fetchMemozyList } = useCollectionStore();
+  const { collectionId } = useParams();
+
+  const handleDelete = async () => {
+    try {
+      await deleteQuiz(quizId || [], sourceId || []);
+      if (collectionId) {
+        await fetchMemozyList(Number(collectionId));
+      }
+      onClose();
+    } catch (err) {
+      console.error("메모지 삭제 중 오류 발생:", err);
+    }
   };
 
   return (

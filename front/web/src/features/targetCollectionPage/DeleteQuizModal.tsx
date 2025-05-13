@@ -3,8 +3,8 @@ import { useCollectionStore } from "../../stores/collection/collectionStore";
 import { useParams } from "react-router";
 
 interface DeleteQuizModalProps {
-  quizId: number[];
-  sourceId: number[];
+  quizId: number[] | null;
+  sourceId: number[] | null;
   onClose: () => void;
 }
 
@@ -14,7 +14,7 @@ function DeleteQuizModal({ quizId, sourceId, onClose }: DeleteQuizModalProps) {
 
   const handleDelete = async () => {
     try {
-      await deleteQuiz(quizId, sourceId);
+      await deleteQuiz(quizId || [], sourceId || []);
       if (collectionId) {
         await fetchMemozyList(Number(collectionId));
       }
