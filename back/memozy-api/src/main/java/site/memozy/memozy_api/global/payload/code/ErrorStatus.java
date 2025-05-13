@@ -27,7 +27,9 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ402", "이미 퀴즈가 존재합니다."),
 	QUIZ_CREATE_ERROR(HttpStatus.BAD_REQUEST, "QUIZ403", "퀴즈 생성에 일시적 오류가 있습니다. 잠시 후 다시 시도해주세요."),
 	QUIZ_ALREADY_CREATE_COUNT(HttpStatus.BAD_REQUEST, "QUIZ404", "퀴즈 생성 수를 초과했습니다."),
-
+	QUIZ_CODE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ405", "해당 퀴즈 코드가 존재하지 않습니다."),
+	QUIZ_NOT_HOST(HttpStatus.BAD_REQUEST, "QUIZ406", "해당 퀴즈의 호스트가 아닙니다."),
+	QUIZ_INVALID_STATE(HttpStatus.BAD_REQUEST, "QUIZ407", "퀴즈 상태가 유효하지 않습니다."),
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
 	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),
@@ -49,6 +51,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	REDIS_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS501", "퀴즈 세션을 저장하는 중 오류가 발생했습니다."),
 	REDIS_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS502", "퀴즈 상태를 갱신하는 중 오류가 발생했습니다."),
 	REDIS_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS503", "퀴즈 세션이 존재하지 않습니다."),
+	REDIS_QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS504", "해당 퀴즈가 존재하지 않습니다."),
+	REDIS_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS505", "해당 참가자가 존재하지 않습니다."),
 	REDIS_QUIZ_ALREADY_ATTEMPTED(HttpStatus.BAD_REQUEST, "REDIS504", "이미 푼 문제에 대해서 재요청 시 처리할 수 없습니다."),
 	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "잘못된 메타데이터 형식입니다.");
 
