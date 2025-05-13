@@ -17,8 +17,7 @@ function QuizShowResultPersonalPage() {
   // const { } = location.state as QuizShowResultPersonalPageProps;
   const collectionId = useParams().collectionId;
 
-  const { point, totalQuizCount, myWrongQuizCount, round } =
-    quizResultData.data;
+  const { point, totalQuizCount, myWrongQuizCount, round } = quizResultData.data;
 
   const handleWrongNoteClick = () => {
     // 오답노트 페이지로 이동
@@ -36,10 +35,7 @@ function QuizShowResultPersonalPage() {
     <div className="content-quiz">
       <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
         <img src={small_logo} alt="logo" className="w-10 h-10" />
-        Quiz :
-        <span className="text-normalactive">
-          {quizShowData.data.collectionName}
-        </span>
+        Quiz :<span className="text-normalactive">{quizShowData.data.collectionName}</span>
       </h1>
       <div className="w-full bg-white rounded-xl shadow-xl p-8 flex flex-col h-[70vh] justify-between relative">
         {/* 캐릭터 이미지 */}
@@ -51,20 +47,14 @@ function QuizShowResultPersonalPage() {
         <div className="w-1/2 h-3/4 bg-blue-50 p-8 rounded-xl flex flex-col">
           <p className="font-pre-medium">나의 점수</p>
           <div className="flex items-end mt-2 mb-6 pb-1 border-b border-gray-300">
-            <span className="text-[54px] leading-none text-blue-600 font-pre-bold">
-              {point}
-            </span>
-            <span className="text-[24px] text-gray-600 ml-2 mb-[1px] font-pre-medium">
-              점
-            </span>
+            <span className="text-[54px] leading-none text-blue-600 font-pre-bold">{point}</span>
+            <span className="text-[24px] text-gray-600 ml-2 mb-[1px] font-pre-medium">점</span>
             <span className="ml-6 mb-[2px] font-pre-medium">{round}회차</span>
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-pre-medium">총 퀴즈 수 : {totalQuizCount}퀴즈</p>
-            <p className="font-pre-medium">
-              틀린 퀴즈 수 : {myWrongQuizCount}퀴즈
-            </p>
+            <p className="font-pre-medium">틀린 퀴즈 수 : {myWrongQuizCount}퀴즈</p>
 
             <button
               onClick={handleWrongNoteClick}
