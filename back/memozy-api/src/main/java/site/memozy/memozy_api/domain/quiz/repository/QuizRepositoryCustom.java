@@ -12,5 +12,4 @@ public interface QuizRepositoryCustom {
 	List<PersonalQuizResponse> getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly);
 
 	long deleteQuizNotInQuizId(List<Long> quizIds, Integer sourceId);
-
 }
