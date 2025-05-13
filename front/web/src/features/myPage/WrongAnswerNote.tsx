@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
-import { quizHistoryData } from "../../dummy/quizHistoryData";
 import small_logo from "../../assets/images/small_logo.png";
 import folder from "../../assets/images/folder.png";
 import Modal from "./WrongAnswerModal";
 import { QuizHistoryData, WrongAnswer } from "../../types/wrongAnswer";
-import { fetchWrongAnswerCollections } from "../../apis/history/historyApi";
+import { fetchWrongAnswerCollections, fetchWrongAnswerDetail } from "../../apis/history/historyApi";
 
 function WrongAnswerNote() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // 모달에 전달할 데이터를 관리하는 state
   const [modalData, setModalData] = useState<QuizHistoryData | null>(null);
   const [collectionList, setCollectionList] = useState<WrongAnswer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   useEffect(() => {
     // API를 사용하여 오답노트 컬렉션 리스트 가져오기
@@ -30,12 +29,28 @@ function WrongAnswerNote() {
     fetchCollections();
   }, []);
 
-  const handleFolderClick = (id: number) => {
-    // 클릭한 아이템의 id를 사용하여 quizHistoryData에서 해당 데이터를 찾기
-    const data = quizHistoryData.find((item) => item.id === id);
-    if (data) {
-      // 찾은 데이터를 모달에 전달할 데이터로 설정하고 모달을 열기
+  const handleFolderClick = async (id: number) => {
+    try {
+      setIsDetailLoading(true);
+      // 선택한 컬렉션의 이름 가져오기
+      const collection = collectionList.find((item) => item.id === id);
+      if (!collection) return;
+
+      // 해당 컬렉션의 오답 내역 가져오기
+      const historyData = await fetchWrongAnswerDetail(id);
+
+      // 모달에 표시할 데이터 설정
+      setModalData({
+        id: id,
+        name: collection.name,
+        data: historyData,
+      });
+
       setIsModalOpen(true);
+    } catch (error) {
+      console.error("오답 내역을 가져오는 중 오류 발생:", error);
+    } finally {
+      setIsDetailLoading(false);
     }
   };
 
@@ -74,7 +89,12 @@ function WrongAnswerNote() {
         ))}
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={modalData} />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        data={modalData}
+        isLoading={isDetailLoading}
+      />
     </div>
   );
 }
