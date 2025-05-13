@@ -36,7 +36,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
         onClick={handleOutsideClick}
       >
         <div className="bg-blue-50 p-8 rounded-lg w-[70%] h-[90%] overflow-y-auto relative shadow-lg">
-          <button onClick={onClose} className="absolute top-4 right-4 text-xl">
+          <button onClick={onClose} className="absolute top-4 right-4 text-20">
             <img src={closeIcon} alt="닫기" />
           </button>
           <div className="flex items-center justify-center h-full">
@@ -67,12 +67,12 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
             }
           `}
         </style>
-        <button onClick={onClose} className="absolute top-4 right-4 text-xl">
+        <button onClick={onClose} className="absolute top-4 right-4 text-20">
           <img src={closeIcon} alt="닫기" />
         </button>
         <div className="flex items-center mb-6">
           <img src={openfolder} alt="폴더" className="w-8 h-8 mr-2" />
-          <h2 className="text-2xl font-bold">{data.name}</h2>
+          <h2 className="text-24 font-bold">{data.name}</h2>
         </div>
         {data.data.length === 0 ? (
           <div className="text-center p-10">
@@ -86,7 +86,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
               onClick={() => toggleDropDown(history.historyId)}
             >
               <div className="flex justify-between items-center">
-                <h3 className="font-pre-bold text-lg">{history.round}회차</h3>
+                <h3 className="font-pre-bold text-[18px]">{history.round}회차</h3>
                 <div className="flex items-center">
                   <button className="p-2 hover:bg-light rounded-lg transition-colors">
                     <img
@@ -100,12 +100,12 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
                 </div>
               </div>
               <div className="flex justify-between">
-                <p className="text-sm text-gray-600">틀린 퀴즈 개수: {history.failCount}</p>
-                <p className="text-sm text-gray-500">{history.date}</p>
+                <p className="text-14 text-gray-600">틀린 퀴즈 개수: {history.failCount}</p>
+                <p className="text-14 text-gray-500">{history.date}</p>
               </div>
               {isDropDownOpen === history.historyId && (
                 <div className="mt-4">
-                  <p className="text-sm text-gray-500">{history.date}</p>
+                  <p className="text-14 text-gray-500">{history.date}</p>
                   {history.quizDataList && history.quizDataList.length > 0 ? (
                     history.quizDataList.map((quiz: QuizDetail, index) => (
                       <div

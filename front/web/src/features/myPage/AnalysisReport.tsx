@@ -257,7 +257,6 @@ function AnalysisReport() {
 
   return (
     <div className="mb-20 px-4 sm:px-0">
-      {/* 헤더 및 통계 박스 - 모바일에서 세로 배치 */}
       <div className="mb-8">
         {/* 헤더 부분 */}
         <div className="flex items-center overflow-hidden">
@@ -377,7 +376,7 @@ function AnalysisReport() {
         {/* 컬렉션별 정답률 차트 */}
         <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md">
           <h3 className="text-14 md:text-[18px] font-pre-semibold mb-1 md:mb-2">컬렉션별 정답률</h3>
-          <p className="text-10 text-gray-600 mb-2 font-pre-regular">
+          <p className="text-10 text-gray-600 font-pre-regular">
             컬렉션별 가장 최근 문제풀이의 정답률을 보여줍니다.
           </p>
           {reportData.collectionAccuracy && reportData.collectionAccuracy.length > 0 ? (
