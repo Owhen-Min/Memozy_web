@@ -20,10 +20,21 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
     setIsDropDownOpen(isDropDownOpen === id ? null : id);
   };
 
+  // 바깥 영역 클릭 시 모달 닫기 처리
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
+    if (e.currentTarget === e.target) {
+      onClose();
+    }
+  };
+
   // 로딩 중이거나 데이터가 없을 때 표시할 내용
   if (isLoading || !data) {
     return (
-      <div className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular">
+      <div
+        className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular"
+        onClick={handleOutsideClick}
+      >
         <div className="bg-blue-50 p-8 rounded-lg w-[70%] h-[90%] overflow-y-auto relative shadow-lg">
           <button onClick={onClose} className="absolute top-4 right-4 text-xl">
             <img src={closeIcon} alt="닫기" />
@@ -37,8 +48,14 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular">
-      <div className="bg-blue-50 p-8 rounded-lg w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide">
+    <div
+      className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular"
+      onClick={handleOutsideClick}
+    >
+      <div
+        className="bg-blue-50 p-8 rounded-lg w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
+        onClick={(e) => e.stopPropagation()} // 내부 클릭은 전파 방지
+      >
         <style>
           {`
             .scrollbar-hide::-webkit-scrollbar {
@@ -90,8 +107,11 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">{history.date}</p>
                   {history.quizDataList && history.quizDataList.length > 0 ? (
-                    history.quizDataList.map((quiz: QuizDetail) => (
-                      <div key={quiz.quizId} className="mt-2 p-3 bg-gray-100 rounded-md">
+                    history.quizDataList.map((quiz: QuizDetail, index) => (
+                      <div
+                        key={`${history.historyId}-${quiz.quizId}-${index}`}
+                        className="mt-2 p-3 bg-gray-100 rounded-md"
+                      >
                         <h4 className="font-pre-semibold">{quiz.content}</h4>
                         {quiz.type === "MULTIPLE_CHOICE" && quiz.choice && (
                           <div className="pl-5">
