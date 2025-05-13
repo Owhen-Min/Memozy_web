@@ -40,7 +40,7 @@ public class MultiQuizShowController {
 		@PathVariable Integer collectionId, @RequestParam(defaultValue = "10") int count
 	) {
 		log.info("[Controller] create() called with collectionId: {}, count: {}", collectionId, count);
-		return ApiResponse.success(multiQuizShowService.createMultiQuizShow(user.getUserId(), collectionId, count));
+		return ApiResponse.success(multiQuizShowService.createMultiQuizShow(user, collectionId, count));
 	}
 
 	@MessageMapping("/quiz/show/{showId}/join")

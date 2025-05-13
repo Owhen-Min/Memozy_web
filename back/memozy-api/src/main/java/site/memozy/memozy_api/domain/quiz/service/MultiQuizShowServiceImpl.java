@@ -21,6 +21,7 @@ import site.memozy.memozy_api.domain.quiz.dto.QuizShowEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
 @Slf4j
 @Service
@@ -34,26 +35,23 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	@Override
 	@Transactional
-	public MultiQuizShowCreateResponse createMultiQuizShow(int userId, int collectionId, int count) {
+	public MultiQuizShowCreateResponse createMultiQuizShow(CustomOAuth2User user, int collectionId, int count) {
 		Collection collection = collectionRepository.findById(collectionId)
-			.orElseThrow(() -> new RuntimeException("해당 컬렉션이 존재하지 않습니다."));
+			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
 
 		String quizShowCode = generateRandomCode();
 		log.info("생성된 퀴즈 코드: {}", quizShowCode);
 		collection.setCode(quizShowCode);
 
-		List<MultiQuizResponse> quizzes = quizRepository.getMultiQuizzes(userId, collectionId, count);
+		List<MultiQuizResponse> quizzes = quizRepository.getMultiQuizzes(user.getUserId(), collectionId, count);
 		log.info("quizzes count: {}", quizzes.size());
 		if (quizzes.isEmpty() || quizzes.size() < count) {
 			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
 
-		List<String> quizList = quizzes.stream()
-			.map(quiz -> quiz.getQuizId().toString())
-			.toList();
-
-		multiQuizShowRedisRepository.saveQuizzes(quizShowCode, collectionId, userId, count, quizList);
-		return new MultiQuizShowCreateResponse(quizShowCode, userId, collection.getName(), count);
+		multiQuizShowRedisRepository.saveQuizzes(quizShowCode, collectionId, user.getUserId(), count, quizzes);
+		String showUrl = String.format("https://memozy.site/quiz/show/%s", quizShowCode);
+		return new MultiQuizShowCreateResponse(quizShowCode, showUrl, user.getName(), collection.getName(), count);
 	}
 
 	@Override

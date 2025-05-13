@@ -4,11 +4,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
+import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
 public interface MultiQuizShowService {
 
 	@Transactional
-	MultiQuizShowCreateResponse createMultiQuizShow(int userId, int collectionId, int count);
+	MultiQuizShowCreateResponse createMultiQuizShow(CustomOAuth2User user, int collectionId, int count);
 
 	void joinMultiQuizShow(String showId, String userId, String nickname, boolean isMember);
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
@@ -26,6 +27,7 @@ public class MultiQuizShowRedisRepository {
 	private static final Duration DURATION = Duration.ofDays(1);
 
 	public void saveParticipant(String showId, String userId) {
+		log.info("[Redis] saveParticipant() called with showId: {}, userId: {}", showId, userId);
 		String participantKey = SHOW_KEY + showId + ":participants";
 		try {
 			redisTemplate.opsForSet().add(participantKey, userId);
@@ -37,6 +39,7 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public void saveParticipantInfo(String showId, String userId, Map<String, String> info) {
+		log.info("[Redis] saveParticipantInfo() called with showId: {}, userId: {}", showId, userId);
 		String participantInfoKey = "show:" + showId + ":user:" + userId;
 		try {
 			redisTemplate.opsForHash().putAll(participantInfoKey, info);
@@ -47,7 +50,8 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public void saveQuizzes(String showId, int collectionId, int hostUserId, int count, List<String> quizList) {
+	public void saveQuizzes(String showId, int collectionId, int hostUserId, int count,
+		List<MultiQuizResponse> quizList) {
 		log.info("[Redis] saveQuizzes() called with showId: {}, collectionId: {}, hostUserId: {}, count: {}",
 			showId, collectionId, hostUserId, count);
 		try {
@@ -63,10 +67,22 @@ public class MultiQuizShowRedisRepository {
 
 			String quizListKey = "show:" + showId + ":quiz";
 			for (int i = 0; i < quizList.size(); i++) {
-				String quizIndex = String.valueOf(i);
-				redisTemplate.opsForHash().put(quizListKey, quizIndex, quizList.get(i));
+				MultiQuizResponse quiz = quizList.get(i);
+				String quizId = String.valueOf(quiz.getQuizId());
+				redisTemplate.opsForHash().put(quizListKey, String.valueOf(i), quizId);
+
+				String quizKey = "quiz:" + quizId;
+				Map<String, String> quizData = new HashMap<>();
+				quizData.put("quizIndex", quizId);
+				quizData.put("content", quiz.getContent());
+				quizData.put("choice", quiz.getChoice().toString());
+				quizData.put("answer", quiz.getAnswer());
+
+				redisTemplate.opsForHash().putAll(quizKey, quizData);
+				redisTemplate.expire(quizKey, DURATION);
 			}
 			redisTemplate.expire(quizListKey, DURATION);
+
 		} catch (Exception e) {
 			log.error("Error saving quizzes to Redis: {}", e.getMessage());
 			throw new GeneralException(REDIS_SAVE_ERROR);
@@ -74,17 +90,26 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public void saveParticipantAnswer(String showId, String userId, int index, String answer, boolean isCorrect) {
+		log.info(
+			"[Redis] saveParticipantAnswer() called with showId: {}, userId: {}, index: {}, answer: {}, isCorrect: {}",
+			showId, userId, index, answer, isCorrect);
 		String answerKey = "show:" + showId + ":userChoice:" + userId;
-		Boolean exists = redisTemplate.opsForHash().hasKey(answerKey, String.valueOf(index));
-		if (Boolean.TRUE.equals(exists)) {
-			return;
+		try {
+			Boolean exists = redisTemplate.opsForHash().hasKey(answerKey, String.valueOf(index));
+			if (Boolean.TRUE.equals(exists)) {
+				return;
+			}
+			redisTemplate.opsForHash().put(answerKey, String.valueOf(index), String.valueOf(answer));
+			redisTemplate.opsForHash().put(answerKey, String.valueOf(index) + "_choice", String.valueOf(isCorrect));
+			redisTemplate.expire(answerKey, Duration.ofDays(1));
+		} catch (Exception e) {
+			log.info("[Redis] Error saving participantAnswer: {}", e.getMessage());
+			throw new GeneralException(REDIS_SAVE_ERROR);
 		}
-		redisTemplate.opsForHash().put(answerKey, String.valueOf(index), String.valueOf(answer));
-		redisTemplate.opsForHash().put(answerKey, String.valueOf(index) + "_choice", String.valueOf(isCorrect));
-		redisTemplate.expire(answerKey, Duration.ofDays(1));
 	}
 
 	public Set<Object> findMembers(String showId) {
+		log.info("[Redis] saveMembers() called with showId: {}", showId);
 		String participantKey = "show:" + showId + ":participants";
 		try {
 			return redisTemplate.opsForSet().members(participantKey);
@@ -95,10 +120,29 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public String getQuizByIndex(String showId, int index) {
+		log.info("[Redis] getQuizByIndex() called with showId: {}", showId);
 		String quizKey = "show:" + showId + ":quiz";
 		try {
-			Object quiz = redisTemplate.opsForHash().get(quizKey, String.valueOf(index));
-			return (String)quiz;
+			Object quizIdObj = redisTemplate.opsForHash().get(quizKey, String.valueOf(index));
+			log.info("[redis] getQuizByIndex() quizId = {}", quizIdObj);
+
+			String quizId = String.valueOf(quizIdObj);
+			String quizByIndexKey = "quiz:" + quizId;
+
+			Map<Object, Object> quizData = redisTemplate.opsForHash().entries(quizByIndexKey);
+			if (quizData == null || quizData.isEmpty()) {
+				throw new GeneralException(REDIS_QUIZ_NOT_FOUND);
+			}
+
+			String choice = (String)quizData.getOrDefault("choice", "");
+
+			return Map.of(
+				"quizId", quizId,
+				"content", quizData.getOrDefault("content", ""),
+				"choice", choice,
+				"answer", quizData.getOrDefault("answer", "")
+			).toString();
+
 		} catch (Exception e) {
 			log.error("[Redis] Error getting quiz by index: {}", e.getMessage());
 			throw new GeneralException(REDIS_QUIZ_NOT_FOUND);
@@ -106,6 +150,7 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public int getQuizCount(String showId) {
+		log.info("[Redis] getQuizCount() called with showId: {}", showId);
 		String metaKey = "show:" + showId + ":metadata";
 		try {
 			String countStr = (String)redisTemplate.opsForHash().get(metaKey, "quizCount");
@@ -117,19 +162,26 @@ public class MultiQuizShowRedisRepository {
 	}
 
 	public Map<String, String> getUserChoice(String showId, String userId) {
+		log.info("[Redis] getUserChoice() called with showId: {}, userId: {}", showId, userId);
 		String answerKey = "show:" + showId + ":userChoice:" + userId;
-		Map<Object, Object> allEntries = redisTemplate.opsForHash().entries(answerKey);
-		Map<String, String> result = new HashMap<>();
-		for (Map.Entry<Object, Object> entry : allEntries.entrySet()) {
-			String key = entry.getKey().toString();
-			if (key.endsWith("_choice")) {
-				result.put(key, entry.getValue().toString());
+		try {
+			Map<Object, Object> allEntries = redisTemplate.opsForHash().entries(answerKey);
+			Map<String, String> result = new HashMap<>();
+			for (Map.Entry<Object, Object> entry : allEntries.entrySet()) {
+				String key = entry.getKey().toString();
+				if (key.endsWith("_choice")) {
+					result.put(key, entry.getValue().toString());
+				}
 			}
+			return result;
+		} catch (Exception e) {
+			log.error("[Redis] Error getting user choice: {}", e.getMessage());
+			throw new GeneralException(REDIS_SESSION_NOT_FOUND);
 		}
-		return result;
 	}
 
 	public Map<String, String> getParticipantInfo(String showId, String userId) {
+		log.info("[Redis] getParticipantInfo() called with showId: {}, userId: {}", showId, userId);
 		String participantInfoKey = "show:" + showId + ":user:" + userId;
 		try {
 			Map<Object, Object> raw = redisTemplate.opsForHash().entries(participantInfoKey);
