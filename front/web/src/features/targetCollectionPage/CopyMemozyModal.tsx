@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import closeIcon from "../../assets/icons/closeIcon.svg";
 import { useCollectionStore } from "../../stores/collection/collectionStore";
+import { useParams } from "react-router";
 
 interface CopyMemozyModalProps {
   memozyIds: number[];
@@ -10,13 +11,17 @@ interface CopyMemozyModalProps {
 function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const { collections, fetchCollections, copyMemozy, loading, error } = useCollectionStore();
+  const { collectionId } = useParams();
+  const currentCollectionId = Number(collectionId);
 
   useEffect(() => {
     fetchCollections();
-    if (collections.length > 0) {
-      setSelectedCollectionId(collections[0].id);
+    // 현재 컬렉션이 아닌 첫 번째 컬렉션을 선택
+    const firstAvailableCollection = collections.find((col) => col.id !== currentCollectionId);
+    if (firstAvailableCollection) {
+      setSelectedCollectionId(firstAvailableCollection.id);
     }
-  }, [collections.length, fetchCollections]);
+  }, [collections.length, fetchCollections, currentCollectionId]);
 
   const handleCopy = async () => {
     if (!selectedCollectionId) return;
@@ -46,8 +51,13 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
           disabled={loading}
         >
           {collections.map((col) => (
-            <option key={col.id} value={col.id}>
-              {col.name}
+            <option
+              key={col.id}
+              value={col.id}
+              disabled={col.id === currentCollectionId}
+              className={col.id === currentCollectionId ? "text-gray-400" : ""}
+            >
+              {col.name} {col.id === currentCollectionId ? "(현재 컬렉션)" : ""}
             </option>
           ))}
         </select>

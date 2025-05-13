@@ -64,6 +64,19 @@ function TargetCollectionPage() {
     );
   };
 
+  const handleOpenModal = (modalType: "copy" | "delete") => {
+    if (selectedMemozyIds.length === 0) {
+      alert("Memozy를 선택해주세요.");
+      return;
+    }
+
+    if (modalType === "copy") {
+      setIsCopyModalOpen(true);
+    } else {
+      setIsDeleteModalOpen(true);
+    }
+  };
+
   return (
     <>
       <div className="content">
@@ -104,13 +117,13 @@ function TargetCollectionPage() {
           <div className="flex gap-4 mb-4">
             <button
               className="border border-normal text-normal bg-bg rounded-xl px-4 py-1 font-pre-medium text-16 transition-colors hover:bg-normal hover:text-white"
-              onClick={() => setIsCopyModalOpen(true)}
+              onClick={() => handleOpenModal("copy")}
             >
               <span className="font-pre-bold">선택 Memozy 복제</span>
             </button>
             <button
               className="border border-red text-red bg-bg rounded-xl px-4 py-1 font-pre-medium text-16 transition-colors hover:bg-red hover:text-white"
-              onClick={() => setIsDeleteModalOpen(true)}
+              onClick={() => handleOpenModal("delete")}
             >
               <span className="font-pre-bold">선택 Memozy 삭제</span>
             </button>
@@ -150,7 +163,7 @@ function TargetCollectionPage() {
         />
       )}
 
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && selectedMemozyIds.length > 0 && (
         <DeleteMemozyModal
           quizId={null}
           sourceId={selectedMemozyIds}
@@ -158,7 +171,7 @@ function TargetCollectionPage() {
         />
       )}
 
-      {isCopyModalOpen && (
+      {isCopyModalOpen && selectedMemozyIds.length > 0 && (
         <CopyMemozyModal memozyIds={selectedMemozyIds} onClose={() => setIsCopyModalOpen(false)} />
       )}
     </>
