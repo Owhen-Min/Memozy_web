@@ -88,6 +88,14 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
+	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
+		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
+
+		int quizCount = quizRepository.findBySourceIdIn(sourceIds).size();
+		return CollectionSummaryResponse.of((long)sourceIds.size(), (long)quizCount);
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId) {
 		if (!quizSourceRepository.existsBySourceIdAndUserId(sourceId, userId)) {

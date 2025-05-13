@@ -78,6 +78,15 @@ public class CollectionController {
 		return ApiResponse.success(response);
 	}
 
+	@Operation(summary = "모오든 메모지를 모아 놓은 컬렉션", description = "모오든 메모지를 모아놓음.")
+	@GetMapping("/all")
+	public ApiResponse<CollectionSummaryResponse> findCollectionByUserId(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user) {
+
+		CollectionSummaryResponse response = collectionService.findCollectionByUserId(user.getUserId());
+		return ApiResponse.success(response);
+	}
+
 	@Operation(summary = "Memozy의 퀴즈들을 조회", description = "url_id를 기준으로 퀴즈들의 조회")
 	@GetMapping("/url/{url_id}/quiz")
 	public ApiResponse<List<QuizSummaryResponse>> getQuizzesByCollectionUrl(
