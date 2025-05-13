@@ -108,6 +108,19 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
+	public String getHostMemberId(String showId) {
+		log.info("[Redis] getHostMember() called for showId = {}", showId);
+		String metaKey = "show:" + showId + ":metadata";
+		try {
+			String hostUserId = (String)redisTemplate.opsForHash().get(metaKey, "hostUserId");
+			log.info("[Redis] Host member ID: {}", hostUserId);
+			return hostUserId;
+		} catch (Exception e) {
+			log.error("[Redis] Error getting host member: {}", e.getMessage());
+			throw new GeneralException(REDIS_INVALID_METADATA);
+		}
+	}
+
 	public Set<Object> findMembers(String showId) {
 		log.info("[Redis] saveMembers() called with showId: {}", showId);
 		String participantKey = "show:" + showId + ":participants";

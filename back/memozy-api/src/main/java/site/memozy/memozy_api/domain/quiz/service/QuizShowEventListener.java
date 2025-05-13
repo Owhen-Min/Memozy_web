@@ -34,10 +34,17 @@ public class QuizShowEventListener {
 		String showId = event.showId();
 		String nickname = event.nickname();
 
+		String type = "join";
+
+		String hostUserId = multiQuizShowRedisRepository.getHostMemberId(showId);
+		if (hostUserId.equals(event.userId())) {
+			type = "host";
+		}
+
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/join",
 			Map.of(
-				"type", "JOIN",
+				"type", type,
 				"userId", event.userId(),
 				"nickname", nickname
 			)

@@ -39,7 +39,7 @@ public class StompHandler implements ChannelInterceptor {
 			return message;
 		}
 
-		String userId = UUID.randomUUID().toString();
+		String userId = generateRandomCode();
 		String nickname = "Guest" + ThreadLocalRandom.current().nextInt(100, 1000);
 		boolean isMember = false;
 
@@ -67,5 +67,10 @@ public class StompHandler implements ChannelInterceptor {
 			.withPayload(message.getPayload())
 			.copyHeaders(accessor.getMessageHeaders())
 			.build();
+	}
+
+	private String generateRandomCode() {
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		return uuid.substring(0, 8);
 	}
 }
