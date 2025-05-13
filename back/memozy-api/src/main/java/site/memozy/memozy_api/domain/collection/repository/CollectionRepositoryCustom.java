@@ -25,7 +25,9 @@ public interface CollectionRepositoryCustom {
 
 	List<MemozyContentResponse> findByCollectionIdWithPaging(Integer collectionId, Pageable pageable);
 
-	long countByCollectionId(Integer collectionId);
+	List<MemozyContentResponse> findAllWithPaging(Integer userId, Pageable pageable);
+
+	Long countByCollectionId(Integer collectionId);
 
 	List<CollectionAccuracyResponse> findAccuracyByCollectionIds(List<Integer> collectionIds);
 
