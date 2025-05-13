@@ -10,7 +10,7 @@ import QuizShowEntrySharedPage from "./pages/QuizShowEntrySharedPage";
 import QuizShowPersonalPage from "./pages/QuizShowPersonalPage";
 import QuizShowSharedPage from "./pages/QuizShowSharedPage";
 import QuizShowResultPersonalPage from "./pages/QuizShowResultPersonalPage";
-
+import QuizShowResultSharedPage from "./pages/QuizShowResultSharedPage";
 function App() {
   return (
     <BrowserRouter>
@@ -51,6 +51,10 @@ function App() {
             element={<QuizShowResultPersonalPage />}
           />
         </Route>
+        <Route
+          path="/quiz-result/shared/:collectionId"
+          element={<QuizShowResultSharedPage />}
+        />
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>

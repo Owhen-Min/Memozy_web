@@ -42,14 +42,19 @@ export const collectionApi = {
   },
 
   //memozy 목록 조회
-  getMemozyList: async (collectionId: number) => {
-    const response = await httpClient.get(`/collection/url?collectionId=${collectionId}`);
+  getMemozyList: async (collectionId: number, page?: number, pageSize?: number) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("collectionId", collectionId.toString());
+    if (page !== undefined) queryParams.append("page", page.toString());
+    if (pageSize !== undefined) queryParams.append("pageSize", pageSize.toString());
+
+    const response = await httpClient.get(`/collection/url?${queryParams.toString()}`);
     return response;
   },
 
   //quiz 목록 조회
-  getQuizList: async (memozyId: number) => {
-    const response = await httpClient.get(`/collection/url/${memozyId}/quiz`);
+  getQuizList: async (sourceId: number) => {
+    const response = await httpClient.get(`/collection/url/${sourceId}/quiz`);
     return response;
   },
 
