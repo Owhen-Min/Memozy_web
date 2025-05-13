@@ -58,9 +58,9 @@ function WrongAnswerNote() {
   if (isLoading) {
     return (
       <div>
-        <div className="flex items-center mb-10">
-          <img src={small_logo} alt="로고" className="w-10" />
-          <h2 className="text-[28px] font-pre-medium">오답노트</h2>
+        <div className="flex items-center gap-2 mb-10">
+          <img src={small_logo} alt="로고" className="w-8 md:w-10" />
+          <h2 className="text-24 md:text-[28px] font-pre-medium">오답노트</h2>
         </div>
         <div>데이터를 불러오는 중입니다...</div>
       </div>
@@ -69,24 +69,26 @@ function WrongAnswerNote() {
 
   return (
     <div>
-      <div className="flex items-center mb-10">
+      <div className="flex items-center gap-2 mb-10">
         <img src={small_logo} alt="로고" className="w-10" />
         <h2 className="text-[28px] font-pre-medium">오답노트</h2>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-        {collectionList.map((item) => (
-          <div
-            key={item.id}
-            className="relative cursor-pointer transition-transform hover:scale-105 w-[164px] mx-auto"
-            onClick={() => handleFolderClick(item.id)}
-          >
-            <img src={folder} alt="폴더" className="w-full" />
-            <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[140px]">
-              <h3 className="text-16 font-pre-medium truncate">{item.name}</h3>
+      <div className="max-w-full mx-auto">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-start sm:gap-16 sm:px-6">
+          {collectionList.map((item) => (
+            <div
+              key={item.id}
+              className="relative cursor-pointer transition-transform hover:scale-105 w-full sm:w-[164px] p-2 sm:p-0"
+              onClick={() => handleFolderClick(item.id)}
+            >
+              <img src={folder} alt="폴더" className="w-full" />
+              <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[90%] sm:w-[140px]">
+                <h3 className="text-16 font-pre-medium truncate">{item.name}</h3>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <Modal

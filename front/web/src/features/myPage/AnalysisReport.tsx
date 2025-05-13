@@ -164,55 +164,159 @@ function AnalysisReport() {
     ],
   };
 
+  // 컬렉션별 정답률 차트 옵션
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    font: {
+      family: "'Pretendard-Regular', sans-serif",
+    },
+    plugins: {
+      legend: {
+        display: false,
+        labels: {
+          font: {
+            family: "'Pretendard-Regular', sans-serif",
+            size: 12,
+          },
+        },
+      },
+      tooltip: {
+        titleFont: {
+          family: "'Pretendard-Regular', sans-serif",
+          size: 14,
+        },
+        bodyFont: {
+          family: "'Pretendard-Regular', sans-serif",
+          size: 13,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          autoSkip: false,
+          font: {
+            family: "'Pretendard-Regular', sans-serif",
+            size: 12,
+          },
+        },
+        grid: {
+          offset: false,
+        },
+      },
+      y: {
+        min: 0,
+        max: 100,
+        ticks: {
+          stepSize: 20,
+          font: {
+            family: "'Pretendard-Regular', sans-serif",
+            size: 12,
+          },
+        },
+      },
+    },
+    layout: {
+      padding: {
+        left: 0,
+        right: 0,
+      },
+    },
+  };
+
+  // 컬렉션별 분포도 차트 옵션
+  const pieChartOptions = {
+    responsive: true,
+    font: {
+      family: "'Pretendard-Regular', sans-serif",
+    },
+    plugins: {
+      legend: {
+        display: false,
+        labels: {
+          font: {
+            family: "'Pretendard-Regular', sans-serif",
+            size: 12,
+          },
+        },
+      },
+      tooltip: {
+        titleFont: {
+          family: "'Pretendard-Regular', sans-serif",
+          size: 14,
+        },
+        bodyFont: {
+          family: "'Pretendard-Regular', sans-serif",
+          size: 13,
+        },
+      },
+    },
+  };
+
   return (
-    <div className="mb-20">
-      <div className="flex items-center gap-2 mb-8">
-        <img src={small_logo} alt="로고" className="w-10" />
-        <h2 className="text-[28px] font-pre-semibold">분석 레포트</h2>
-        <div className="flex justify-end gap-4 ml-auto font-pre-medium">
-          <div
-            className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
-            style={{ borderRadius: "8px", width: "180px", height: "64px" }}
-          >
-            <div className="flex items-center justify-center" style={{ width: "48px" }}>
-              <img src={bookicon} alt="Book Icon" className="w-6" />
-            </div>
-
-            {/* 텍스트 박스를 절대 위치로 중앙 정렬 */}
-            <div className="absolute inset-0 flex flex-col justify-center items-center">
-              <div className="text-14 text-center">전체 퀴즈 개수</div>
-              <div className="text-20 font-pre-regular text-center">
-                {reportData.totalQuizCount}
-              </div>
-            </div>
+    <div className="mb-20 px-4 sm:px-0">
+      {/* 헤더 및 통계 박스 - 모바일에서 세로 배치 */}
+      <div className="mb-8">
+        {/* 헤더 부분 */}
+        <div className="flex items-center overflow-hidden">
+          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <img src={small_logo} alt="로고" className="w-8 md:w-10" />
+            <h2 className="text-24 md:text-[28px] font-pre-medium whitespace-nowrap">
+              분석 레포트
+            </h2>
           </div>
 
-          <div
-            className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
-            style={{ borderRadius: "8px", width: "180px", height: "64px" }}
-          >
-            {/* 아이콘 */}
-            <div className="flex items-center justify-center" style={{ width: "48px" }}>
-              <img src={openbookicon} alt="Open Book Icon" className="w-6" />
-            </div>
+          {/* 통계박스 - 데스크탑에서만 표시 */}
+          <div className="hidden md:flex ml-auto gap-3">
+            {[
+              { icon: bookicon, label: "전체 퀴즈 개수", value: reportData.totalQuizCount },
+              { icon: openbookicon, label: "푼 퀴즈 개수", value: reportData.solvedQuizCount },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-[170px] h-[64px] relative"
+              >
+                <div className="flex items-center px-2 h-full">
+                  <img src={item.icon} alt={item.label} className="w-5" />
+                </div>
+                <div className="flex flex-col justify-center items-center absolute inset-0 ml-8">
+                  <div className="text-14 font-pre-regular">{item.label}</div>
+                  <div className="text-16 font-pre-medium">{item.value}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-            {/* 중앙 정렬된 텍스트 */}
-            <div className="absolute inset-0 flex flex-col justify-center items-center">
-              <div className="text-14 text-center">푼 퀴즈 개수</div>
-              <div className="text-20 font-pre-regular text-center">
-                {reportData.solvedQuizCount}
+        {/* 통계박스 - 모바일에서만 표시 (헤더 아래) */}
+        <div className="flex md:hidden justify-center gap-3 mt-4">
+          {[
+            { icon: bookicon, label: "전체 퀴즈 개수", value: reportData.totalQuizCount },
+            { icon: openbookicon, label: "푼 퀴즈 개수", value: reportData.solvedQuizCount },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-[110px] h-[44px] relative"
+            >
+              <div className="flex items-center px-1.5 h-full">
+                <img src={item.icon} alt={item.label} className="w-4" />
+              </div>
+              <div className="flex flex-col justify-center items-center absolute inset-0 ml-5">
+                <div className="text-10 font-pre-regular">{item.label}</div>
+                <div className="text-12 font-pre-medium">{item.value}</div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg border border-normal shadow-md mb-10">
+      {/* 학습 참여도 섹션 - 스크롤 대응 */}
+      <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md mb-6 md:mb-10">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-[18px] font-pre-semibold">학습 참여도</h3>
-          {/* 보기 옵션 드롭박스 */}
+          <h3 className="text-14 md:text-[18px] font-pre-semibold">학습 참여도</h3>
           <select
-            className="border border-normal rounded px-2 py-1 text-sm font-pre-regular"
+            className="border border-normal rounded px-1 py-1 text-xs md:text-sm font-pre-regular"
             value={selectedView}
             onChange={(e) => setSelectedView(e.target.value)}
           >
@@ -224,174 +328,117 @@ function AnalysisReport() {
           </select>
         </div>
 
-        <CalendarHeatmap
-          startDate={startDate}
-          endDate={endDate}
-          values={filteredContributions}
-          classForValue={(value) => {
-            if (!value || value.count === 0) return "color-empty";
-            if (value.level === 1) return "color-scale-1";
-            if (value.level === 2) return "color-scale-2";
-            if (value.level === 3) return "color-scale-3";
-            if (value.level === 4) return "color-scale-4";
-            return "color-empty";
-          }}
-          titleForValue={(value) => {
-            if (!value) return "0 문제";
-            const date = new Date(value.date);
-            const formattedDate = `${date.getFullYear()}년 ${
-              date.getMonth() + 1
-            }월 ${date.getDate()}일`;
-            return `${formattedDate}: ${value.count} 문제`;
-          }}
-        />
+        <p className="text-10 text-gray-600 mb-2 font-pre-regular">
+          하루 단위 문제 풀이 기록으로, 색상 강도는 풀이 개수(0, 1-4, 5-9, 10-14, 15+)를 의미합니다.
+        </p>
 
-        <div className="text-xs text-gray-500 mt-2 flex justify-end">
+        <div className="overflow-x-auto">
+          <div className="min-w-[650px]">
+            <CalendarHeatmap
+              startDate={startDate}
+              endDate={endDate}
+              values={filteredContributions}
+              classForValue={(value) => {
+                if (!value || value.count === 0) return "color-empty";
+                if (value.level === 1) return "color-scale-1";
+                if (value.level === 2) return "color-scale-2";
+                if (value.level === 3) return "color-scale-3";
+                if (value.level === 4) return "color-scale-4";
+                return "color-empty";
+              }}
+              titleForValue={(value) => {
+                if (!value) return "0 문제";
+                const date = new Date(value.date);
+                const formattedDate = `${date.getFullYear()}년 ${
+                  date.getMonth() + 1
+                }월 ${date.getDate()}일`;
+                return `${formattedDate}: ${value.count} 문제`;
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="text-10 md:text-xs text-gray-500 mt-2 flex justify-end">
           적음
           <div className="flex ml-1">
-            <div className="w-3 h-3 bg-[#ebedf0] mx-1"></div>
-            <div className="w-3 h-3 bg-lightactive mx-1"></div>
-            <div className="w-3 h-3 bg-normal mx-1"></div>
-            <div className="w-3 h-3 bg-normalhover mx-1"></div>
-            <div className="w-3 h-3 bg-normalactive mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-[#ebedf0] mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-lightactive mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normal mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalhover mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalactive mx-1"></div>
           </div>
           많음
         </div>
       </div>
 
+      {/* 차트 섹션 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-1">
-        <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
-          <h3 className="text-[18px] font-pre-semibold mb-2">컬렉션별 정답률</h3>
-          <div className="overflow-x-auto">
-            <div
-              style={{
-                width: `${Math.max(reportData.collectionAccuracy.length * 90, 500)}px`, // 최소 너비를 500px로 설정
-                height: "300px",
-              }}
-            >
-              <Bar
-                data={{
-                  ...barChartData,
-                  datasets: barChartData.datasets.map((dataset) => ({
-                    ...dataset,
-                    barThickness: 80, // 각 막대의 너비를 80px로 고정
-                    categoryPercentage: 0.8, // 카테고리 간격을 0.8로 설정하여 간격 확보
-                  })),
+        {/* 컬렉션별 정답률 차트 */}
+        <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md">
+          <h3 className="text-14 md:text-[18px] font-pre-semibold mb-1 md:mb-2">컬렉션별 정답률</h3>
+          <p className="text-10 text-gray-600 mb-2 font-pre-regular">
+            컬렉션별 가장 최근 문제풀이의 정답률을 보여줍니다.
+          </p>
+          {reportData.collectionAccuracy && reportData.collectionAccuracy.length > 0 ? (
+            <div className="overflow-x-auto">
+              <div
+                style={{
+                  width: `${Math.max(reportData.collectionAccuracy.length * 60, 300)}px`,
+                  minWidth: "100%",
+                  height: "250px",
                 }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  font: {
-                    family: "'Pretendard-Regular', sans-serif",
-                  },
-                  plugins: {
-                    legend: {
-                      display: false,
-                      labels: {
-                        font: {
-                          family: "'Pretendard-Regular', sans-serif",
-                          size: 12,
-                        },
-                      },
-                    },
-                    tooltip: {
-                      titleFont: {
-                        family: "'Pretendard-Regular', sans-serif",
-                        size: 14,
-                      },
-                      bodyFont: {
-                        family: "'Pretendard-Regular', sans-serif",
-                        size: 13,
-                      },
-                    },
-                  },
-                  scales: {
-                    x: {
-                      ticks: {
-                        autoSkip: false,
-                        font: {
-                          family: "'Pretendard-Regular', sans-serif",
-                          size: 12,
-                        },
-                      },
-                      grid: {
-                        offset: false,
-                      },
-                    },
-                    y: {
-                      min: 0,
-                      max: 100,
-                      ticks: {
-                        stepSize: 20,
-                        font: {
-                          family: "'Pretendard-Regular', sans-serif",
-                          size: 12,
-                        },
-                      },
-                    },
-                  },
-                  layout: {
-                    padding: {
-                      left: 0,
-                      right: 0,
-                    },
-                  },
-                }}
-              />
+              >
+                <Bar
+                  data={{
+                    ...barChartData,
+                    datasets: barChartData.datasets.map((dataset) => ({
+                      ...dataset,
+                      barThickness: window.innerWidth < 768 ? 40 : 80, // 모바일에서는 더 작게
+                    })),
+                  }}
+                  options={barChartOptions}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+              <p>아직 문제를 풀어본 컬렉션이 없습니다.</p>
+              <p className="mt-2">문제를 풀면 정답률 데이터가 표시됩니다.</p>
+            </div>
+          )}
         </div>
 
-        <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
-          <h3 className="text-[18px] font-pre-semibold mb-2">컬렉션별 분포도</h3>
-          <div className="flex flex-col justify-center items-center">
-            <div style={{ height: "240px", width: "240px" }}>
-              <Pie
-                data={pieChartData}
-                options={{
-                  responsive: true,
-                  font: {
-                    family: "'Pretendard-Regular', sans-serif",
-                  },
-                  plugins: {
-                    legend: {
-                      display: false,
-                      labels: {
-                        font: {
-                          family: "'Pretendard-Regular', sans-serif",
-                          size: 12,
-                        },
-                      },
-                    },
-                    tooltip: {
-                      titleFont: {
-                        family: "'Pretendard-Regular', sans-serif",
-                        size: 14,
-                      },
-                      bodyFont: {
-                        family: "'Pretendard-Regular', sans-serif",
-                        size: 13,
-                      },
-                    },
-                  },
-                }}
-              />
+        {/* 컬렉션별 분포도 차트 */}
+        <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md">
+          <h3 className="text-14 md:text-[18px] font-pre-semibold mb-1 md:mb-2">컬렉션별 분포도</h3>
+          <p className="text-10 text-gray-600 mb-2 font-pre-regular">
+            전체 문제 중 컬렉션별 비율로, 주로 학습한 주제 영역을 확인할 수 있습니다.
+          </p>
+          {reportData.topCollections && reportData.topCollections.length > 0 ? (
+            <div className="flex flex-col justify-center items-center">
+              <div style={{ height: "180px", width: "180px", maxWidth: "100%" }}>
+                <Pie data={pieChartData} options={pieChartOptions} />
+              </div>
+              <div className="flex flex-wrap justify-center mt-2 md:mt-4">
+                {pieChartData.labels.map((label, index) => (
+                  <div key={index} className="flex items-center mx-1 md:mx-2 mb-1 md:mb-2">
+                    <div
+                      className="w-2 h-2 md:w-3 md:h-3"
+                      style={{
+                        backgroundColor: pieChartData.datasets[0].backgroundColor[index],
+                      }}
+                    ></div>
+                    <span className="ml-1 text-10 md:text-14 font-pre-regular">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            {/* 레전드를 차트 외부에 별도로 구현 */}
-            <div className="flex flex-wrap justify-center mt-4">
-              {pieChartData.labels.map((label, index) => (
-                <div key={index} className="flex items-center mx-2 mb-2">
-                  <div
-                    className="w-3 h-3"
-                    style={{
-                      backgroundColor: pieChartData.datasets[0].backgroundColor[index],
-                    }}
-                  ></div>
-                  <span className="ml-1 text-14 font-pre-regular">{label}</span>
-                </div>
-              ))}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+              <p className="text-sm">아직 문제를 풀어본 컬렉션이 없습니다.</p>
+              <p className="mt-2 text-sm">문제를 풀면 컬렉션 분포 데이터가 표시됩니다.</p>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
