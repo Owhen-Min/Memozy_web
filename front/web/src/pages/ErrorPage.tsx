@@ -9,10 +9,10 @@ function ErrorPage() {
         </h1>
 
         <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 w-full">
-          <p className="text-[12px] sm:text-[14px] md:text-[16px] font-pre-medium text-main200">
+          <p className="text-12 sm:text-14 md:text-16 font-pre-medium text-main200">
             이런! 문제가 발생했어요.
           </p>
-          <p className="text-[12px] sm:text-[14px] md:text-[16px] font-pre-medium text-red">
+          <p className="text-12 sm:text-14 md:text-16 font-pre-medium text-red">
             error message : 존재하지 않는 주소입니다.
           </p>
         </div>
@@ -27,7 +27,7 @@ function ErrorPage() {
 
         <button
           onClick={() => (window.location.href = "/")}
-          className="mt-4 sm:mt-6 md:mt-8 bg-normal hover:bg-normalhover text-white px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-full text-[16px] sm:text-[18px] md:text-[20px] font-pre-medium transition-colors"
+          className="mt-4 sm:mt-6 md:mt-8 bg-normal hover:bg-normalhover text-white px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-full text-16 sm:text-[18px] md:text-20 font-pre-medium transition-colors"
         >
           시작화면으로 돌아가기
         </button>

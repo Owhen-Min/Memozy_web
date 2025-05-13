@@ -1,21 +1,17 @@
-interface MemozyContent {
-  urlId: number;
-  urlTitle: string;
+export interface Memozy {
+  sourceId: number;
+  sourceTitle: string;
   summary: string;
   quizCount: number;
 }
 
-interface MemozyData {
-  collectionName: string;
-  content: MemozyContent[];
-  offset: number;
-  page: number;
-  last: boolean;
-}
-
-export interface MemozyResponse {
+export interface MemozyListResponse {
   success: boolean;
   errorMsg: null | string;
   errorCode: null | string;
-  data: MemozyData;
+  data: {
+    collectionName: string;
+    content: Memozy[];
+    last: boolean;
+  };
 }

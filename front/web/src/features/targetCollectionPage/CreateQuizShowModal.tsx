@@ -49,13 +49,13 @@ function CreateQuizShowModal({
 
         <h1 className="text-[24px] font-pre-bold text-center mb-4">퀴즈쇼 생성하기</h1>
 
-        <p className="text-[14px] font-pre-regular text-gray200 text-center mb-8">
+        <p className="text-14 font-pre-regular text-gray200 text-center mb-8">
           해당 컬렉션에서 설정한 퀴즈 수만큼 랜덤한 퀴즈를 선정합니다
         </p>
 
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <span className="text-[16px] font-pre-medium text-main200">친구들과 함께 풀기</span>
+            <span className="text-16 font-pre-medium text-main200">친구들과 함께 풀기</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -68,13 +68,13 @@ function CreateQuizShowModal({
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-[16px] font-pre-medium">퀴즈 수</span>
+            <span className="text-16 font-pre-medium">퀴즈 수</span>
             <select
               value={quizCount}
               onChange={(e) => setQuizCount(Number(e.target.value))}
               className="
                                 border border-gray-300 rounded-lg px-4 py-2 w-24 text-center
-                                text-[16px] font-pre-medium
+                                text-16 font-pre-medium
                                 focus:outline-none focus:ring-2 focus:ring-main200
                                 appearance-none
                                 bg-white
