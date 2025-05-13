@@ -76,7 +76,7 @@ function MemozyCard({
           <DropDownBox sourceId={sourceId} />
         </div>
       </div>
-      <div className="h-4" /> {/* 카드 사이 간격 */}
+      <div className="h-4" />
       {isModalOpen && (
         <NoteModal
           sourceTitle={sourceTitle}
