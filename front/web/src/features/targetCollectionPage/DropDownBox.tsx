@@ -1,6 +1,5 @@
 // TODO 퀴즈 목록 드롭다운 박스에 편집 모드 추가
 import { useState, useEffect } from "react";
-import { Quiz } from "../../stores/collection/types";
 import trashIcon from "../../assets/icons/trashIcon.png";
 import DeleteQuizModal from "./DeleteQuizModal";
 import { useCollectionStore } from "../../stores/collection/collectionStore";
