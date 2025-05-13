@@ -17,13 +17,13 @@ function NoteModal({ sourceTitle, summary, onClose }: NoteModalProps) {
           <img src={closeIcon} alt="close" className="w-3 h-3" />
         </button>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-[20px] font-pre-semibold text-main200">
+          <h2 className="text-20 font-pre-semibold text-main200">
             개념 요약 노트 -{" "}
-            <span className="text-[20px] font-pre-semibold text-normalactive">{sourceTitle}</span>
+            <span className="text-20 font-pre-semibold text-normalactive">{sourceTitle}</span>
           </h2>
         </div>
         <div className="bg-bg rounded-xl p-4 overflow-y-auto flex-1">
-          <p className="text-[16px] font-pre-regular text-main200 whitespace-pre-wrap">{summary}</p>
+          <p className="text-16 font-pre-regular text-main200 whitespace-pre-wrap">{summary}</p>
         </div>
       </div>
     </div>

@@ -31,10 +31,10 @@ function DropDownBox({ sourceId }: DropDownBoxProps) {
               className="p-4 hover:bg-light border-b border-light last:border-0"
             >
               <div className="flex items-center justify-between gap-4">
-                <span className="text-[14px] font-pre-medium text-main200 flex-1 break-words">
+                <span className="text-14 font-pre-medium text-main200 flex-1 break-words">
                   {quiz.quizContent}
                 </span>
-                <span className="text-[12px] font-pre-regular text-gray200 whitespace-nowrap">
+                <span className="text-12 font-pre-regular text-gray200 whitespace-nowrap">
                   {quiz.quizType === "MULTIPLE_CHOICE"
                     ? "객관식"
                     : quiz.quizType === "OBJECTIVE"

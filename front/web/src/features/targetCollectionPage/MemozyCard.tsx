@@ -41,12 +41,12 @@ function MemozyCard({
                 />
               )}
               <div>
-                <h2 className="text-[20px] font-pre-semibold text-main200 mb-2 line-clamp-1">
+                <h2 className="text-20 font-pre-semibold text-main200 mb-2 line-clamp-1">
                   {sourceTitle}
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-pre-regular text-gray200">퀴즈 수</span>
-                  <span className="text-[14px] font-pre-medium text-normal">{quizCount}</span>
+                  <span className="text-14 font-pre-regular text-gray200">퀴즈 수</span>
+                  <span className="text-14 font-pre-medium text-normal">{quizCount}</span>
                 </div>
               </div>
             </div>

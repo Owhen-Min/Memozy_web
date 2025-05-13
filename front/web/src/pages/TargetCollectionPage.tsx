@@ -69,7 +69,7 @@ function TargetCollectionPage() {
       <div className="content">
         <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200">
           {collectionName}
-          <span className="text-[20px] font-pre-medium text-main200 pl-2">컬렉션</span>
+          <span className="text-20 font-pre-medium text-main200 pl-2">컬렉션</span>
         </h1>
         <hr className="border-t border-gray100 my-4" />
         <div className="flex gap-2 mb-4 justify-between">
@@ -103,13 +103,13 @@ function TargetCollectionPage() {
         {isEditMode && (
           <div className="flex gap-4 mb-4">
             <button
-              className="border border-normal text-normal bg-bg rounded-xl px-4 py-1 font-pre-medium text-[16px] transition-colors hover:bg-normal hover:text-white"
+              className="border border-normal text-normal bg-bg rounded-xl px-4 py-1 font-pre-medium text-16 transition-colors hover:bg-normal hover:text-white"
               onClick={() => setIsCopyModalOpen(true)}
             >
               <span className="font-pre-bold">선택 Memozy 복제</span>
             </button>
             <button
-              className="border border-red text-red bg-bg rounded-xl px-4 py-1 font-pre-medium text-[16px] transition-colors hover:bg-red hover:text-white"
+              className="border border-red text-red bg-bg rounded-xl px-4 py-1 font-pre-medium text-16 transition-colors hover:bg-red hover:text-white"
               onClick={() => setIsDeleteModalOpen(true)}
             >
               <span className="font-pre-bold">선택 Memozy 삭제</span>

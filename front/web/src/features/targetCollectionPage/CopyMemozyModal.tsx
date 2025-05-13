@@ -29,11 +29,11 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
         <button onClick={onClose} className="absolute top-4 right-4">
           <img src={closeIcon} alt="close" className="w-3 h-3" />
         </button>
-        <h1 className="text-[20px] font-pre-bold text-center mb-4">
+        <h1 className="text-20 font-pre-bold text-center mb-4">
           <span className="font-pre-bold">Memozy 복제하기</span>
         </h1>
         <select
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-[16px] font-pre-medium mb-8 focus:outline-none focus:ring-2 focus:ring-main200"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-16 font-pre-medium mb-8 focus:outline-none focus:ring-2 focus:ring-main200"
           value={selectedCollectionId ?? ""}
           onChange={(e) => setSelectedCollectionId(Number(e.target.value))}
         >
@@ -45,7 +45,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
         </select>
         <button
           onClick={handleCopy}
-          className="w-full bg-normal text-white rounded-xl py-2 font-pre-medium text-[16px] hover:bg-normal/90 transition-colors"
+          className="w-full bg-normal text-white rounded-xl py-2 font-pre-medium text-16 hover:bg-normal/90 transition-colors"
         >
           해당 컬렉션에 복제
         </button>
