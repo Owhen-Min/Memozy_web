@@ -23,10 +23,17 @@ public class PersonalQuizResponse {
 	@QueryProjection
 	public PersonalQuizResponse(Long quizId, String content, QuizType type, String choice, String answer,
 		String commentary) {
+		System.out.println("🔍 quizId: " + quizId);
+		System.out.println("🔍 choice: " + choice);
 		this.quizId = quizId;
 		this.content = content;
 		this.type = type;
-		this.choice = Arrays.asList(choice.split(",")); // 문자열을 List로 변환
+		if (choice != null) {
+			this.choice = Arrays.asList(choice.split(","));
+		} else {
+			this.choice = null;
+		}
+		// this.choice = Arrays.asList(choice.split(",")); // 문자열을 List로 변환
 		this.answer = answer;
 		this.commentary = commentary;
 	}
