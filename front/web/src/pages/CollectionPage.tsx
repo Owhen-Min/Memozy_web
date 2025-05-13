@@ -113,5 +113,5 @@ function CollectionPage() {
     </div>
   );
 }
-
+//ejt
 export default CollectionPage;
