@@ -4,7 +4,7 @@ import { analysisReportData } from "../../dummy/analysisReportData";
 import { AnalysisReportData } from "../../types/analysisReport";
 import bookicon from "../../assets/icons/book.svg";
 import openbookicon from "../../assets/icons/openbook.svg";
-import { fetchLearningContribution } from "../../apis/historyApi";
+import { fetchLearningContribution, fetchQuizStats } from "../../apis/history/historyApi";
 
 // 학습 참여도 캘린더 히트맵을 위한 라이브러리
 import CalendarHeatmap from "react-calendar-heatmap";
@@ -25,20 +25,10 @@ import {
 } from "chart.js";
 
 // ChartJS 컴포넌트 등록
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 function AnalysisReport() {
-  const [reportData, setReportData] = useState<AnalysisReportData | null>(
-    analysisReportData.data
-  );
+  const [reportData, setReportData] = useState<AnalysisReportData | null>(analysisReportData.data);
   const apiRequestMade = useRef<boolean>(false);
 
   // 현재 날짜 정보
@@ -82,12 +72,24 @@ function AnalysisReport() {
       apiRequestMade.current = true;
 
       try {
-        const data = await fetchLearningContribution(
+        // 학습 참여도 데이터 가져오기
+        const contributionData = await fetchLearningContribution(
           selectedView === "last12months" ? undefined : parseInt(selectedView)
         );
-        setReportData((prevData) =>
-          prevData ? { ...prevData, learningContribution: data } : null
-        );
+
+        // 퀴즈 통계 데이터 가져오기
+        const quizStatsData = await fetchQuizStats();
+
+        // 두 데이터를 병합하여 상태 업데이트
+        setReportData((prevData) => {
+          if (!prevData) return null;
+          return {
+            ...prevData,
+            learningContribution: contributionData,
+            totalQuizCount: quizStatsData.totalQuizCount,
+            solvedQuizCount: quizStatsData.solvedQuizCount,
+          };
+        });
       } catch (error) {
         console.error("데이터를 불러오는 중 오류 발생:", error);
       } finally {
@@ -106,35 +108,27 @@ function AnalysisReport() {
   }
 
   // 선택된 날짜 범위에 맞는 데이터만 필터링
-  const filteredContributions = reportData.learningContribution.filter(
-    (contrib) => {
-      const contribDate = new Date(contrib.date);
-      return contribDate >= startDate && contribDate <= endDate;
-    }
-  );
+  const filteredContributions = reportData.learningContribution.filter((contrib) => {
+    const contribDate = new Date(contrib.date);
+    return contribDate >= startDate && contribDate <= endDate;
+  });
 
+  // 컬렉션별 정답률 차트 데이터
   const barChartData = {
     labels: reportData.collectionAccuracy.map((item) => item.name),
     datasets: [
       {
         label: "정답률 (%)",
         data: reportData.collectionAccuracy.map((item) => item.latestAccuracy),
-        backgroundColor: [
-          "#FFCE56",
-          "#6A5ACD",
-          "#CCCCCC",
-          "#3CB371",
-          "#3E6FFA",
-        ],
+        backgroundColor: ["#FFCE56", "#6A5ACD", "#CCCCCC", "#3CB371", "#3E6FFA"],
       },
     ],
   };
 
+  // 컬렉션별 분포도 차트 데이터
   const pieChartData = {
     labels: [
-      ...reportData.topCollections.map(
-        (item) => `${item.name} (${item.problemCount})`
-      ),
+      ...reportData.topCollections.map((item) => `${item.name} (${item.problemCount})`),
       `기타 (${reportData.otherCollectionsCount}) `,
     ],
     datasets: [
@@ -163,19 +157,14 @@ function AnalysisReport() {
             className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
-            <div
-              className="flex items-center justify-center"
-              style={{ width: "48px" }}
-            >
+            <div className="flex items-center justify-center" style={{ width: "48px" }}>
               <img src={bookicon} alt="Book Icon" className="w-6" />
             </div>
 
             {/* 텍스트 박스를 절대 위치로 중앙 정렬 */}
             <div className="absolute inset-0 flex flex-col justify-center items-center">
               <div className="text-sm text-center">전체 퀴즈 개수</div>
-              <div className="text-xl font-bold text-center">
-                {reportData.totalQuizCount}
-              </div>
+              <div className="text-xl font-bold text-center">{reportData.totalQuizCount}</div>
             </div>
           </div>
 
@@ -184,19 +173,14 @@ function AnalysisReport() {
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
             {/* 아이콘 */}
-            <div
-              className="flex items-center justify-center"
-              style={{ width: "48px" }}
-            >
+            <div className="flex items-center justify-center" style={{ width: "48px" }}>
               <img src={openbookicon} alt="Open Book Icon" className="w-6" />
             </div>
 
             {/* 중앙 정렬된 텍스트 */}
             <div className="absolute inset-0 flex flex-col justify-center items-center">
               <div className="text-sm text-center">푼 퀴즈 개수</div>
-              <div className="text-xl font-bold text-center">
-                {reportData.solvedQuizCount}
-              </div>
+              <div className="text-xl font-bold text-center">{reportData.solvedQuizCount}</div>
             </div>
           </div>
         </div>
@@ -260,10 +244,7 @@ function AnalysisReport() {
           <div className="overflow-x-auto">
             <div
               style={{
-                width: `${Math.max(
-                  reportData.collectionAccuracy.length * 90,
-                  500
-                )}px`, // 최소 너비를 500px로 설정
+                width: `${Math.max(reportData.collectionAccuracy.length * 90, 500)}px`, // 최소 너비를 500px로 설정
                 height: "300px",
               }}
             >
@@ -334,8 +315,7 @@ function AnalysisReport() {
                   <div
                     className="w-3 h-3"
                     style={{
-                      backgroundColor:
-                        pieChartData.datasets[0].backgroundColor[index],
+                      backgroundColor: pieChartData.datasets[0].backgroundColor[index],
                     }}
                   ></div>
                   <span className="ml-1 text-sm">{label}</span>
