@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import small_logo from "../../assets/images/small_logo.png";
-import { analysisReportData } from "../../dummy/analysisReportData";
 import { AnalysisReportData } from "../../types/analysisReport";
 import bookicon from "../../assets/icons/book.svg";
 import openbookicon from "../../assets/icons/openbook.svg";
-import { fetchLearningContribution } from "../../apis/historyApi";
+import {
+  fetchLearningContribution,
+  fetchQuizStats,
+  fetchCollectionStats,
+} from "../../apis/history/historyApi";
 
 // 학습 참여도 캘린더 히트맵을 위한 라이브러리
 import CalendarHeatmap from "react-calendar-heatmap";
@@ -25,20 +28,17 @@ import {
 } from "chart.js";
 
 // ChartJS 컴포넌트 등록
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+
+// 차트 글로벌 기본값 설정
+ChartJS.defaults.font.family =
+  "'Pretendard-Regular', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif";
+ChartJS.defaults.color = "#333";
 
 function AnalysisReport() {
-  const [reportData, setReportData] = useState<AnalysisReportData | null>(
-    analysisReportData.data
-  );
+  // 초기 상태를 빈 객체로 설정
+  const [reportData, setReportData] = useState<AnalysisReportData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const apiRequestMade = useRef<boolean>(false);
 
   // 현재 날짜 정보
@@ -80,17 +80,36 @@ function AnalysisReport() {
       // StrictMode에서 중복 요청을 방지
       if (apiRequestMade.current) return;
       apiRequestMade.current = true;
+      setIsLoading(true);
 
       try {
-        const data = await fetchLearningContribution(
-          selectedView === "last12months" ? undefined : parseInt(selectedView)
-        );
-        setReportData((prevData) =>
-          prevData ? { ...prevData, learningContribution: data } : null
-        );
+        // 병렬로 모든 API 요청 실행
+        const [contributionData, quizStatsData, collectionStatsData] = await Promise.all([
+          fetchLearningContribution(
+            selectedView === "last12months" ? undefined : parseInt(selectedView)
+          ),
+          fetchQuizStats(),
+          fetchCollectionStats(),
+        ]);
+
+        // 데이터 병합하여 상태 업데이트
+        setReportData((_prevData) => {
+          const newData = {
+            // 기본 reportData 구조를 초기화
+            totalQuizCount: quizStatsData.totalQuizCount,
+            solvedQuizCount: quizStatsData.solvedQuizCount,
+            learningContribution: contributionData,
+            collectionAccuracy: collectionStatsData.collectionAccuracyResponses,
+            topCollections: collectionStatsData.quizCountAnalysisResponse.topCollections,
+            otherCollectionsCount:
+              collectionStatsData.quizCountAnalysisResponse.otherCollectionsCount,
+          };
+          return newData;
+        });
       } catch (error) {
         console.error("데이터를 불러오는 중 오류 발생:", error);
       } finally {
+        setIsLoading(false);
         // 다음 선택 변경 시 다시 요청할 수 있도록 setTimeout으로 초기화
         setTimeout(() => {
           apiRequestMade.current = false;
@@ -101,40 +120,32 @@ function AnalysisReport() {
   }, [selectedView]);
 
   // 데이터 로딩 중인 경우
-  if (!reportData) {
+  if (isLoading || !reportData) {
     return <div>데이터를 불러오는 중입니다...</div>;
   }
 
   // 선택된 날짜 범위에 맞는 데이터만 필터링
-  const filteredContributions = reportData.learningContribution.filter(
-    (contrib) => {
-      const contribDate = new Date(contrib.date);
-      return contribDate >= startDate && contribDate <= endDate;
-    }
-  );
+  const filteredContributions = reportData.learningContribution.filter((contrib) => {
+    const contribDate = new Date(contrib.date);
+    return contribDate >= startDate && contribDate <= endDate;
+  });
 
+  // 컬렉션별 정답률 차트 데이터
   const barChartData = {
     labels: reportData.collectionAccuracy.map((item) => item.name),
     datasets: [
       {
         label: "정답률 (%)",
         data: reportData.collectionAccuracy.map((item) => item.latestAccuracy),
-        backgroundColor: [
-          "#FFCE56",
-          "#6A5ACD",
-          "#CCCCCC",
-          "#3CB371",
-          "#3E6FFA",
-        ],
+        backgroundColor: ["#FFCE56", "#6A5ACD", "#CCCCCC", "#3CB371", "#3E6FFA"],
       },
     ],
   };
 
+  // 컬렉션별 분포도 차트 데이터
   const pieChartData = {
     labels: [
-      ...reportData.topCollections.map(
-        (item) => `${item.name} (${item.problemCount})`
-      ),
+      ...reportData.topCollections.map((item) => `${item.name} (${item.problemCount})`),
       `기타 (${reportData.otherCollectionsCount}) `,
     ],
     datasets: [
@@ -157,23 +168,20 @@ function AnalysisReport() {
     <div className="mb-20">
       <div className="flex items-center gap-2 mb-8">
         <img src={small_logo} alt="로고" className="w-10" />
-        <h2 className="text-[28px] font-pre-medium">분석 레포트</h2>
+        <h2 className="text-[28px] font-pre-semibold">분석 레포트</h2>
         <div className="flex justify-end gap-4 ml-auto font-pre-medium">
           <div
             className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white relative"
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
-            <div
-              className="flex items-center justify-center"
-              style={{ width: "48px" }}
-            >
+            <div className="flex items-center justify-center" style={{ width: "48px" }}>
               <img src={bookicon} alt="Book Icon" className="w-6" />
             </div>
 
             {/* 텍스트 박스를 절대 위치로 중앙 정렬 */}
             <div className="absolute inset-0 flex flex-col justify-center items-center">
-              <div className="text-sm text-center">전체 퀴즈 개수</div>
-              <div className="text-xl font-bold text-center">
+              <div className="text-14 text-center">전체 퀴즈 개수</div>
+              <div className="text-20 font-pre-regular text-center">
                 {reportData.totalQuizCount}
               </div>
             </div>
@@ -184,17 +192,14 @@ function AnalysisReport() {
             style={{ borderRadius: "8px", width: "180px", height: "64px" }}
           >
             {/* 아이콘 */}
-            <div
-              className="flex items-center justify-center"
-              style={{ width: "48px" }}
-            >
+            <div className="flex items-center justify-center" style={{ width: "48px" }}>
               <img src={openbookicon} alt="Open Book Icon" className="w-6" />
             </div>
 
             {/* 중앙 정렬된 텍스트 */}
             <div className="absolute inset-0 flex flex-col justify-center items-center">
-              <div className="text-sm text-center">푼 퀴즈 개수</div>
-              <div className="text-xl font-bold text-center">
+              <div className="text-14 text-center">푼 퀴즈 개수</div>
+              <div className="text-20 font-pre-regular text-center">
                 {reportData.solvedQuizCount}
               </div>
             </div>
@@ -204,10 +209,10 @@ function AnalysisReport() {
 
       <div className="bg-white p-6 rounded-lg border border-normal shadow-md mb-10">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold">학습 참여도</h3>
+          <h3 className="text-[18px] font-pre-semibold">학습 참여도</h3>
           {/* 보기 옵션 드롭박스 */}
           <select
-            className="border border-normal  rounded px-2 py-1 text-sm font-pre-regular"
+            className="border border-normal rounded px-2 py-1 text-sm font-pre-regular"
             value={selectedView}
             onChange={(e) => setSelectedView(e.target.value)}
           >
@@ -256,14 +261,11 @@ function AnalysisReport() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-1">
         <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
-          <h3 className="text-lg font-semibold mb-2">컬렉션별 정답률</h3>
+          <h3 className="text-[18px] font-pre-semibold mb-2">컬렉션별 정답률</h3>
           <div className="overflow-x-auto">
             <div
               style={{
-                width: `${Math.max(
-                  reportData.collectionAccuracy.length * 90,
-                  500
-                )}px`, // 최소 너비를 500px로 설정
+                width: `${Math.max(reportData.collectionAccuracy.length * 90, 500)}px`, // 최소 너비를 500px로 설정
                 height: "300px",
               }}
             >
@@ -279,13 +281,38 @@ function AnalysisReport() {
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
+                  font: {
+                    family: "'Pretendard-Regular', sans-serif",
+                  },
                   plugins: {
-                    legend: { display: false },
+                    legend: {
+                      display: false,
+                      labels: {
+                        font: {
+                          family: "'Pretendard-Regular', sans-serif",
+                          size: 12,
+                        },
+                      },
+                    },
+                    tooltip: {
+                      titleFont: {
+                        family: "'Pretendard-Regular', sans-serif",
+                        size: 14,
+                      },
+                      bodyFont: {
+                        family: "'Pretendard-Regular', sans-serif",
+                        size: 13,
+                      },
+                    },
                   },
                   scales: {
                     x: {
                       ticks: {
                         autoSkip: false,
+                        font: {
+                          family: "'Pretendard-Regular', sans-serif",
+                          size: 12,
+                        },
                       },
                       grid: {
                         offset: false,
@@ -296,6 +323,10 @@ function AnalysisReport() {
                       max: 100,
                       ticks: {
                         stepSize: 20,
+                        font: {
+                          family: "'Pretendard-Regular', sans-serif",
+                          size: 12,
+                        },
                       },
                     },
                   },
@@ -312,33 +343,51 @@ function AnalysisReport() {
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-normal shadow-md">
-          <h3 className="text-lg font-semibold mb-2">컬렉션별 분포도</h3>
+          <h3 className="text-[18px] font-pre-semibold mb-2">컬렉션별 분포도</h3>
           <div className="flex flex-col justify-center items-center">
             <div style={{ height: "240px", width: "240px" }}>
               <Pie
                 data={pieChartData}
                 options={{
                   responsive: true,
+                  font: {
+                    family: "'Pretendard-Regular', sans-serif",
+                  },
                   plugins: {
                     legend: {
-                      display: false, // 차트 내 레전드 비활성화
+                      display: false,
+                      labels: {
+                        font: {
+                          family: "'Pretendard-Regular', sans-serif",
+                          size: 12,
+                        },
+                      },
+                    },
+                    tooltip: {
+                      titleFont: {
+                        family: "'Pretendard-Regular', sans-serif",
+                        size: 14,
+                      },
+                      bodyFont: {
+                        family: "'Pretendard-Regular', sans-serif",
+                        size: 13,
+                      },
                     },
                   },
                 }}
               />
             </div>
             {/* 레전드를 차트 외부에 별도로 구현 */}
-            <div className="flex justify-center mt-4">
+            <div className="flex flex-wrap justify-center mt-4">
               {pieChartData.labels.map((label, index) => (
-                <div key={index} className="flex items-center mx-2">
+                <div key={index} className="flex items-center mx-2 mb-2">
                   <div
                     className="w-3 h-3"
                     style={{
-                      backgroundColor:
-                        pieChartData.datasets[0].backgroundColor[index],
+                      backgroundColor: pieChartData.datasets[0].backgroundColor[index],
                     }}
                   ></div>
-                  <span className="ml-1 text-sm">{label}</span>
+                  <span className="ml-1 text-14 font-pre-regular">{label}</span>
                 </div>
               ))}
             </div>
@@ -348,4 +397,5 @@ function AnalysisReport() {
     </div>
   );
 }
+
 export default AnalysisReport;
