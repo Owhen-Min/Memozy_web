@@ -45,3 +45,18 @@ export const fetchCollectionStats = async () => {
     throw error;
   }
 };
+
+// 오답노트 컬렉션 리스트 가져오기
+export const fetchWrongAnswerCollections = async () => {
+  try {
+    const response = await httpClient.get(`/history/collection`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.errorMsg || "Unknown error");
+    }
+  } catch (error) {
+    console.error("오답노트 컬렉션 목록 요청 중 오류 발생:", error);
+    throw error;
+  }
+};
