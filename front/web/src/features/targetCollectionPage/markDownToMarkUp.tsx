@@ -35,7 +35,7 @@ const CustomReactMarkdown: React.FC<CustomReactMarkdownProps> = ({ children, ...
             </div>
           ) : (
             <code
-              className={`${className} text-red-500 bg-gray-200 px-1 rounded text-sm font-mono`}
+              className={`${className} text-red-500 bg-gray-200 px-1 rounded text-[14px] font-mono`}
               {...props}
             >
               {codeChildren}
@@ -79,29 +79,32 @@ const CustomReactMarkdown: React.FC<CustomReactMarkdownProps> = ({ children, ...
         // 헤딩 태그 커스텀 렌더링
         h1({ node, ...props }) {
           return (
-            <h1 className="text-2xl font-bold my-6 pb-2 border-b border-gray-200" {...props} />
+            <h1 className="text-[24px] font-bold my-6 pb-2 border-b border-gray-200" {...props} />
           );
         },
         h2({ node, ...props }) {
           return (
-            <h2 className="text-xl font-semibold my-5 pb-2 border-b border-gray-200" {...props} />
+            <h2
+              className="text-[20px] font-semibold my-5 pb-2 border-b border-gray-200"
+              {...props}
+            />
           );
         },
         h3({ node, ...props }) {
-          return <h3 className="text-lg font-semibold my-4" {...props} />;
+          return <h3 className="text-[18px] font-semibold my-4" {...props} />;
         },
         h4({ node, ...props }) {
-          return <h4 className="text-lg font-semibold my-3" {...props} />;
+          return <h4 className="text-[18px] font-semibold my-3" {...props} />;
         },
         h5({ node, ...props }) {
-          return <h5 className="text-base font-semibold my-2" {...props} />;
+          return <h5 className="text-[16px] font-semibold my-2" {...props} />;
         },
         h6({ node, ...props }) {
-          return <h6 className="text-base font-semibold my-1" {...props} />;
+          return <h6 className="text-[16px] font-semibold my-1" {...props} />;
         },
         // 기본 텍스트(문단) 커스텀 렌더링
         p({ node, ...props }) {
-          return <p className="text-base my-4" {...props} />;
+          return <p className="text-[16px] my-4" {...props} />;
         },
         // 링크(a 태그) 커스텀 렌더링
         a({ node, ...props }) {
