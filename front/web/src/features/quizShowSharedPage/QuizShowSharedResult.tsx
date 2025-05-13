@@ -1,16 +1,16 @@
-import small_logo from "../assets/images/small_logo.png";
-import { quizShowData } from "../dummy/quizShowData";
-import rightmonster from "../assets/images/quizshowImg.png";
-import save from "../assets/icons/save.svg";
-import book from "../assets/icons/summaryIcon.svg";
-import first from "../assets/images/first.png";
-import second from "../assets/images/second.png";
-import third from "../assets/images/third.png";
-import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
+import small_logo from "../../assets/images/small_logo.png";
+import rightmonster from "../../assets/images/quizshowImg.png";
+import save from "../../assets/icons/save.svg";
+import book from "../../assets/icons/summaryIcon.svg";
+import first from "../../assets/images/first.png";
+import second from "../../assets/images/second.png";
+import third from "../../assets/images/third.png";
+import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
-import MostWrongQuiz from "../components/quizShowPage/MostWrongQuiz";
-import { quizShowResultData, quizShowMyResultData } from "../dummy/quizSharedResultData";
+import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
+import { quizShowResultData, quizShowMyResultData } from "../../dummy/quizSharedResultData";
+import { quizShowData } from "../../dummy/quizShowData";
 
 function QuizShowResultSharedPage() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ function QuizShowResultSharedPage() {
   });
 
   return (
-    <div className="content-quiz">
+    <>
       <h1 className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
         <div className="flex items-center gap-1 md:gap-2 w-full overflow-hidden">
           <img src={small_logo} alt="logo" className="w-6 md:w-10 flex-shrink-0" />
@@ -145,7 +145,7 @@ function QuizShowResultSharedPage() {
           />
         )}
       </div>
-    </div>
+    </>
   );
 }
 

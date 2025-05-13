@@ -1,33 +1,23 @@
 import { useNavigate, useParams } from "react-router";
-import small_logo from "../assets/images/small_logo.png";
-import Memozy_logo from "../assets/images/Memozylogo.svg";
-import monster1 from "../assets/images/monster1.png";
-import { quizShowData } from "../dummy/quizShowData";
-import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
-import useWebSocket from "../apis/stompClient";
-import { useEffect } from "react";
+import small_logo from "../../assets/images/small_logo.png";
+import Memozy_logo from "../../assets/images/Memozylogo.svg";
+import monster1 from "../../assets/images/monster1.png";
+import { quizShowData } from "../../dummy/quizShowData";
+import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 
-function QuizShowEntrySharedPage() {
+function QuizShowSharedEntry({
+  isHost,
+  participants,
+  nickname,
+  onStartQuizShow,
+}: {
+  isHost: boolean;
+  participants: string[];
+  nickname: string;
+  onStartQuizShow: () => void;
+}) {
   const { collectionId } = useParams();
   const navigate = useNavigate();
-  const { stompClient, isConnected } = useWebSocket();
-
-  useEffect(() => {
-    if (stompClient && isConnected) {
-      const subscription = stompClient.subscribe(
-        `/sub/quizshows/${quizShowData.data.quizSessionId}`,
-        (message) => {
-          console.log("받은 메시지:", message.body);
-        }
-      );
-      console.log(`구독 시작: /sub/quizshows/${quizShowData.data.quizSessionId}`);
-
-      return () => {
-        subscription.unsubscribe();
-        console.log(`구독 해지: /sub/quizshows/${quizShowData.data.quizSessionId}`);
-      };
-    }
-  }, []);
 
   const handleStartQuizShow = () => {
     navigate(`/quiz-show/shared/${collectionId}`, {
@@ -39,11 +29,12 @@ function QuizShowEntrySharedPage() {
       },
     });
   };
+  console.log(isHost);
 
   return (
-    <div className="content-quiz">
+    <>
       <div className="flex items-center justify-between">
-        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
+        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center justify-center gap-2">
           <img src={small_logo} alt="logo" className="w-10 h-10" />
           Quiz : <span className="text-normalactive">{quizShowData.data.collectionName}</span>
         </h1>
@@ -52,7 +43,7 @@ function QuizShowEntrySharedPage() {
           onClick={() => navigate(`/collection/${collectionId}`)}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
-          컬렉션 리스트로 돌아가기
+          퀴즈 나가기
         </button>
       </div>
       <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
@@ -67,12 +58,21 @@ function QuizShowEntrySharedPage() {
             </div>
 
             <div className="relative z-10 ml-4 md:ml-32">
-              <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
-                <h2 className="text-20 mb-2 font-pre-medium">단체 퀴즈쇼가 생성되었어요!</h2>
-                <p className="text-14 font-pre-regular">
-                  원하는 인원이 모두 모였다면 시작하기 버튼을 눌러주세요.
-                </p>
-              </div>
+              {isHost ? (
+                <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
+                  <h2 className="text-20 mb-2 font-pre-medium">단체 퀴즈쇼가 생성되었어요!</h2>
+                  <p className="text-14 font-pre-regular">
+                    원하는 인원이 모두 모였다면 시작하기 버튼을 눌러주세요.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
+                  <p className="text-16 font-pre-bold">퀴즈 참여가 완료되었어요!</p>
+                  <p className="text-14 font-pre-regular">
+                    호스트가 퀴즈를 시작할 때까지 잠시만 기다려주세요!
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="absolute right-4 md:right-10 top-[70px] z-30">
@@ -101,8 +101,17 @@ function QuizShowEntrySharedPage() {
           </div>
         </div>
       </div>
-    </div>
+      <div>
+        <h3>참가자 목록</h3>
+        <ul>
+          {participants.map((name, idx) => (
+            <li key={idx}>{name}</li>
+          ))}
+        </ul>
+      </div>
+      {isHost && <button onClick={onStartQuizShow}>시작하기</button>}
+    </>
   );
 }
 
-export default QuizShowEntrySharedPage;
+export default QuizShowSharedEntry;

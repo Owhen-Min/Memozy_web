@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import closeIcon from "../../assets/icons/closeIcon.svg";
+import {
+  sharedQuizShowApi,
+  SharedQuizShowCreateResponse,
+} from "../../apis/sharedQuizShow/sharedQuizShowApi";
 
 interface CreateQuizShowModalProps {
   onClose: () => void;
@@ -19,7 +23,7 @@ function CreateQuizShowModal({
   const [isShared, setIsShared] = useState(false);
   const [quizCount, setQuizCount] = useState(1);
 
-  const handleQuizShowCreate = () => {
+  const handleQuizShowCreate = async () => {
     // TODO: 퀴즈 시작 로직 구현
     console.log(
       "퀴즈쇼 생성 컬렉션 이름 : ",
@@ -32,9 +36,24 @@ function CreateQuizShowModal({
       isShared
     );
     onClose();
-    navigate(
-      isShared ? `/quiz-entry/shared/${collectionId}` : `/quiz-entry/personal/${collectionId}`
-    );
+
+    if (isShared) {
+      try {
+        const response: SharedQuizShowCreateResponse = await sharedQuizShowApi.createSharedQuizShow(
+          collectionId,
+          quizCount
+        );
+        if (response.success) {
+          navigate(response.data.showUrl);
+        } else {
+          alert(response.errorMsg);
+        }
+      } catch (error) {
+        console.error("퀴즈쇼 생성 실패 : ", error);
+      }
+    } else {
+      navigate(`/quiz-entry/personal/${collectionId}`);
+    }
   };
 
   // 선택 가능한 퀴즈 수 배열 생성 (1부터 totalQuizCount까지)
