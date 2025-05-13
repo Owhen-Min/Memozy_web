@@ -227,6 +227,21 @@ public class CollectionServiceImpl implements CollectionService {
 			.build();
 	}
 
+	@Override
+	public CollectionMemozyListResponse getAllMemozies(Integer userId, int page, int pageSize) {
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		List<MemozyContentResponse> content = collectionRepository.findAllWithPaging(userId, pageable);
+
+		boolean isLast = content.size() < pageSize;
+
+		return CollectionMemozyListResponse.builder()
+			.collectionName("모두 보기")
+			.content(content)
+			.last(isLast)
+			.build();
+	}
+
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
 		List<Long> validQuizIds = collectionRepository.findValidQuizIdsByUser(quizIds, userId);
 		quizRepository.deleteByQuizIdIn(validQuizIds);

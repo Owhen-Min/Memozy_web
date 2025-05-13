@@ -32,4 +32,6 @@ public interface CollectionService {
 
 	CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId, int offset,
 		int page);
+
+	CollectionMemozyListResponse getAllMemozies(Integer userId, int offset, int page);
 }
