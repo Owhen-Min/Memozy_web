@@ -152,7 +152,8 @@ function TargetCollectionPage() {
 
       {isDeleteModalOpen && (
         <DeleteMemozyModal
-          memozyIds={selectedMemozyIds}
+          quizId={null}
+          sourceId={selectedMemozyIds}
           onClose={() => setIsDeleteModalOpen(false)}
         />
       )}

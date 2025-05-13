@@ -11,8 +11,8 @@ export interface CopyMemozyRequest {
 }
 
 export interface DeleteQuizRequest {
-  quizId: number[];
-  sourceId: number[];
+  quizId: number[] | null;
+  sourceId: number[] | null;
 }
 
 export interface DeleteCollectionRequest {
