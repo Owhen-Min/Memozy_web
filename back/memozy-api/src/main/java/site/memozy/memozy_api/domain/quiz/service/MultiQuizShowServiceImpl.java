@@ -17,7 +17,7 @@ import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
-import site.memozy.memozy_api.domain.quiz.dto.QuizShowEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
@@ -32,12 +32,17 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private final CollectionRepository collectionRepository;
 	private final QuizRepository quizRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
+	private final MultiQuizShowRunner multiQuizShowRunner;
 
 	@Override
 	@Transactional
 	public MultiQuizShowCreateResponse createMultiQuizShow(CustomOAuth2User user, int collectionId, int count) {
 		Collection collection = collectionRepository.findById(collectionId)
 			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
+
+		if (!collection.getUserId().equals(user.getUserId())) {
+			throw new GeneralException(COLLECTION_INVALID_USER);
+		}
 
 		String quizShowCode = generateRandomCode();
 		log.info("생성된 퀴즈 코드: {}", quizShowCode);
@@ -49,7 +54,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
 
-		multiQuizShowRedisRepository.saveQuizzes(quizShowCode, collectionId, user.getUserId(), count, quizzes);
+		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getName(), user.getName(),
+			count, quizzes);
 		String showUrl = String.format("https://memozy.site/quiz/show/%s", quizShowCode);
 		return new MultiQuizShowCreateResponse(quizShowCode, showUrl, user.getName(), collection.getName(), count);
 	}
@@ -59,7 +65,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		log.info("[service] joinMultiQuizShow() called with showId: {}", showId);
 
 		if (!collectionRepository.existsByCode(showId)) {
-			throw new IllegalArgumentException("Invalid code" + showId);
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
 
 		Map<String, String> participantInfo = Map.of(
@@ -71,7 +77,23 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		multiQuizShowRedisRepository.saveParticipant(showId, userId);
 		multiQuizShowRedisRepository.saveParticipantInfo(showId, userId, participantInfo);
 
-		applicationEventPublisher.publishEvent(new QuizShowEvent(showId, userId, nickname));
+		Map<String, String> metaData = multiQuizShowRedisRepository.getQuizMetaData(showId);
+		applicationEventPublisher.publishEvent(
+			new QuizShowJoinEvent(showId, userId, nickname, metaData.get("hostName"), metaData.get("collectionName"),
+				metaData.get("quizCount")));
+	}
+
+	@Transactional
+	public void startMultiQuizShow(String showId, String userId) {
+		if (!collectionRepository.existsByCode(showId)) {
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
+		}
+
+		String hostUserId = multiQuizShowRedisRepository.getQuizMetaData(showId).get("hostId");
+		if (!hostUserId.equals(userId)) {
+			throw new GeneralException(QUIZ_NOT_HOST);
+		}
+		multiQuizShowRunner.startQuizShow(showId);
 	}
 
 	@Override

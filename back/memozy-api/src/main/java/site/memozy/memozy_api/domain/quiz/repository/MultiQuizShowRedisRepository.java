@@ -50,15 +50,16 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public void saveQuizzes(String showId, int collectionId, int hostUserId, int count,
+	public void saveQuizzes(Integer hostId, String showId, String collectionName, String hostName, int count,
 		List<MultiQuizResponse> quizList) {
 		log.info("[Redis] saveQuizzes() called with showId: {}, collectionId: {}, hostUserId: {}, count: {}",
-			showId, collectionId, hostUserId, count);
+			showId, collectionName, hostName, count);
 		try {
 			String metaDataKey = "show:" + showId + ":metadata";
 			Map<String, String> metadata = new HashMap<>();
-			metadata.put("hostUserId", String.valueOf(hostUserId));
-			metadata.put("collectionId", String.valueOf(collectionId));
+			metadata.put("hostId", String.valueOf(hostId));
+			metadata.put("hostName", String.valueOf(hostName));
+			metadata.put("collectionName", String.valueOf(collectionName));
 			metadata.put("quizCount", String.valueOf(count));
 			metadata.put("startTime", LocalDateTime.now().toString());
 
@@ -129,6 +130,29 @@ public class MultiQuizShowRedisRepository {
 		} catch (Exception e) {
 			log.error("[Redis] Error finding participants : {}", e.getMessage());
 			throw new GeneralException(REDIS_PARTICIPANT_NOT_FOUND);
+		}
+	}
+
+	public Map<String, String> getQuizMetaData(String showId) {
+		log.info("[Redis] getQuizMetaData() called with showId: {}", showId);
+		String metaKey = "show:" + showId + ":metadata";
+		try {
+			Map<Object, Object> metadata = redisTemplate.opsForHash().entries(metaKey);
+
+			if (metadata.isEmpty()) {
+				throw new GeneralException(REDIS_INVALID_METADATA);
+			}
+
+			Map<String, String> quizData = new HashMap<>();
+			for (Map.Entry<Object, Object> entry : metadata.entrySet()) {
+				quizData.put(entry.getKey().toString(), entry.getValue().toString());
+			}
+
+			log.info("[Redis] Quiz metadata: {}", quizData);
+			return quizData;
+		} catch (Exception e) {
+			log.error("[Redis] Error getting quiz metadata: {}", e.getMessage());
+			throw new GeneralException(REDIS_SESSION_NOT_FOUND);
 		}
 	}
 

@@ -14,13 +14,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MyMultiQuizShowResultResponse;
-import site.memozy.memozy_api.domain.quiz.dto.QuizShowEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowResultEvent;
 import site.memozy.memozy_api.domain.quiz.dto.TopQuizResultResponse;
 import site.memozy.memozy_api.domain.quiz.dto.TotalMultiQuizShowResultResponse;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class QuizShowEventListener {
@@ -30,13 +32,11 @@ public class QuizShowEventListener {
 	private final MultiQuizShowRedisRepository multiQuizShowRedisRepository;
 
 	@EventListener
-	public void handleQuizShowEvent(QuizShowEvent event) {
+	public void handleJoinQuizShowEvent(QuizShowJoinEvent event) {
 		String showId = event.showId();
-		String nickname = event.nickname();
-
 		String type = "join";
 
-		String hostUserId = multiQuizShowRedisRepository.getHostMemberId(showId);
+		String hostUserId = multiQuizShowRedisRepository.getQuizMetaData(showId).get("hostId");
 		if (hostUserId.equals(event.userId())) {
 			type = "host";
 		}
@@ -46,7 +46,10 @@ public class QuizShowEventListener {
 			Map.of(
 				"type", type,
 				"userId", event.userId(),
-				"nickname", nickname
+				"nickname", event.nickname(),
+				"hostName", event.hostName(),
+				"collectionName", event.collectionName(),
+				"quizCount", event.quizCount()
 			)
 		);
 
@@ -67,7 +70,7 @@ public class QuizShowEventListener {
 	}
 
 	@EventListener
-	public void handleQuizShowResult(QuizShowResultEvent event) {
+	public void handleQuizShowResultEvent(QuizShowResultEvent event) {
 		String showId = event.showId();
 		int quizCount = multiQuizShowRedisRepository.getQuizCount(showId);
 		Set<Object> userIds = multiQuizShowRedisRepository.findMembers(showId);
@@ -85,16 +88,19 @@ public class QuizShowEventListener {
 			int correctCount = 0;
 			for (Map.Entry<String, String> entry : userAnswers.entrySet()) {
 				String key = entry.getKey();
-				String value = entry.getValue();
+				if (!key.endsWith("_choice"))
+					continue;
+
 				int index = Integer.parseInt(key.replace("_choice", ""));
-				boolean isCorrect = Boolean.parseBoolean(value);
+				boolean isCorrect = Boolean.parseBoolean(entry.getValue());
 
 				if (isCorrect) {
 					correctCount++;
 				} else {
-					wrongCounts.put(index, wrongCounts.get(index) + 1);
+					wrongCounts.put(index, wrongCounts.getOrDefault(index, 0) + 1);
 				}
 			}
+
 			int score = (int)Math.round((correctCount * 100.0) / quizCount);
 			Map<String, String> participantInfo = multiQuizShowRedisRepository.getParticipantInfo(showId, userId);
 			String nickname = participantInfo.get("nickname");
@@ -115,7 +121,7 @@ public class QuizShowEventListener {
 			.orElse(0); // default index 0
 
 		String mostWrongQuizJson = multiQuizShowRedisRepository.getQuizByIndex(showId, mostWrongIndex);
-
+		log.info("Most wrong quiz index: {}", mostWrongIndex);
 		for (MyMultiQuizShowResultResponse result : results) {
 			messagingTemplate.convertAndSend(
 				"/sub/quiz/show/" + showId + "/result/" + result.userId(),
