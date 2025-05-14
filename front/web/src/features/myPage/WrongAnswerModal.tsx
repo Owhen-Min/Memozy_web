@@ -71,7 +71,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
           onClick={onClose}
           className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20"
         >
-          <img src={closeIcon} alt="닫기" className="w-4 md:w-8" />
+          <img src={closeIcon} alt="닫기" className="w-4" />
         </button>
         <div className="flex items-center mb-4 md:mb-6">
           <img src={openfolder} alt="폴더" className="w-8 md:w-8 mr-2" />

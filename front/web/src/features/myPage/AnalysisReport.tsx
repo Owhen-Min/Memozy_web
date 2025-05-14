@@ -67,7 +67,7 @@ function AnalysisReport() {
   }
 
   return (
-    <div className="mb-20 px-4 sm:px-0">
+    <div className="mb-20">
       <CountQuizSection
         totalQuizCount={reportData.totalQuizCount}
         solvedQuizCount={reportData.solvedQuizCount}
