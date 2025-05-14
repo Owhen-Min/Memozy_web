@@ -23,6 +23,8 @@ import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResultResponse;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quiz.util.QuizSessionStore;
+import site.memozy.memozy_api.domain.user.User;
+import site.memozy.memozy_api.domain.user.repository.UserRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Service
@@ -34,13 +36,15 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 	private final HistoryRepository historyRepository;
 
 	private final QuizSessionStore quizSessionStore;
+	private final UserRepository userRepository;
 
 	@Override
-	public PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly) {
+	public PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, Integer collectionId, int count,
+		boolean newOnly) {
 		List<PersonalQuizResponse> personalQuizzes = quizRepository.getPersonalQuizzes(userId, collectionId, count,
 			newOnly);
 
-		if (personalQuizzes.isEmpty() || personalQuizzes.size() < count) {
+		if (personalQuizzes == null || personalQuizzes.isEmpty() || personalQuizzes.size() < count) {
 			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
 
@@ -49,14 +53,24 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 			.map(quiz -> String.valueOf(quiz.getQuizId()))
 			.toList();
 
-		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
-			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
+		// 기본값 설정
+		int effectiveCollectionId = collectionId;
+		String effectiveCollectionName = "전체";
+
+		if (collectionId > 0) {
+			// 실제 Collection 조회
+			Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
+				.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
+
+			effectiveCollectionId = collection.getCollectionId();
+			effectiveCollectionName = collection.getName();
+		}
 
 		// Redis에 퀴즈 정보 초기화
 		String sessionId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-		quizSessionStore.saveQuizSession(userId, quizList, sessionId, collection.getCollectionId());
+		quizSessionStore.saveQuizSession(userId, quizList, sessionId, effectiveCollectionId);
 
-		return PersonalQuizAndSessionResponse.of(collection.getName(), sessionId, personalQuizzes,
+		return PersonalQuizAndSessionResponse.of(effectiveCollectionName, sessionId, personalQuizzes,
 			personalQuizzes.size());
 	}
 
@@ -81,7 +95,13 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 		Map<String, String> meta = (Map<String, String>)sessionMap.get(QuizSessionStore.METADATA_KEY);
 
 		int collectionId = Integer.parseInt(meta.get("collectionId"));
-		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId)
+		String email = null;
+		if (collectionId == 0) {
+			User user = userRepository.findById(userId)
+				.orElseThrow(() -> new GeneralException(MEMBER_NOT_FOUND));
+			email = user.getEmail();
+		}
+		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId, email)
 			.orElse(0) + 1;
 		int totalQuizCount = quizStatus.size();
 		int incorrectQuizCount = 0;
@@ -96,12 +116,16 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 				incorrectQuizCount++;
 			}
 
-			historyList.add(History.builder().isSolved(isSolved)
+			History history = History.builder().isSolved(isSolved)
 				.userSelect(status.get("answer"))
 				.quizId(Long.parseLong(entry.getKey()))
 				.collectionId(collectionId)
 				.round(nextRound)
-				.build());
+				.build();
+			if (collectionId == 0 && email != null) {
+				history.updateEmail(email);
+			}
+			historyList.add(history);
 		}
 		historyRepository.saveAll(historyList);
 
