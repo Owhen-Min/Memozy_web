@@ -39,6 +39,7 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 	private final UserRepository userRepository;
 
 	@Override
+	@Transactional(readOnly = true)
 	public PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, Integer collectionId, int count,
 		boolean newOnly) {
 		List<PersonalQuizResponse> personalQuizzes = quizRepository.getPersonalQuizzes(userId, collectionId, count,
