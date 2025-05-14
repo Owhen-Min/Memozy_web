@@ -9,10 +9,10 @@ export const validateCollectionName = (name: string): { isValid: boolean; messag
   }
 
   // 전체 길이 제한 (25자)
-  if (name.length > 25) {
+  if (name.length > 20) {
     return {
       isValid: false,
-      message: "이름은 25자를 초과할 수 없습니다.",
+      message: "이름은 20자를 초과할 수 없습니다.",
     };
   }
 
