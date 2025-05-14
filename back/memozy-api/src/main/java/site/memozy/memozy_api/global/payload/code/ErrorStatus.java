@@ -59,9 +59,5 @@ public enum ErrorStatus implements BaseErrorCode {
 	private final HttpStatus httpStatusCode;
 	private final String errorCode;
 	private final String errorMsg;
-
-	@Override
-	public ErrorStatus getErrorReason() {
-		return this;
-	}
+	
 }
