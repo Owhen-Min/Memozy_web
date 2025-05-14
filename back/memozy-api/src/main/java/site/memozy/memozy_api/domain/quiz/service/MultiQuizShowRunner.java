@@ -54,7 +54,7 @@ public class MultiQuizShowRunner {
 			}
 
 			try {
-				String quiz = redisRepository.getQuizByIndex(showId, index).toString();
+				Map<String, Object> quiz = redisRepository.getQuizByIndex(showId, index);
 				log.info("{} 퀴즈쇼 {}번째 퀴즈 전송: {}", showId, index, quiz);
 				if (quiz == null) {
 					log.error("퀴즈쇼 문제 오류 = {}번째 문제부터", index);
@@ -71,12 +71,20 @@ public class MultiQuizShowRunner {
 		activeTasks.put(showId, future);
 	}
 
-	private void sendQuiz(String showId, int index, String quiz) {
+	private void sendQuiz(String showId, int index, Map<String, Object> quiz) {
+		Map<String, Object> quizData = Map.of(
+			"content", quiz.get("content"),
+			"choice", quiz.get("choice"),
+			"type", quiz.get("type"),
+			"answer", quiz.get("answer"),
+			"commentary", quiz.get("commentary")
+		);
+
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/quiz",
 			Map.of(
-				"type", "quiz",
-				"quiz", quiz,
+				"type", "QUIZ",
+				"quiz", quizData,
 				"index", index
 			)
 		);

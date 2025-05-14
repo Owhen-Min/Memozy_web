@@ -75,6 +75,7 @@ public class MultiQuizShowRedisRepository {
 				String quizKey = "quiz:" + quizId;
 				Map<String, String> quizData = new HashMap<>();
 				quizData.put("quizIndex", quizId);
+				quizData.put("type", String.valueOf(quiz.getType()));
 				quizData.put("content", quiz.getContent());
 				quizData.put("choice", quiz.getChoice().toString());
 				quizData.put("answer", quiz.getAnswer());
@@ -186,13 +187,13 @@ public class MultiQuizShowRedisRepository {
 				throw new GeneralException(REDIS_QUIZ_NOT_FOUND);
 			}
 
-			String choice = (String)quizData.getOrDefault("choice", "");
-
 			return Map.of(
 				"quizId", quizId,
+				"type", quizData.getOrDefault("type", ""),
 				"content", quizData.getOrDefault("content", ""),
-				"choice", choice,
-				"answer", quizData.getOrDefault("answer", "")
+				"choice", quizData.getOrDefault("choice", ""),
+				"answer", quizData.getOrDefault("answer", ""),
+				"commentary", quizData.getOrDefault("commentary", "")
 			);
 
 		} catch (Exception e) {

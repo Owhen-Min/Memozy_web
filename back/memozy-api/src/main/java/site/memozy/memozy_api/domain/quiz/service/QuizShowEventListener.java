@@ -19,6 +19,7 @@ import site.memozy.memozy_api.domain.quiz.dto.MyMultiQuizShowResultResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowResultEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowStartEvent;
 import site.memozy.memozy_api.domain.quiz.dto.TopQuizResultResponse;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 
@@ -34,15 +35,15 @@ public class QuizShowEventListener {
 	@EventListener
 	public void handleJoinQuizShowEvent(QuizShowJoinEvent event) {
 		String showId = event.showId();
-		String type = "join";
+		String type = "JOIN";
 
-		String hostUserId = multiQuizShowRedisRepository.getQuizMetaData(showId).get("hostId");
-		if (hostUserId.equals(event.userId())) {
-			type = "host";
+		Map<String, String> metaData = multiQuizShowRedisRepository.getQuizMetaData(showId);
+		if (metaData.get("hostId").equals(event.userId())) {
+			type = "HOST";
 		}
 
-		sendToParticipant(showId, type, event);
-		broadcastParticipants(showId);
+		sendToParticipant(type, showId, event.userId(), event.nickname(), metaData);
+		broadcastParticipants("JOIN", showId);
 	}
 
 	@EventListener
@@ -50,21 +51,26 @@ public class QuizShowEventListener {
 		String showId = event.showId();
 		String userId = event.userId();
 		String nickname = event.nickname();
+		String type = "NICKNAME";
+
+		sendToUser(type, showId, userId, nickname);
+		broadcastParticipants("NICKNAME", showId);
+	}
+
+	@EventListener
+	public void handleQuizShowStartEvent(QuizShowStartEvent event) {
+		String showId = event.showId();
+		String type = "START";
 
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/join",
-			Map.of(
-				"type", "NICKNAME",
-				"userId", userId,
-				"nickname", nickname
-			)
+			Map.of("type", type)
 		);
-
-		broadcastParticipants(showId);
 	}
 
 	@EventListener
 	public void handleQuizShowResultEvent(QuizShowResultEvent event) {
+		log.info("[Event] QuizShowResultEvent triggered for showId: {}", event.showId());
 		String showId = event.showId();
 		int quizCount = multiQuizShowRedisRepository.getQuizCount(showId);
 		Set<Object> userIds = multiQuizShowRedisRepository.findParticipants(showId);
@@ -139,32 +145,50 @@ public class QuizShowEventListener {
 		);
 	}
 
-	private void sendToParticipant(String showId, String type, QuizShowJoinEvent event) {
+	private void sendToUser(String type, String showId, String userId, String nickname) {
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/join",
 			Map.of(
 				"type", type,
-				"userId", event.userId(),
-				"nickname", event.nickname(),
-				"hostName", event.hostName(),
-				"collectionName", event.collectionName(),
-				"quizCount", event.quizCount()
+				"userId", userId,
+				"nickname", nickname
 			)
 		);
 	}
 
-	private void broadcastParticipants(String showId) {
+	private void sendToParticipant(String type, String showId, String userId, String nickname,
+		Map<String, String> metaData) {
+		messagingTemplate.convertAndSend(
+			"/sub/quiz/show/" + showId + "/join",
+			Map.of(
+				"type", type,
+				"userId", userId,
+				"nickname", nickname,
+				"hostId", metaData.get("hostId"),
+				"hostName", metaData.get("hostName"),
+				"collectionName", metaData.get("collectionName"),
+				"quizCount", metaData.get("quizCount")
+			)
+		);
+	}
+
+	private void broadcastParticipants(String type, String showId) {
 		Set<Object> members = multiQuizShowRedisRepository.findParticipants(showId);
-		List<String> users = members.stream()
-			.map(id -> redisTemplate.opsForHash().entries("show:" + showId + ":user:" + id))
+		List<Map<String, String>> users = members.stream()
+			.map(userId -> {
+				Map<Object, Object> userMap = redisTemplate.opsForHash().entries("show:" + showId + ":user:" + userId);
+				Map<String, String> result = new HashMap<>();
+				result.put("userId", userId.toString());
+				result.put("nickname", (String)userMap.get("nickname"));
+				return result;
+			})
 			.filter(Objects::nonNull)
-			.map(user -> (String)user.get("nickname"))
 			.toList();
 
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/participants",
 			Map.of(
-				"type", "PARTICIPANT_LIST",
+				"type", type,
 				"participants", users
 			)
 		);

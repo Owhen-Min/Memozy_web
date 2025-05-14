@@ -19,6 +19,7 @@ import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowStartEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
@@ -94,6 +95,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (!hostUserId.equals(userId)) {
 			throw new GeneralException(QUIZ_NOT_HOST);
 		}
+		applicationEventPublisher.publishEvent(new QuizShowStartEvent(showId));
 		multiQuizShowRunner.startQuizShow(showId);
 	}
 
@@ -123,5 +125,4 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
 	}
-
 }
