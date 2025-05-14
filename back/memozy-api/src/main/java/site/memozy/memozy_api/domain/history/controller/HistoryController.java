@@ -85,4 +85,15 @@ public class HistoryController {
 		return ApiResponse.success(collectionHistoryDetail);
 	}
 
+	@Operation(summary = "컬렉션 상세 조회 (모든 문제에 대한 히스토리)", description = "컬렉션 상세 조회 (모든 문제에 대한 히스토리)")
+	@GetMapping("/collection/all")
+	public ApiResponse<List<CollectionHistoryDetailResponse>> findAllHistoryWithQuizzes(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+	) {
+		List<CollectionHistoryDetailResponse> allHistoryWithQuizzes = historyService.findAllHistoryWithQuizzes(
+			customOAuth2User.getEmail());
+
+		return ApiResponse.success(allHistoryWithQuizzes);
+	}
+
 }

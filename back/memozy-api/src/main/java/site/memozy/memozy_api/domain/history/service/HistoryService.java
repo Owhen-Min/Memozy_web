@@ -19,4 +19,5 @@ public interface HistoryService {
 
 	List<CollectionHistoryDetailResponse> getCollectionHistoryDetail(Integer userId, Integer collectionId);
 
+	List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail);
 }

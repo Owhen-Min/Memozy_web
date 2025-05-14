@@ -75,13 +75,16 @@ public class HistoryServiceImpl implements HistoryService {
 	@Transactional(readOnly = true)
 	public List<CollectionHistoryDetailResponse> getCollectionHistoryDetail(Integer userId, Integer collectionId) {
 
-		log.info("userId {}, collectionId {}", userId, collectionId);
-
 		if (!collectionRepository.existsByUserIdAndCollectionId(userId, collectionId)) {
 			throw new GeneralException(COLLECTION_NOT_FOUND);
 		}
 
 		return collectionRepository.findCollectionHistoryWithQuizzes(collectionId);
+	}
+
+	@Override
+	public List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail) {
+		return collectionRepository.findAllHistoryWithQuizzes(userEmail);
 	}
 
 }
