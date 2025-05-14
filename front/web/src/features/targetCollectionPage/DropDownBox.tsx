@@ -12,6 +12,7 @@ function DropDownBox({ sourceId }: DropDownBoxProps) {
   const { quizzes, fetchQuizList, loading } = useCollectionStore();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteQuizId, setDeleteQuizId] = useState<number | null>(null);
+  const currentQuizzes = quizzes.get(sourceId) || [];
 
   useEffect(() => {
     fetchQuizList(sourceId);
@@ -22,10 +23,10 @@ function DropDownBox({ sourceId }: DropDownBoxProps) {
       <div className="max-h-[300px] overflow-y-auto">
         {loading ? (
           <div className="p-4 text-center text-gray200">로딩 중...</div>
-        ) : quizzes.length === 0 ? (
+        ) : currentQuizzes.length === 0 ? (
           <div className="p-4 text-center text-gray200">퀴즈가 없습니다.</div>
         ) : (
-          quizzes.map((quiz) => (
+          currentQuizzes.map((quiz) => (
             <div
               key={quiz.quizId}
               className="p-4 hover:bg-light border-b border-light last:border-0"
