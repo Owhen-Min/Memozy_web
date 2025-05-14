@@ -337,4 +337,64 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		return result;
 	}
+
+	public List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail) {
+		QHistory history = QHistory.history;
+		QQuiz quiz = QQuiz.quiz;
+
+		List<Integer> rounds = queryFactory
+			.select(history.round)
+			.from(history)
+			.where(
+				history.collectionId.eq(0)
+					.and(history.email.eq((userEmail)))
+			)
+			.groupBy(history.round)
+			.orderBy(history.round.desc())
+			.fetch();
+
+		List<CollectionHistoryDetailResponse> result = new ArrayList<>();
+
+		for (Integer round : rounds) {
+			List<Tuple> tuples = queryFactory
+				.select(history, quiz)
+				.from(history)
+				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.where(
+					history.collectionId.eq(0),
+					history.round.eq(round),
+					history.isSolved.eq(false),
+					history.email.eq(userEmail)
+				)
+				.fetch();
+
+			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
+				History h = tuple.get(history);
+				Quiz q = tuple.get(quiz);
+				return new QuizDetailResponse(
+					q.getQuizId(),
+					q.getContent(),
+					q.getType().name(),
+					h.getUserSelect(),
+					(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
+						? List.of(q.getOption().split("№"))
+						: null,
+					q.getAnswer(),
+					q.getCommentary()
+				);
+			}).toList();
+
+			History anyHistory = tuples.get(0).get(history);
+			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+
+			result.add(new CollectionHistoryDetailResponse(
+				anyHistory.getHistoryId(),
+				round,
+				failCount,
+				anyHistory.getCreatedAt().toLocalDate().toString(),
+				quizList
+			));
+		}
+		return result;
+	}
 }
