@@ -3,13 +3,13 @@ package site.memozy.memozy_api.domain.history.service;
 import java.util.List;
 
 import site.memozy.memozy_api.domain.history.dto.HistoryCollectionStatsResponse;
-import site.memozy.memozy_api.domain.history.dto.HistoryContributeResponse;
+import site.memozy.memozy_api.domain.history.dto.LearningContributionResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
 
 public interface HistoryService {
-	List<HistoryContributeResponse> getUserStreaks(Integer userId, Integer year);
+	LearningContributionResponse getUserStreaks(Integer userId, String userEmail);
 
 	QuizStatsResponse getUserQuizStats(Integer userId);
 
