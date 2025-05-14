@@ -10,7 +10,7 @@ public interface QuizRepositoryCustom {
 
 	List<QuizSelectResponse> findAllQuizBySourceId(Integer sourceId);
 
-	List<PersonalQuizResponse> getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly);
+	List<PersonalQuizResponse> getPersonalQuizzes(int userId, Integer collectionId, int count, boolean newOnly);
 
 	List<MultiQuizResponse> getMultiQuizzes(int userId, int collectionId, int count);
 
