@@ -14,6 +14,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QCollectionSummaryResponse;
@@ -34,6 +35,7 @@ import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.entity.QuizType;
 import site.memozy.memozy_api.domain.quizsource.entity.QQuizSource;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -346,8 +348,9 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			.select(history.round)
 			.from(history)
 			.where(
-				history.collectionId.eq(0)
-					.and(history.email.eq((userEmail)))
+				history.collectionId.eq(0),
+				history.email.eq((userEmail)),
+				history.isSolved.eq(false)
 			)
 			.groupBy(history.round)
 			.orderBy(history.round.desc())
