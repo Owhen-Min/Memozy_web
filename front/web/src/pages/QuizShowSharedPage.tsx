@@ -38,6 +38,7 @@ const QuizShowSharedPage = () => {
   const [hostId, setHostId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const [userId, setUserId] = useState<string>("");
 
   // 알림 상태 관리
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -91,7 +92,7 @@ const QuizShowSharedPage = () => {
       return () => clearTimeout(timer);
     }
   }, [showId, stompClient, isConnected]);
-
+  // 푼 문제 제출하기
   const submitAnswer = async (answer: Answer) => {
     if (!stompClient || !isConnected || !showId) return;
 
@@ -118,10 +119,9 @@ const QuizShowSharedPage = () => {
             setCollectionName(payload.collectionName);
             setNickname(payload.nickname);
             setQuizCount(payload.quizCount);
+            setUserId(payload.userId);
             setIsHost(true);
             setIsLoading(false);
-          } else {
-            addNotification(`${payload.nickname} 님이 퀴즈쇼 호스트로 지정되었습니다.`, "success");
           }
         } else if (payload.type === "JOIN") {
           if (nickname === "") {
@@ -129,6 +129,7 @@ const QuizShowSharedPage = () => {
             setCollectionName(payload.collectionName);
             setNickname(payload.nickname);
             setQuizCount(payload.quizCount);
+            setUserId(payload.userId);
             setIsLoading(false);
           } else {
             // 새로운 참가자가 입장했을 때 알림 표시
@@ -188,6 +189,20 @@ const QuizShowSharedPage = () => {
       return () => subscription.unsubscribe();
     }
   }, [showId, stompClient, isConnected]);
+
+  // 퀴즈 결과 응답받기
+  useEffect(() => {
+    if (stompClient && isConnected && showId) {
+      const subscription = stompClient.subscribe(
+        `/sub/quiz/show/${showId}/result/${userId}`,
+        (message) => {
+          const data = JSON.parse(message.body);
+          console.log(data);
+        }
+      );
+      return () => subscription.unsubscribe();
+    }
+  }, [stompClient, isConnected, userId]);
 
   // 퀴즈 문자열 파싱 함수
   const parseQuizString = (quiz: any): QuizShared => {

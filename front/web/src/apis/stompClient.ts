@@ -34,6 +34,9 @@ const useWebSocket = () => {
       onStompError: (frame) => {
         console.error("에러 발생:", frame);
       },
+      debug: (str) => {
+        console.log(str);
+      },
     });
 
     client.activate();
