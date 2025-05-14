@@ -2,8 +2,8 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { clearTokens, getAccessToken } from "../utils/auth";
 
 // API 서버 URL 설정
-const baseURL = "https://memozy.site/api";
-// const baseURL = "http://70.12.246.135:8080/api/quiz/show";
+// const baseURL = "https://memozy.site/api";
+const baseURL = "http://70.12.246.135:8080/api/";
 // Axios 인스턴스 생성
 const httpClient: AxiosInstance = axios.create({
   baseURL: baseURL,

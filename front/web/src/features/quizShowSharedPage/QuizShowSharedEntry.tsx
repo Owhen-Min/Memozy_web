@@ -15,9 +15,10 @@ function QuizShowSharedEntry({
   hostNickname,
   nickname,
   collectionName,
+  quizCount,
   onStartQuizShow,
   onChangeNickname,
-  quizCount,
+  isLoading,
 }: {
   isHost: boolean;
   isLoggedIn: boolean;
@@ -28,6 +29,7 @@ function QuizShowSharedEntry({
   quizCount: number;
   onStartQuizShow: () => void;
   onChangeNickname: (newNickname: string) => Promise<boolean | undefined>;
+  isLoading: boolean;
 }) {
   const navigate = useNavigate();
   const [showParticipants, setShowParticipants] = useState(false);
@@ -77,6 +79,17 @@ function QuizShowSharedEntry({
       console.error("닉네임 변경 중 오류가 발생했습니다.", error);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[70vh] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-24 font-pre-bold text-main200 mb-4">퀴즈쇼 정보를 불러오는 중...</h2>
+          <p className="text-16 font-pre-medium text-gray-500">잠시만 기다려주세요</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

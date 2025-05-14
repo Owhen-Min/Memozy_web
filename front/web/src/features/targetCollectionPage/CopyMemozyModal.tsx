@@ -27,7 +27,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     if (!selectedCollectionId) return;
 
     try {
-      await copyMemozy(selectedCollectionId, memozyIds);
+      await copyMemozy(selectedCollectionId, memozyIds, currentCollectionId);
       onClose();
     } catch (err) {
       console.error("메모지 복제 중 오류 발생:", err);

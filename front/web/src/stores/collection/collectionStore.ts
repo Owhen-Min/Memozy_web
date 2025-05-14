@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { collectionApi } from "../../apis/collection/colletionApi";
-import { CollectionState } from "./types";
+import { CollectionState, Quiz } from "./types";
 
 export const useCollectionStore = create<CollectionState>((set, get) => ({
   collections: [],
   memozies: [],
-  quizzes: [],
+  quizzes: new Map<number, Quiz[]>(),
   loading: false,
   error: null,
   collectionName: null,
@@ -105,11 +105,12 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   },
 
   // 메모지 복제
-  copyMemozy: async (copyCollectionId: number, sourceId: number[]) => {
+  copyMemozy: async (copyCollectionId: number, sourceId: number[], currentCollectionId: number) => {
     try {
       set({ loading: true, error: null });
       await collectionApi.copyMemozy(copyCollectionId, sourceId);
-      await get().fetchMemozyList(copyCollectionId); // 메모지 목록 새로고침
+      // 복제 후 현재 컬렉션의 메모지 목록만 새로고침
+      await get().fetchMemozyList(currentCollectionId, 0);
     } catch (error) {
       set({ error: "메모지 복제에 실패했습니다.", loading: false });
       console.error("메모지 복제 오류:", error);
@@ -121,7 +122,10 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       const response = await collectionApi.getQuizList(sourceId);
-      set({ quizzes: response.data.data || [], loading: false });
+      set((state) => ({
+        quizzes: new Map(state.quizzes).set(sourceId, response.data.data || []),
+        loading: false,
+      }));
     } catch (error) {
       set({ error: "퀴즈 목록을 불러오는데 실패했습니다.", loading: false });
       console.error("퀴즈 목록 조회 오류:", error);

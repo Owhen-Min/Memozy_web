@@ -8,6 +8,8 @@ import Objective from "../components/quizShowPage/Objective";
 import Progress from "../components/quizShowPage/Progress";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../assets/icons/nextIcon.svg";
+import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
+
 interface QuizShowPersonalPageProps {
   collectionName: string;
   quizList: Quiz[];
@@ -25,6 +27,7 @@ function QuizShowPersonalPage() {
   const [userAnswer, setUserAnswer] = useState<
     string | number | { index: number; value: string } | null
   >(null);
+  const { submitAnswer } = useQuizShowPersonalStore();
 
   useEffect(() => {
     if (quizList.length > 0) {
@@ -32,7 +35,7 @@ function QuizShowPersonalPage() {
     }
   }, [quizList]);
 
-  const handleShowAnswer = () => {
+  const handleShowAnswer = async () => {
     if (userAnswer === null) {
       alert("답을 선택해주세요!");
       return;
@@ -53,15 +56,13 @@ function QuizShowPersonalPage() {
       isCorrect = currentQuizData.answer === answerValue;
     }
 
-    console.log("퀴즈 정보:", {
-      quizId: currentQuizData.quizId,
-      quizSessionId: quizSessionId,
-      userAnswer: answerValue,
-      isCorrect: isCorrect,
-      correctAnswer: currentQuizData.answer,
-    });
-
-    setShowAnswer(true);
+    try {
+      await submitAnswer(currentQuizData.quizId, answerValue, isCorrect);
+      setShowAnswer(true);
+    } catch (error) {
+      console.error("답안 제출 중 오류 발생:", error);
+      alert("답안 제출에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   const renderQuizComponent = (currentQuiz: Quiz) => {
@@ -75,7 +76,8 @@ function QuizShowPersonalPage() {
       if (currentQuizIndex === quizList.length - 1) {
         navigate(`/quiz-result/personal/${collectionId}`, {
           state: {
-            quizSessionId: quizSessionId,
+            quizSessionId,
+            collectionName,
           },
         });
       }

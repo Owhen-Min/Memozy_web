@@ -31,7 +31,7 @@ export interface MemozyListResponse {
 export interface CollectionState {
   collections: Collection[];
   memozies: Memozy[];
-  quizzes: Quiz[];
+  quizzes: Map<number, Quiz[]>;
   loading: boolean;
   error: string | null;
   collectionName: string | null;
@@ -49,7 +49,11 @@ export interface CollectionState {
   fetchMemozyList: (collectionId: number, page?: number, pageSize?: number) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
-  copyMemozy: (copyCollectionId: number, sourceId: number[]) => Promise<void>;
+  copyMemozy: (
+    copyCollectionId: number,
+    sourceId: number[],
+    currentCollectionId: number
+  ) => Promise<void>;
 
   // 퀴즈 관련 액션
   fetchQuizList: (memozyId: number) => Promise<void>;

@@ -3,9 +3,8 @@ import { QuizHistory } from "../../types/wrongAnswer";
 //학습참여도
 export const fetchLearningContribution = async (year?: number) => {
   try {
-    const response = await httpClient.get(`/history/streaks`, {
-      params: { year },
-    });
+    const url = year ? `/history/streaks?year=${year}` : "/history/streaks";
+    const response = await httpClient.get(url);
     if (response.data.success) {
       return response.data.data;
     } else {

@@ -8,17 +8,34 @@ import Progress from "../../components/quizShowPage/Progress";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
 
-function QuizShowSharedShow() {
+interface QuizShowSharedShowProps {
+  quizList: Quiz[];
+  quizSessionId: string;
+  collectionName: string;
+  currentQuizIndex: number;
+}
+
+function QuizShowSharedShow({
+  quizList,
+  quizSessionId,
+  collectionName,
+  currentQuizIndex,
+}: QuizShowSharedShowProps) {
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
-  const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [userAnswer, setUserAnswer] = useState<
     string | number | { index: number; value: string } | null
   >(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (quizList.length > 0) {
-      setCurrentQuiz(quizList[0]);
+      const timer = setTimeout(() => {
+        setCurrentQuiz(quizList[0]);
+        setIsLoading(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
   }, [quizList]);
 
@@ -60,8 +77,7 @@ function QuizShowSharedShow() {
     const handleNextQuiz = () => {
       setShowAnswer(false);
       setUserAnswer(null);
-      setCurrentQuizIndex(currentQuizIndex + 1);
-      setCurrentQuiz(quizList[currentQuizIndex + 1]);
+      setCurrentQuiz(quizList[currentQuizIndex]);
     };
 
     const isLastQuiz = currentQuizIndex === quizList.length - 1;
@@ -121,25 +137,35 @@ function QuizShowSharedShow() {
         </h1>
         <button
           className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
-          onClick={() => navigate(`/collection/${collectionId}`)}
+          onClick={() => (window.location.href = "/")}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
-          컬렉션 리스트로 돌아가기
+          퀴즈 나가기
         </button>
       </div>
       <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
-        <div className="flex items-center justify-center">
-          <Progress currentQuizIndex={currentQuizIndex} totalQuizCount={quizList.length} />
-        </div>
-        {currentQuiz && renderQuizComponent(currentQuiz)}
-        {!showAnswer && (
-          <button
-            className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
-            onClick={handleShowAnswer}
-          >
-            <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
-            정답 보기
-          </button>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-2xl font-pre-medium text-main200">
+              잠시 후 퀴즈가 시작됩니다...
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-center">
+              <Progress currentQuizIndex={currentQuizIndex} totalQuizCount={quizList.length} />
+            </div>
+            {currentQuiz && renderQuizComponent(currentQuiz)}
+            {!showAnswer && (
+              <button
+                className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
+                onClick={handleShowAnswer}
+              >
+                <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+                정답 보기
+              </button>
+            )}
+          </>
         )}
       </div>
     </>
