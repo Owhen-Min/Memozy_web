@@ -22,4 +22,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 		""")
 	Optional<Integer> findMaxHistoryIdByCollectionId(@Param("collectionId") Integer collectionId,
 		@Param("email") String email);
+
+	List<History> findByCollectionIdAndRound(Integer collectionId, Integer round);
 }
