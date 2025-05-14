@@ -21,6 +21,7 @@ import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizAndSessionResponse;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResultResponse;
+import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quiz.util.QuizSessionStore;
 import site.memozy.memozy_api.domain.user.User;
@@ -102,10 +103,10 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 				.orElseThrow(() -> new GeneralException(MEMBER_NOT_FOUND));
 			email = user.getEmail();
 		}
+
 		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId, email)
 			.orElse(0) + 1;
-		int totalQuizCount = quizStatus.size();
-		int incorrectQuizCount = 0;
+		List<Long> incorrectQuizIds = new ArrayList<>();
 		List<History> historyList = new ArrayList<>();
 		for (Map.Entry<String, Map<String, String>> entry : quizStatus.entrySet()) {
 			Map<String, String> status = entry.getValue();
@@ -114,7 +115,7 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 			boolean isSolved = correctStr != null && correctStr.equalsIgnoreCase("true");
 
 			if (!isSolved) {
-				incorrectQuizCount++;
+				incorrectQuizIds.add(Long.parseLong(entry.getKey()));
 			}
 
 			History history = History.builder().isSolved(isSolved)
@@ -130,12 +131,26 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 		}
 		historyRepository.saveAll(historyList);
 
+		int totalQuizCount = quizStatus.size();
+		int correctCount = totalQuizCount - incorrectQuizIds.size();
+		int point = calculateScore(totalQuizCount, correctCount);
+
+		List<String> incorrectQuizList = quizRepository.findByQuizIdIn(incorrectQuizIds)
+			.stream().map(Quiz::getContent).toList();
+
 		quizSessionStore.deleteQuizSession(userId, quizSessionId);
 
-		int correctCount = totalQuizCount - incorrectQuizCount;
-		int point = (int)Math.round(((double)correctCount / totalQuizCount) * 100);
+		List<History> histories = historyRepository.findByCollectionIdAndRound(collectionId, nextRound - 1);
+		int previousRoundTotalCount = histories.size();
+		long previousRoundSolvedCount = histories.stream().filter(History::getIsSolved).count();
+		int previousPoint = calculateScore(previousRoundTotalCount, (int)previousRoundSolvedCount);
 
-		return PersonalQuizResultResponse.of(totalQuizCount, incorrectQuizCount, nextRound, point);
+		return PersonalQuizResultResponse.of(totalQuizCount, incorrectQuizIds.size(), nextRound, point,
+			incorrectQuizList, previousPoint);
 
+	}
+
+	private int calculateScore(int totalCount, int correctCount) {
+		return (int)Math.round(((double)correctCount / totalCount) * 100);
 	}
 }
