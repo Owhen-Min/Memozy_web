@@ -137,7 +137,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				quizSource.sourceId,
 				quizSource.title,
 				quizSource.summary,
-				quiz.count().intValue() // 각 quizSource에 묶인 quiz 개수
+				quiz.count().intValue(), // 각 quizSource에 묶인 quiz 개수
+				quizSource.url
 			))
 			.from(quizSource)
 			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
@@ -173,7 +174,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				quizSource.sourceId,
 				quizSource.title,
 				quizSource.summary,
-				quiz.count().intValue()
+				quiz.count().intValue(),
+				quizSource.url
 			))
 			.from(quizSource)
 			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))

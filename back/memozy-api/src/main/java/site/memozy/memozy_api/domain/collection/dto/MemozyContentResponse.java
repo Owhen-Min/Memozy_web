@@ -13,12 +13,14 @@ public class MemozyContentResponse {
 	private String sourceTitle;
 	private String summary;
 	private int quizCount;
+	private String url;
 
 	@QueryProjection
-	public MemozyContentResponse(int sourceId, String sourceTitle, String summary, int quizCount) {
+	public MemozyContentResponse(int sourceId, String sourceTitle, String summary, int quizCount, String url) {
 		this.sourceId = sourceId;
 		this.sourceTitle = sourceTitle;
 		this.summary = summary;
 		this.quizCount = quizCount;
+		this.url = url;
 	}
 }
