@@ -53,8 +53,8 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
       onClick={handleOutsideClick}
     >
       <div
-        className="bg-blue-50 p-8 rounded-lg w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
-        onClick={(e) => e.stopPropagation()} // 내부 클릭은 전파 방지
+        className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
+        onClick={(e) => e.stopPropagation()}
       >
         <style>
           {`
@@ -67,79 +67,85 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
             }
           `}
         </style>
-        <button onClick={onClose} className="absolute top-4 right-4 text-20">
-          <img src={closeIcon} alt="닫기" />
+        <button
+          onClick={onClose}
+          className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20"
+        >
+          <img src={closeIcon} alt="닫기" className="w-4 md:w-8" />
         </button>
-        <div className="flex items-center mb-6">
-          <img src={openfolder} alt="폴더" className="w-8 h-8 mr-2" />
-          <h2 className="text-24 font-bold">{data.name}</h2>
+        <div className="flex items-center mb-4 md:mb-6">
+          <img src={openfolder} alt="폴더" className="w-8 md:w-8 mr-2" />
+          <h2 className="text-20 md:text-24 font-bold">{data.name}</h2>
         </div>
         {data.data.length === 0 ? (
-          <div className="text-center p-10">
-            <p>오답 내역이 없습니다.</p>
+          <div className="text-center p-6 md:p-10">
+            <p className="text-14 md:text-16">오답 내역이 없습니다.</p>
           </div>
         ) : (
           data.data.map((history: QuizHistory) => (
             <div
               key={history.historyId}
-              className="mb-4 p-4 bg-white rounded-lg shadow-md"
+              className="mb-3 md:mb-4 p-3 md:p-4 bg-white rounded-lg shadow-md"
               onClick={() => toggleDropDown(history.historyId)}
             >
               <div className="flex justify-between items-center">
-                <h3 className="font-pre-bold text-[18px]">{history.round}회차</h3>
+                <h3 className="font-pre-bold text-16 md:text-[18px]">{history.round}회차</h3>
                 <div className="flex items-center">
-                  <button className="p-2 hover:bg-light rounded-lg transition-colors">
+                  <button className="p-1 md:p-2 hover:bg-light rounded-lg transition-colors">
                     <img
                       src={dropDownIcon}
                       alt="드롭다운 아이콘"
-                      className={`w-6 transition-transform duration-200 ${
+                      className={`w-4 md:w-6 transition-transform duration-200 ${
                         isDropDownOpen === history.historyId ? "rotate-180" : ""
                       }`}
                     />
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between">
-                <p className="text-14 text-gray-600">틀린 퀴즈 개수: {history.failCount}</p>
-                <p className="text-14 text-gray-500">{history.date}</p>
+              <div className="flex flex-col md:flex-row md:justify-between mt-1 md:mt-0">
+                <p className="text-12 md:text-14 text-gray-600">
+                  틀린 퀴즈 개수: {history.failCount}
+                </p>
+                <p className="text-12 md:text-14 text-gray-500 mt-1 md:mt-0">{history.date}</p>
               </div>
               {isDropDownOpen === history.historyId && (
-                <div className="mt-4">
-                  <p className="text-14 text-gray-500">{history.date}</p>
+                <div className="mt-3 md:mt-4">
                   {history.quizDataList && history.quizDataList.length > 0 ? (
                     history.quizDataList.map((quiz: QuizDetail, index) => (
                       <div
                         key={`${history.historyId}-${quiz.quizId}-${index}`}
-                        className="mt-2 p-3 bg-gray-100 rounded-md"
+                        className="mt-2 p-2 md:p-3 bg-gray-100 rounded-md"
                       >
-                        <h4 className="font-pre-semibold">{quiz.content}</h4>
+                        <h4 className="font-pre-semibold text-14 md:text-16">{quiz.content}</h4>
                         {quiz.type === "MULTIPLE_CHOICE" && quiz.choice && (
-                          <div className="pl-5">
+                          <div className="pl-3 md:pl-5 mt-1">
                             {quiz.choice.map((option, index) => (
                               <p
                                 key={index}
-                                className={
+                                className={`text-12 md:text-14 ${
                                   quiz.userSelect && option === quiz.userSelect ? "text-red" : ""
-                                }
+                                }`}
                               >
                                 {index + 1}) {option}
                               </p>
                             ))}
                           </div>
                         )}
-                        {quiz.type === "OX" && <p>선택지: O, X</p>}
-                        <div className="flex justify-between mt-2">
+                        {quiz.type === "OX" && (
+                          <p className="text-12 md:text-14 mt-1">선택지: O, X</p>
+                        )}
+                        <div className="flex flex-col md:flex-row md:justify-between gap-2 mt-2">
                           <div className="p-2 bg-green-100 rounded-md">
-                            <p className="text-12 ">정답: {quiz.answer}</p>
+                            <p className="text-10 md:text-12">정답: {quiz.answer}</p>
                           </div>
                         </div>
                         <div className="mt-2 p-2 bg-[#FEE9EB] rounded-md">
-                          <p className="text-12">해설: {quiz.commentary}</p>
+                          <p className="text-10 md:text-12">해설: {quiz.commentary}</p>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p>퀴즈 데이터가 없습니다.</p>
+                    <p className="text-12 md:text-14">퀴즈 데이터가 없습니다.</p>
                   )}
                 </div>
               )}
