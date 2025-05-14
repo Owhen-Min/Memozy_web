@@ -275,13 +275,13 @@ function AnalysisReport() {
             ].map((item, index) => (
               <div
                 key={index}
-                className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-[170px] h-[64px] relative"
+                className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-[170px] h-16 relative"
               >
                 <div className="flex items-center px-2 h-full">
                   <img src={item.icon} alt={item.label} className="w-5" />
                 </div>
                 <div className="flex flex-col justify-center items-center absolute inset-0 ml-8">
-                  <div className="text-14 font-pre-regular">{item.label}</div>
+                  <div className="text-16 font-pre-regular">{item.label}</div>
                   <div className="text-16 font-pre-medium">{item.value}</div>
                 </div>
               </div>
@@ -297,14 +297,14 @@ function AnalysisReport() {
           ].map((item, index) => (
             <div
               key={index}
-              className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-[110px] h-[44px] relative"
+              className="flex bg-gradient-to-r from-[#5997FF] to-[#3E6FFA] rounded-lg shadow text-white w-40 h-11 relative"
             >
               <div className="flex items-center px-1.5 h-full">
                 <img src={item.icon} alt={item.label} className="w-4" />
               </div>
               <div className="flex flex-col justify-center items-center absolute inset-0 ml-5">
-                <div className="text-10 font-pre-regular">{item.label}</div>
-                <div className="text-12 font-pre-medium">{item.value}</div>
+                <div className="text-12 font-pre-regular">{item.label}</div>
+                <div className="text-14 font-pre-medium">{item.value}</div>
               </div>
             </div>
           ))}
@@ -361,11 +361,11 @@ function AnalysisReport() {
         <div className="text-10 md:text-xs text-gray-500 mt-2 flex justify-end">
           적음
           <div className="flex ml-1">
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-[#ebedf0] mx-1"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-lightactive mx-1"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-normal mx-1"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalhover mx-1"></div>
-            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalactive mx-1"></div>
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-[#ebedf0] mx-1" />
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-lightactive mx-1" />
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normal mx-1" />
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalhover mx-1" />
+            <div className="w-2 h-2 md:w-3 md:h-3 bg-normalactive mx-1" />
           </div>
           많음
         </div>
