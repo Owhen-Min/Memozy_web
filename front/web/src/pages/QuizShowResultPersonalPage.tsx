@@ -1,7 +1,5 @@
 import small_logo from "../assets/images/small_logo.png";
 import rightmonster from "../assets/images/rightmonster.png";
-import openbook from "../assets/icons/blackopenbook.svg";
-import book from "../assets/icons/summaryIcon.svg";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
@@ -22,12 +20,6 @@ function QuizShowResultPersonalPage() {
   useEffect(() => {
     getQuizResult(quizSessionId);
   }, [getQuizResult, quizSessionId]);
-
-  const handleWrongNoteClick = () => {
-    navigate("/my");
-  };
-
-  const handleReStartQuizClick = () => {};
 
   const renderContent = () => {
     if (isLoading) {
