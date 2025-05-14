@@ -4,6 +4,7 @@ import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
 import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
 import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.querydsl.core.types.dsl.Expressions;
@@ -40,16 +41,30 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 	}
 
 	@Override
-	public List<PersonalQuizResponse> getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly) {
+	public List<PersonalQuizResponse> getPersonalQuizzes(int userId, Integer collectionId, int count, boolean newOnly) {
 		// 1. QuizSource 유효성 검사
 		List<Integer> sourceIds = jpaQueryFactory
 			.select(quizSource.sourceId)
 			.from(quizSource)
 			.where(
-				quizSource.collectionId.eq(collectionId),
-				quizSource.userId.eq(userId)
+				// 1단계: URL 별 최소 sourceId 필터링
+				quizSource.sourceId.in(
+					jpaQueryFactory
+						.select(quizSource.sourceId.min())
+						.from(quizSource)
+						.where(
+							quizSource.userId.eq(userId),
+							collectionId != 0 ? quizSource.collectionId.eq(collectionId) : null // collectionId 체크 추가
+						)
+						.groupBy(quizSource.url)
+				)
 			)
+			.orderBy(quizSource.createdAt.desc())
 			.fetch();
+
+		if (sourceIds == null || sourceIds.isEmpty()) {
+			return new ArrayList<>();
+		}
 
 		// 2. 랜덤 퀴즈 조회
 		return jpaQueryFactory
@@ -74,7 +89,7 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 						)
 				) : null // newOnly가 false일 때는 조건 생략
 			)
-			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
+			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
 			.limit(count)
 			.fetch();
 	}

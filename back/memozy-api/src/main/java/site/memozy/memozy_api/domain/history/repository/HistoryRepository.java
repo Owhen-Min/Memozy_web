@@ -14,6 +14,12 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 	@Query("SELECT COUNT(DISTINCT h.quizId) FROM History h WHERE h.collectionId IN :collectionIds")
 	long countDistinctSolvedQuiz(@Param("collectionIds") List<Integer> collectionIds);
 
-	@Query("SELECT MAX(h.historyId) FROM History h WHERE h.collectionId = :collectionId")
-	Optional<Integer> findMaxHistoryIdByCollectionId(@Param("collectionId") Integer collectionId);
+	@Query("""
+			SELECT MAX(h.round)
+			FROM History h
+			WHERE h.collectionId = :collectionId
+			AND (:email IS NULL OR h.email = :email)
+		""")
+	Optional<Integer> findMaxHistoryIdByCollectionId(@Param("collectionId") Integer collectionId,
+		@Param("email") String email);
 }

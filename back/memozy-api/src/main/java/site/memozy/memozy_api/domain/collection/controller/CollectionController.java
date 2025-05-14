@@ -78,6 +78,15 @@ public class CollectionController {
 		return ApiResponse.success(response);
 	}
 
+	@Operation(summary = "모오든 메모지를 모아 놓은 컬렉션", description = "모오든 메모지를 모아놓음.")
+	@GetMapping("/all")
+	public ApiResponse<CollectionSummaryResponse> findCollectionByUserId(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user) {
+
+		CollectionSummaryResponse response = collectionService.findCollectionByUserId(user.getUserId());
+		return ApiResponse.success(response);
+	}
+
 	@Operation(summary = "Memozy의 퀴즈들을 조회", description = "url_id를 기준으로 퀴즈들의 조회")
 	@GetMapping("/url/{url_id}/quiz")
 	public ApiResponse<List<QuizSummaryResponse>> getQuizzesByCollectionUrl(
@@ -123,12 +132,23 @@ public class CollectionController {
 	@GetMapping("/url")
 	public ApiResponse<CollectionMemozyListResponse> getUrlsInCollection(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
-		@RequestParam("collectionId") Integer collectionId,
+		@RequestParam(value = "collectionId") Integer collectionId,
 		@RequestParam(value = "page", defaultValue = "0") int page,
 		@RequestParam(value = "pageSize", defaultValue = "5") int pageSize
 	) {
 		CollectionMemozyListResponse response = collectionService.getMemoziesByCollectionId(user.getUserId(),
 			collectionId, page, pageSize);
+		return ApiResponse.success(response);
+	}
+
+	@Operation(summary = "모두 보기 내 memozy 목록 조회", description = "page는 0번 부터 순차적으로 1,2,3 늘려주면서 호출해주면 됨")
+	@GetMapping("/url/all")
+	public ApiResponse<CollectionMemozyListResponse> getUrlsInCollection(
+		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User user,
+		@RequestParam(value = "page", defaultValue = "0") int page,
+		@RequestParam(value = "pageSize", defaultValue = "5") int pageSize
+	) {
+		CollectionMemozyListResponse response = collectionService.getAllMemozies(user.getUserId(), page, pageSize);
 		return ApiResponse.success(response);
 	}
 }

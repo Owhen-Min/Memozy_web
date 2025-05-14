@@ -20,6 +20,8 @@ public interface CollectionService {
 
 	List<CollectionSummaryResponse> getAllCollections(Integer userId);
 
+	CollectionSummaryResponse findCollectionByUserId(Integer userId);
+
 	List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId);
 
 	void addQuizzesToCollection(Integer userId, Integer collectionId, List<Long> quizIds);
@@ -30,4 +32,6 @@ public interface CollectionService {
 
 	CollectionMemozyListResponse getMemoziesByCollectionId(Integer userId, Integer collectionId, int offset,
 		int page);
+
+	CollectionMemozyListResponse getAllMemozies(Integer userId, int offset, int page);
 }

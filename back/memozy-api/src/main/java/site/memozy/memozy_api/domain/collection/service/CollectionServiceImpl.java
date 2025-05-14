@@ -89,6 +89,15 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
+		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
+
+		int quizCount = quizRepository.findBySourceIdIn(sourceIds).size();
+		return CollectionSummaryResponse.of((long)sourceIds.size(), (long)quizCount);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public List<QuizSummaryResponse> getQuizzesByCollectionUrl(Integer userId, Integer sourceId) {
 		if (!quizSourceRepository.existsBySourceIdAndUserId(sourceId, userId)) {
 			throw new GeneralException(COLLECTION_INVALID_USER);
@@ -214,6 +223,22 @@ public class CollectionServiceImpl implements CollectionService {
 
 		return CollectionMemozyListResponse.builder()
 			.collectionName(collection.getName())
+			.content(content)
+			.last(isLast)
+			.build();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public CollectionMemozyListResponse getAllMemozies(Integer userId, int page, int pageSize) {
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		List<MemozyContentResponse> content = collectionRepository.findAllWithPaging(userId, pageable);
+
+		boolean isLast = content.size() < pageSize;
+
+		return CollectionMemozyListResponse.builder()
+			.collectionName("모두 보기")
 			.content(content)
 			.last(isLast)
 			.build();

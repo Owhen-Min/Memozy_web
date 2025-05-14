@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +150,41 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	}
 
 	@Override
-	public long countByCollectionId(Integer collectionId) {
+	public List<MemozyContentResponse> findAllWithPaging(Integer userId, Pageable pageable) {
+		// 1. 중복 제거한 sourceId 목록 조회 (페이지 적용)
+		List<Integer> minSourceIds = queryFactory
+			.select(quizSource.sourceId)
+			.from(quizSource)
+			.where(quizSource.sourceId.in(
+				queryFactory
+					.select(quizSource.sourceId.min())
+					.from(quizSource)
+					.where(quizSource.userId.eq(userId))
+					.groupBy(quizSource.url)
+			))
+			.orderBy(quizSource.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		// 2. sourceId를 통해 상세 정보 조회
+		return queryFactory
+			.select(new QMemozyContentResponse(
+				quizSource.sourceId,
+				quizSource.title,
+				quizSource.summary,
+				quiz.count().intValue()
+			))
+			.from(quizSource)
+			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
+			.where(quizSource.sourceId.in(minSourceIds))
+			.groupBy(quizSource.sourceId)
+			.orderBy(quizSource.createdAt.desc())
+			.fetch();
+	}
+
+	@Override
+	public Long countByCollectionId(Integer collectionId) {
 		return queryFactory
 			.select(quizSource.count())
 			.from(quizSource)

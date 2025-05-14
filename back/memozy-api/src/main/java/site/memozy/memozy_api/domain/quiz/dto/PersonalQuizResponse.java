@@ -26,7 +26,9 @@ public class PersonalQuizResponse {
 		this.quizId = quizId;
 		this.content = content;
 		this.type = type;
-		this.choice = Arrays.asList(choice.split(",")); // 문자열을 List로 변환
+		if (choice != null) {
+			this.choice = Arrays.asList(choice.split(","));
+		}
 		this.answer = answer;
 		this.commentary = commentary;
 	}

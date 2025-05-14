@@ -5,7 +5,7 @@ import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResultResponse;
 
 public interface PersonalQuizService {
-	PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, int collectionId, int count, boolean newOnly);
+	PersonalQuizAndSessionResponse getPersonalQuizzes(int userId, Integer collectionId, int count, boolean newOnly);
 
 	void submitQuizAnswer(int userId, long quizId, PersonalQuizAnswerRequest request);
 
