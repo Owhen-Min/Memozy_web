@@ -88,6 +88,7 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
 		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
 
@@ -228,6 +229,7 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public CollectionMemozyListResponse getAllMemozies(Integer userId, int page, int pageSize) {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
