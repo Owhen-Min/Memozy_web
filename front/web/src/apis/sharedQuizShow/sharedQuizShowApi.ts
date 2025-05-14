@@ -27,7 +27,7 @@ export const sharedQuizShowApi = {
   // },
 
   createSharedQuizShow: async (collectionId: string | undefined, count: number) => {
-    const response = await httpClient.get(`/quiz/show/shared/${collectionId}?count=${count}`);
+    const response = await httpClient.get(`/quiz/show/${collectionId}?count=${count}`);
     return response.data;
   },
 };

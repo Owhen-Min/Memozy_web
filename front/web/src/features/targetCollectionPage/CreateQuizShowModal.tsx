@@ -44,7 +44,7 @@ function CreateQuizShowModal({
           quizCount
         );
         if (response.success) {
-          navigate(response.data.showUrl);
+          navigate(`/quiz/show/${response.data.showId}`);
         } else {
           alert(response.errorMsg);
         }

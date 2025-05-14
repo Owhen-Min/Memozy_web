@@ -9,8 +9,9 @@ const useWebSocket = () => {
   useEffect(() => {
     const accessToken = localStorage.getItem("memozy_access_token");
     const client = new Client({
-      // brokerURL: "wss://memozy.site/ws-connect",
-      brokerURL: "ws://70.12.246.135:8080/ws-connect",
+      brokerURL: "wss://memozy.site/ws-connect",
+      // brokerURL: "ws://70.12.246.135:8080/ws-connect",
+
       reconnectDelay: 10000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
