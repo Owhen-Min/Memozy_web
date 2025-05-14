@@ -10,7 +10,7 @@ import nextIcon from "../../assets/icons/nextIcon.svg";
 interface Answer {
   type: "SUBMIT";
   index: number;
-  answer: string;
+  choice: string;
   isCorrect: boolean;
 }
 
@@ -111,7 +111,7 @@ function QuizShowSharedShow({
     submitAnswer({
       type: "SUBMIT",
       index: currentQuizIndex,
-      answer: answerValue,
+      choice: answerValue,
       isCorrect: isCorrect,
     });
 

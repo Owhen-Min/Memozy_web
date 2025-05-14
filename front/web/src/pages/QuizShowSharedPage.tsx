@@ -22,7 +22,8 @@ interface User {
 interface Answer {
   type: "SUBMIT";
   index: number;
-  answer: string;
+  choice: string;
+  isCorrect: boolean;
 }
 
 const QuizShowSharedPage = () => {
@@ -190,7 +191,18 @@ const QuizShowSharedPage = () => {
     }
   }, [showId, stompClient, isConnected]);
 
-  // 퀴즈 결과 응답받기
+  // 전체 퀴즈 결과 응답받기
+  useEffect(() => {
+    if (stompClient && isConnected && showId) {
+      const subscription = stompClient.subscribe(`/sub/quiz/show/${showId}/result`, (message) => {
+        const data = JSON.parse(message.body);
+        console.log(data);
+      });
+      return () => subscription.unsubscribe();
+    }
+  }, [stompClient, isConnected, userId]);
+
+  // 내 퀴즈 결과 응답받기
   useEffect(() => {
     if (stompClient && isConnected && showId) {
       const subscription = stompClient.subscribe(
