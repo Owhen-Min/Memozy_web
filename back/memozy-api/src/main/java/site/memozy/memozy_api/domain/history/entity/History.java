@@ -45,4 +45,11 @@ public class History extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private Integer round;
+
+	@Column(nullable = true)
+	private String email;
+
+	public void updateEmail(String email) {
+		this.email = email;
+	}
 }
