@@ -15,6 +15,7 @@ export interface Memozy {
   sourceTitle: string;
   summary: string;
   quizCount: number;
+  url: string;
 }
 
 export interface MemozyListResponse {
@@ -28,8 +29,16 @@ export interface MemozyListResponse {
   };
 }
 
+export interface AllCollectionResponse {
+  success: boolean;
+  errorMsg: null | string;
+  errorCode: null | string;
+  data: Collection;
+}
+
 export interface CollectionState {
   collections: Collection[];
+  allCollection: Collection | null;
   memozies: Memozy[];
   quizzes: Map<number, Quiz[]>;
   loading: boolean;
@@ -41,12 +50,14 @@ export interface CollectionState {
 
   // 컬렉션 관련 액션
   fetchCollections: () => Promise<void>;
+  fetchAllCollection: () => Promise<void>;
   createCollection: (title: string) => Promise<void>;
   updateCollection: (collectionId: number, title: string) => Promise<void>;
   deleteCollection: (collectionId: number) => Promise<void>;
 
   // 메모지 관련 액션
   fetchMemozyList: (collectionId: number, page?: number, pageSize?: number) => Promise<void>;
+  fetchAllMemozyList: (page?: number, pageSize?: number) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
   copyMemozy: (

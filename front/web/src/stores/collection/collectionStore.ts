@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { collectionApi } from "../../apis/collection/colletionApi";
-import { CollectionState, Quiz } from "./types";
+import { CollectionState, Quiz, Memozy } from "./types";
 
 export const useCollectionStore = create<CollectionState>((set, get) => ({
   collections: [],
+  allCollection: null,
   memozies: [],
   quizzes: new Map<number, Quiz[]>(),
   loading: false,
@@ -77,11 +78,16 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         currentPageSize
       );
 
+      // 현재 페이지의 메모지 ID 목록
+      const currentMemozyIds = new Set(get().memozies.map((m: Memozy) => m.sourceId));
+      // 새로운 메모지 중 중복되지 않은 것만 필터링
+      const newMemozyList = response.data.data.content.filter(
+        (m: Memozy) => !currentMemozyIds.has(m.sourceId)
+      );
+
       set({
         memozies:
-          currentPage === 0
-            ? response.data.data.content
-            : [...get().memozies, ...response.data.data.content],
+          currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
         collectionName: response.data.data.collectionName,
         currentPage: currentPage,
         pageSize: currentPageSize,
@@ -143,6 +149,49 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     } catch (error) {
       set({ error: "퀴즈 삭제에 실패했습니다.", loading: false });
       console.error("퀴즈 삭제 오류:", error);
+    }
+  },
+
+  // 전체 컬렉션 조회
+  fetchAllCollection: async () => {
+    try {
+      set({ loading: true, error: null });
+      const response = await collectionApi.getAllCollection();
+      set({ allCollection: response.data.data, loading: false });
+    } catch (error) {
+      set({ error: "전체 컬렉션을 불러오는데 실패했습니다.", loading: false });
+      console.error("전체 컬렉션 조회 오류:", error);
+    }
+  },
+
+  // 전체 메모지 조회
+  fetchAllMemozyList: async (page?: number, pageSize?: number) => {
+    try {
+      set({ loading: true, error: null });
+      const currentPage = page ?? get().currentPage;
+      const currentPageSize = pageSize ?? get().pageSize;
+
+      const response = await collectionApi.getAllMemozyList(currentPage, currentPageSize);
+
+      // 현재 페이지의 메모지 ID 목록
+      const currentMemozyIds = new Set(get().memozies.map((m: Memozy) => m.sourceId));
+      // 새로운 메모지 중 중복되지 않은 것만 필터링
+      const newMemozyList = response.data.data.content.filter(
+        (m: Memozy) => !currentMemozyIds.has(m.sourceId)
+      );
+
+      set({
+        memozies:
+          currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
+        collectionName: response.data.data.collectionName,
+        currentPage: currentPage,
+        pageSize: currentPageSize,
+        hasMore: !response.data.data.last,
+        loading: false,
+      });
+    } catch (error) {
+      set({ error: "메모지 목록을 불러오는데 실패했습니다.", loading: false });
+      console.error("메모지 목록 조회 오류:", error);
     }
   },
 }));

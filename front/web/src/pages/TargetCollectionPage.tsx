@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import MemozyCard from "../features/targetCollectionPage/MemozyCard";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import CreateQuizShowModal from "../features/targetCollectionPage/CreateQuizShowModal";
 import memozyIcon from "../assets/icons/memozyIcon.png";
 import DeleteMemozyModal from "../features/targetCollectionPage/DeleteMemozyModal";
@@ -14,49 +14,75 @@ function TargetCollectionPage() {
     collectionName,
     memozies = [],
     fetchMemozyList,
+    fetchAllMemozyList,
     loading,
     currentPage,
     hasMore,
     setPage,
+    allCollection,
+    fetchAllCollection,
   } = useCollectionStore();
   const memozyCount = memozies?.length ?? 0;
   const quizCount =
-    memozies?.reduce((sum: number, item: Memozy) => sum + (item.quizCount ?? 0), 0) ?? 0;
+    collectionId === "0"
+      ? (allCollection?.quizCount ?? 0)
+      : (memozies?.reduce((sum: number, item: Memozy) => sum + (item.quizCount ?? 0), 0) ?? 0);
   const [isQuizShowModalOpen, setIsQuizShowModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedMemozyIds, setSelectedMemozyIds] = useState<number[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
-  // 무한 스크롤을 위한 옵저버 설정
-  const observer = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node !== null && !loading && hasMore) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              setPage(currentPage + 1);
-              if (collectionId) {
-                fetchMemozyList(Number(collectionId), currentPage + 1);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const observerNodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!loading && hasMore && observerNodeRef.current) {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !loading && hasMore) {
+            setPage(currentPage + 1);
+            if (collectionId) {
+              const collectionIdNum = Number(collectionId);
+              if (collectionIdNum === 0) {
+                fetchAllMemozyList(currentPage + 1);
+              } else {
+                fetchMemozyList(collectionIdNum, currentPage + 1);
               }
             }
-          },
-          { threshold: 1.0 }
-        );
-        observer.observe(node);
-        return () => observer.disconnect();
+          }
+        },
+        { threshold: 1.0 }
+      );
+
+      observerRef.current.observe(observerNodeRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
       }
-    },
-    [loading, hasMore, currentPage, collectionId, fetchMemozyList, setPage]
-  );
+    };
+  }, [loading, hasMore, currentPage, collectionId, fetchMemozyList, fetchAllMemozyList, setPage]);
+
+  // observer 콜백 함수를 단순화
+  const observer = useCallback((node: HTMLDivElement | null) => {
+    observerNodeRef.current = node;
+  }, []);
 
   useEffect(() => {
     if (collectionId) {
       // 페이지 초기화 후 첫 페이지 로드
       setPage(0);
-      fetchMemozyList(Number(collectionId), 0);
+      const collectionIdNum = Number(collectionId);
+      if (collectionIdNum === 0) {
+        fetchAllMemozyList(0);
+        fetchAllCollection(); // 전체 컬렉션 정보 가져오기
+      } else {
+        fetchMemozyList(collectionIdNum, 0);
+      }
     }
-  }, [collectionId, fetchMemozyList, setPage]);
+  }, [collectionId, fetchMemozyList, fetchAllMemozyList, fetchAllCollection, setPage]);
 
   const handleMemozySelect = (memozyId: number) => {
     setSelectedMemozyIds((prev) =>
@@ -99,18 +125,20 @@ function TargetCollectionPage() {
             >
               퀴즈쇼 생성
             </button>
-            <button
-              onClick={() => {
-                setIsEditMode(!isEditMode);
-                if (!isEditMode) {
-                  setSelectedMemozyIds([]);
-                }
-              }}
-              className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
-              disabled={loading}
-            >
-              {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
-            </button>
+            {collectionId !== "0" && (
+              <button
+                onClick={() => {
+                  setIsEditMode(!isEditMode);
+                  if (!isEditMode) {
+                    setSelectedMemozyIds([]);
+                  }
+                }}
+                className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
+                disabled={loading}
+              >
+                {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+              </button>
+            )}
           </div>
         </div>
         {isEditMode && (
@@ -145,10 +173,11 @@ function TargetCollectionPage() {
                 isEditMode={isEditMode}
                 isSelected={selectedMemozyIds.includes(content.sourceId)}
                 onSelect={() => handleMemozySelect(content.sourceId)}
+                url={content.url}
+                collectionId={collectionId}
               />
             ))}
-            {/* 무한 스크롤을 위한 옵저버 요소 */}
-            <div ref={observer} className="h-4" />
+            {hasMore && !loading && <div ref={observer} className="h-4" />}
             {loading && <div className="text-center py-4">추가 메모지 로딩 중...</div>}
           </>
         )}
