@@ -75,20 +75,27 @@ function WrongAnswerNote() {
       </div>
 
       <div className="max-w-full mx-auto">
-        <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-start sm:gap-16 sm:px-6">
-          {collectionList.map((item) => (
-            <div
-              key={item.id}
-              className="relative cursor-pointer transition-transform hover:scale-105 w-full sm:w-[164px] p-2 sm:p-0"
-              onClick={() => handleFolderClick(item.id)}
-            >
-              <img src={folder} alt="폴더" className="w-full" />
-              <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[90%] sm:w-[140px]">
-                <h3 className="text-16 font-pre-medium truncate">{item.name}</h3>
+        {collectionList.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+            <p className="text-14 md:text-16 font-pre-medium">오답노트가 존재하지 않습니다.</p>
+            <p className="mt-2 text-12 md:text-14">퀴즈를 풀고 오답노트를 생성해보세요!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-start sm:gap-16 sm:px-6">
+            {collectionList.map((item) => (
+              <div
+                key={item.id}
+                className="relative cursor-pointer transition-transform hover:scale-105 w-full sm:w-[164px] p-2 sm:p-0"
+                onClick={() => handleFolderClick(item.id)}
+              >
+                <img src={folder} alt="폴더" className="w-full" />
+                <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[90%] sm:w-[140px]">
+                  <h3 className="text-16 font-pre-medium truncate">{item.name}</h3>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Modal
