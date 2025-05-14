@@ -8,6 +8,22 @@ import {
 } from "./types";
 
 export const collectionApi = {
+  //all 컬렉션 조회
+  getAllCollection: async () => {
+    const response = await httpClient.get("/collection/all");
+    return response;
+  },
+
+  //all memozy 조회
+  getAllMemozyList: async (page?: number, pageSize?: number) => {
+    const queryParams = new URLSearchParams();
+    if (page !== undefined) queryParams.append("page", page.toString());
+    if (pageSize !== undefined) queryParams.append("pageSize", pageSize.toString());
+
+    const response = await httpClient.get(`/collection/url/all?${queryParams.toString()}`);
+    return response;
+  },
+
   // 컬렉션 조회
   getCollection: async () => {
     const response = await httpClient.get("/collection");
