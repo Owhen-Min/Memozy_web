@@ -5,17 +5,12 @@ import book from "../../assets/icons/summaryIcon.svg";
 import first from "../../assets/images/first.png";
 import second from "../../assets/images/second.png";
 import third from "../../assets/images/third.png";
-import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
-import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
 import { quizShowResultData, quizShowMyResultData } from "../../dummy/quizSharedResultData";
 import { quizShowData } from "../../dummy/quizShowData";
 
 function QuizShowResultSharedPage() {
-  const navigate = useNavigate();
-  const { collectionId } = useParams();
-
   // 개인 결과 데이터에서 필요한 정보 가져오기
   const { myWrongQuizCount, totalQuizCount, myScore } = quizShowMyResultData.data;
 
@@ -121,17 +116,6 @@ function QuizShowResultSharedPage() {
               <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.score}</span>
             </div>
           ))}
-        </div>
-
-        {/* 하단 버튼 영역 - 위로 올림 */}
-        <div className="flex justify-center mt-6 md:mt-0">
-          <button
-            className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
-            onClick={() => navigate(`/collection/${collectionId}`)}
-          >
-            <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
-            컬렉션 리스트로 돌아가기
-          </button>
         </div>
 
         {/* 가장 많이 틀린 퀴즈 모달 */}

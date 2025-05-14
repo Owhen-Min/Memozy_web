@@ -5,13 +5,24 @@ import QuizShowSharedEntry from "../features/quizShowSharedPage/QuizShowSharedEn
 import QuizShowSharedShow from "../features/quizShowSharedPage/QuizShowSharedShow";
 import QuizShowSharedResult from "../features/quizShowSharedPage/QuizShowSharedResult";
 import { useAuthStore } from "../stores/authStore";
-import { Quiz } from "../types/quizShow";
+import { QuizShared } from "../types/quizShow";
 
 // 알림 인터페이스 정의
 interface Notification {
   id: number;
   message: string;
   type: "success" | "info" | "warning" | "error";
+}
+
+interface User {
+  userId: string;
+  nickname: string;
+}
+
+interface Answer {
+  type: "SUBMIT";
+  index: number;
+  answer: string;
 }
 
 const QuizShowSharedPage = () => {
@@ -22,9 +33,9 @@ const QuizShowSharedPage = () => {
   const [isHost, setIsHost] = useState(false);
   const [quizCount, setQuizCount] = useState<number>(0);
   const [collectionName, setCollectionName] = useState<string>("");
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<User[]>([]);
   const [nickname, setNickname] = useState<string>("");
-  const [hostNickname, setHostNickname] = useState<string>("");
+  const [hostId, setHostId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -33,7 +44,7 @@ const QuizShowSharedPage = () => {
   const [nextNotificationId, setNextNotificationId] = useState(1);
 
   // 추가된 상태
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quizzes, setQuizzes] = useState<QuizShared[]>([]);
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [quizSessionId, setQuizSessionId] = useState<string>("");
 
@@ -81,6 +92,19 @@ const QuizShowSharedPage = () => {
     }
   }, [showId, stompClient, isConnected]);
 
+  const submitAnswer = async (answer: Answer) => {
+    if (!stompClient || !isConnected || !showId) return;
+
+    try {
+      await stompClient.publish({
+        destination: `/pub/quiz/show/${showId}/submit`,
+        body: JSON.stringify(answer),
+      });
+    } catch (error) {
+      console.error("답변 제출 중 오류가 발생했습니다.", error);
+      return false;
+    }
+  };
   // 새로 참가한 인원 알림 받기
   useEffect(() => {
     if (stompClient && isConnected && showId) {
@@ -88,16 +112,20 @@ const QuizShowSharedPage = () => {
         const payload = JSON.parse(message.body);
         console.log(payload);
 
-        if (payload.type === "host") {
-          setHostNickname(payload.hostName);
-          setCollectionName(payload.collectionName);
-          setNickname(payload.nickname);
-          setQuizCount(payload.quizCount);
-          setIsHost(true);
-          setIsLoading(false);
-        } else if (payload.type === "join") {
+        if (payload.type === "HOST") {
           if (nickname === "") {
-            setHostNickname(payload.hostName);
+            setHostId(payload.hostId);
+            setCollectionName(payload.collectionName);
+            setNickname(payload.nickname);
+            setQuizCount(payload.quizCount);
+            setIsHost(true);
+            setIsLoading(false);
+          } else {
+            addNotification(`${payload.nickname} 님이 퀴즈쇼 호스트로 지정되었습니다.`, "success");
+          }
+        } else if (payload.type === "JOIN") {
+          if (nickname === "") {
+            setHostId(payload.hostId);
             setCollectionName(payload.collectionName);
             setNickname(payload.nickname);
             setQuizCount(payload.quizCount);
@@ -121,7 +149,8 @@ const QuizShowSharedPage = () => {
         `/sub/quiz/show/${showId}/participants`,
         (message) => {
           const data = JSON.parse(message.body);
-          if (data.type === "PARTICIPANT_LIST") {
+          console.log(data);
+          if (data.type === "JOIN" || data.type === "NICKNAME") {
             setParticipants(data.participants);
           }
         }
@@ -136,12 +165,11 @@ const QuizShowSharedPage = () => {
       const subscription = stompClient.subscribe(`/sub/quiz/show/${showId}/quiz`, (message) => {
         const data = JSON.parse(message.body);
         console.log(data);
-        setIsShowStarted(true);
 
-        if (data.type === "quiz") {
+        if (data.type === "QUIZ") {
           // 문자열로 된 퀴즈 데이터를 파싱
-          const quizStr = data.quiz;
-          const quizObj = parseQuizString(quizStr);
+          const quiz = data.quiz;
+          const quizObj = parseQuizString(quiz);
 
           // 퀴즈 배열에 추가
           setQuizzes((prev) => {
@@ -162,26 +190,20 @@ const QuizShowSharedPage = () => {
   }, [showId, stompClient, isConnected]);
 
   // 퀴즈 문자열 파싱 함수
-  const parseQuizString = (quizString: string): Quiz => {
+  const parseQuizString = (quiz: any): QuizShared => {
     // 문자열에서 필요한 정보 추출
-    const quizIdMatch = quizString.match(/quizId=(\d+)/);
-    const typeMatch = quizString.match(/type=(\w+)/);
-    const contentMatch = quizString.match(/content=([^,}]+)/);
-    const answerMatch = quizString.match(/answer=([^,}]+)/);
-
-    // choice 배열 추출 (대괄호 안의 내용)
-    const choiceMatch = quizString.match(/choice=\[(.*?)\]/);
-    const choices = choiceMatch ? [choiceMatch[1]] : [];
+    const typeMatch = quiz.type;
+    const contentMatch = quiz.content;
+    const answerMatch = quiz.answer;
+    const commentaryMatch = quiz.commentary;
+    const choiceMatch = quiz.choice ? quiz.choice.slice(1, -1).split(",") : [];
 
     return {
-      quizId: quizIdMatch ? parseInt(quizIdMatch[1]) : 0,
-      type: typeMatch
-        ? (typeMatch[1] as "MULTIPLE_CHOICE" | "OX" | "OBJECTIVE")
-        : "MULTIPLE_CHOICE",
-      content: contentMatch ? contentMatch[1] : "",
-      answer: answerMatch ? answerMatch[1] : "",
-      choice: choices,
-      commentary: "",
+      type: typeMatch,
+      content: contentMatch ? contentMatch : "",
+      answer: answerMatch ? answerMatch : "",
+      choice: choiceMatch ? choiceMatch : [],
+      commentary: commentaryMatch ? commentaryMatch : "",
     };
   };
 
@@ -250,7 +272,7 @@ const QuizShowSharedPage = () => {
           collectionName={collectionName}
           participants={participants}
           nickname={nickname}
-          hostNickname={hostNickname}
+          hostId={hostId}
           quizCount={quizCount}
           onStartQuizShow={handleStartQuizShow}
           onChangeNickname={handleChangeNickname}
@@ -259,10 +281,14 @@ const QuizShowSharedPage = () => {
       )}
       {isShowStarted && !isShowEnded && (
         <QuizShowSharedShow
+          quizCount={quizCount}
           quizList={quizzes}
           quizSessionId={quizSessionId}
           collectionName={collectionName}
           currentQuizIndex={currentQuizIndex}
+          setCurrentQuizIndex={setCurrentQuizIndex}
+          setIsShowEnded={setIsShowEnded}
+          submitAnswer={submitAnswer}
         />
       )}
       {isShowEnded && <QuizShowSharedResult />}

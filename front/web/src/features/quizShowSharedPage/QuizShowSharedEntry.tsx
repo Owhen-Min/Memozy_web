@@ -8,29 +8,36 @@ import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import editNicknameIcon from "../../assets/icons/editNickname.svg";
 import { QRCodeSVG } from "qrcode.react";
 
+interface User {
+  userId: string;
+  nickname: string;
+}
+
+interface QuizShowSharedEntryProps {
+  isHost: boolean;
+  isLoggedIn: boolean;
+  participants: User[];
+  hostId: string;
+  nickname: string;
+  collectionName: string;
+  quizCount: number;
+  onStartQuizShow: () => void;
+  onChangeNickname: (newNickname: string) => Promise<boolean | undefined>;
+  isLoading: boolean;
+}
+
 function QuizShowSharedEntry({
   isHost,
   isLoggedIn,
   participants,
-  hostNickname,
+  hostId,
   nickname,
   collectionName,
   quizCount,
   onStartQuizShow,
   onChangeNickname,
   isLoading,
-}: {
-  isHost: boolean;
-  isLoggedIn: boolean;
-  participants: string[];
-  nickname: string;
-  hostNickname: string;
-  collectionName: string;
-  quizCount: number;
-  onStartQuizShow: () => void;
-  onChangeNickname: (newNickname: string) => Promise<boolean | undefined>;
-  isLoading: boolean;
-}) {
+}: QuizShowSharedEntryProps) {
   const navigate = useNavigate();
   const [showParticipants, setShowParticipants] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -123,15 +130,15 @@ function QuizShowSharedEntry({
                 className={`absolute ${showParticipants ? "block" : "hidden"} md:hidden md:group-hover:block right-0 top-full bg-white shadow-lg rounded-lg p-4 z-50 min-w-[150px]`}
               >
                 <ul className="max-h-[200px] overflow-y-auto">
-                  {participants.map((name, idx) => (
+                  {participants.map((user, idx) => (
                     <li key={idx} className="py-1">
-                      {hostNickname === name ? (
+                      {hostId === user.userId ? (
                         <span className="text-16 font-pre-bold flex items-center gap-1">
                           <img src={crownIcon} alt="crown" className="w-6 h-6" />
-                          {name}
+                          {user.nickname}
                         </span>
                       ) : (
-                        <span className="text-16 font-pre-regular">{name}</span>
+                        <span className="text-16 font-pre-regular">{user.nickname}</span>
                       )}
                     </li>
                   ))}
