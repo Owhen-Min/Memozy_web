@@ -5,14 +5,12 @@ import closeIcon from "../../assets/icons/closeIcon.svg";
 interface CreateQuizShowModalProps {
   onClose: () => void;
   collectionId: string | undefined;
-  collectionName: string;
   quizCount: number;
 }
 
 function CreateQuizShowModal({
   onClose,
   collectionId,
-  collectionName,
   quizCount: totalQuizCount,
 }: CreateQuizShowModalProps) {
   const navigate = useNavigate();
@@ -20,20 +18,11 @@ function CreateQuizShowModal({
   const [quizCount, setQuizCount] = useState(1);
 
   const handleQuizShowCreate = () => {
-    // TODO: 퀴즈 시작 로직 구현
-    console.log(
-      "퀴즈쇼 생성 컬렉션 이름 : ",
-      collectionName,
-      "퀴즈쇼 생성 컬렉션 id : ",
-      collectionId,
-      "퀴즈 수 : ",
-      quizCount,
-      "공유 여부 : ",
-      isShared
-    );
+    console.log("퀴즈쇼 생성 컬렉션 id : ", collectionId, "퀴즈 수 : ", quizCount);
     onClose();
     navigate(
-      isShared ? `/quiz-entry/shared/${collectionId}` : `/quiz-entry/personal/${collectionId}`
+      isShared ? `/quiz-entry/shared/${collectionId}` : `/quiz-entry/personal/${collectionId}`,
+      { state: { quizCount } }
     );
   };
 
