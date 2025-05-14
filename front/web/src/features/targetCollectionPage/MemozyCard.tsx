@@ -14,6 +14,7 @@ interface MemozyCardProps {
   isSelected: boolean;
   onSelect: () => void;
   url: string;
+  collectionId?: string;
 }
 
 function MemozyCard({
@@ -23,14 +24,15 @@ function MemozyCard({
   quizCount,
   isEditMode,
   isSelected,
-  url,
   onSelect,
+  url,
+  collectionId,
 }: MemozyCardProps) {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <>
+    <div className="relative">
       <div className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
         <div className="p-6">
           <div className="flex justify-between items-start">
@@ -84,7 +86,7 @@ function MemozyCard({
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropDownOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
         >
-          <DropDownBox sourceId={sourceId} />
+          <DropDownBox sourceId={sourceId} collectionId={collectionId} />
         </div>
       </div>
       <div className="h-4" />
@@ -95,7 +97,7 @@ function MemozyCard({
           onClose={() => setIsModalOpen(false)}
         />
       )}
-    </>
+    </div>
   );
 }
 

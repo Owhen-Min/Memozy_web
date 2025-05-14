@@ -174,6 +174,7 @@ function TargetCollectionPage() {
                 isSelected={selectedMemozyIds.includes(content.sourceId)}
                 onSelect={() => handleMemozySelect(content.sourceId)}
                 url={content.url}
+                collectionId={collectionId}
               />
             ))}
             {hasMore && !loading && <div ref={observer} className="h-4" />}
