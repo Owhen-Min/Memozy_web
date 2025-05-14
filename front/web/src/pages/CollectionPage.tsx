@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import CollectionCard from "../features/collectionPage/CollectionCard";
 import collectionPlusIcon from "../assets/icons/collectionPlusIcon.png";
-import memozyIcon from "../assets/icons/memozyIcon.png";
-import { useNavigate } from "react-router";
 import AddCollection from "../features/collectionPage/collectionPageModal/AddCollection";
 import { useState } from "react";
 import small_logo from "../assets/images/small_logo.png";
@@ -10,7 +8,6 @@ import { motion } from "framer-motion";
 import { useCollectionStore } from "../stores/collection/collectionStore";
 
 function CollectionPage() {
-  const navigate = useNavigate();
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
 
   // store에서 데이터와 함수 가져오기

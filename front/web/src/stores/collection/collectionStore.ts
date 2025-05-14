@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { collectionApi } from "../../apis/collection/colletionApi";
-import { CollectionState, Quiz, Memozy, AllCollectionResponse } from "./types";
+import { CollectionState, Quiz, Memozy } from "./types";
 
 export const useCollectionStore = create<CollectionState>((set, get) => ({
   collections: [],
