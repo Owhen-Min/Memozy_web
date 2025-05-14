@@ -13,7 +13,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.global.payload.ApiResponse;
-import site.memozy.memozy_api.global.payload.code.ErrorStatus;
+import site.memozy.memozy_api.global.payload.code.BaseErrorCode;
 
 @Slf4j
 @RestControllerAdvice
@@ -43,9 +43,10 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(GeneralException.class)
 	public ApiResponse<Object> handleGeneralException(GeneralException exception) {
-		ErrorStatus errorReason = exception.getCode().getErrorReason();
-		logError(errorReason.getHttpStatusCode(), errorReason.getErrorCode(), errorReason.getErrorMsg());
-		return errorResponse(errorReason.getErrorCode(), errorReason.getErrorMsg());
+		BaseErrorCode error = exception.getCode();
+
+		logError(error.getHttpStatusCode(), error.getErrorCode(), error.getErrorMsg());
+		return errorResponse(error.getErrorCode(), error.getErrorMsg());
 	}
 
 	@ExceptionHandler(Exception.class)

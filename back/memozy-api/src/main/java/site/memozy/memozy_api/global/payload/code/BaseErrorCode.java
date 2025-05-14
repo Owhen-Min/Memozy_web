@@ -1,6 +1,15 @@
 package site.memozy.memozy_api.global.payload.code;
 
-public interface BaseErrorCode {
+import org.springframework.http.HttpStatus;
 
-	ErrorStatus getErrorReason();
+public interface BaseErrorCode {
+	HttpStatus getHttpStatusCode();
+
+	String getErrorCode();
+
+	String getErrorMsg();
+
+	default CustomErrorStatus withMessage(String customMessage) {
+		return new CustomErrorStatus(getHttpStatusCode(), getErrorCode(), customMessage);
+	}
 }
