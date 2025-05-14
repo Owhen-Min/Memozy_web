@@ -1,4 +1,5 @@
 import httpClient from "../httpClient";
+import { QuizHistory } from "../../types/wrongAnswer";
 //학습참여도
 export const fetchLearningContribution = async (year?: number) => {
   try {
@@ -42,6 +43,36 @@ export const fetchCollectionStats = async () => {
     }
   } catch (error) {
     console.error("컬렉션 통계 데이터 요청 중 오류 발생:", error);
+    throw error;
+  }
+};
+
+// 오답노트 컬렉션 리스트 가져오기
+export const fetchWrongAnswerCollections = async () => {
+  try {
+    const response = await httpClient.get(`/history/collection`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.errorMsg || "Unknown error");
+    }
+  } catch (error) {
+    console.error("오답노트 컬렉션 목록 요청 중 오류 발생:", error);
+    throw error;
+  }
+};
+
+// 오답노트 컬렉션별 오답 내역 가져오기
+export const fetchWrongAnswerDetail = async (collectionId: number): Promise<QuizHistory[]> => {
+  try {
+    const response = await httpClient.get(`/history/collection/${collectionId}`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.errorMsg || "Unknown error");
+    }
+  } catch (error) {
+    console.error("오답 내역 요청 중 오류 발생:", error);
     throw error;
   }
 };

@@ -27,7 +27,7 @@ export interface QuizHistory {
   round: number;
   failCount: number;
   date: string;
-  quizDatas: QuizDetail[];
+  quizDataList: QuizDetail[];
 }
 
 export interface QuizHistoryData {
