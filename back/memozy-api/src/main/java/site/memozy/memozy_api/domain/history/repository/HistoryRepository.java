@@ -24,4 +24,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 		@Param("email") String email);
 
 	List<History> findByCollectionIdAndRound(Integer collectionId, Integer round);
+	
+	void deleteAllByQuizIdIn(List<Long> quizIds);
 }

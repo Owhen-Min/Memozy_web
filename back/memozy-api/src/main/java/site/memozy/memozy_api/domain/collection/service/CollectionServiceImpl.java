@@ -22,19 +22,20 @@ import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
-// TODO: 컬렉션 삭제 시, Memozy 및 퀴즈도 삭제하는 로직 추가하기
 @Service
 @RequiredArgsConstructor
 public class CollectionServiceImpl implements CollectionService {
 	private final CollectionRepository collectionRepository;
 	private final QuizSourceRepository quizSourceRepository;
 	private final QuizRepository quizRepository;
+	private final HistoryRepository historyRepository;
 
 	@Override
 	@Transactional
@@ -53,10 +54,28 @@ public class CollectionServiceImpl implements CollectionService {
 	@Transactional
 	public void deleteCollection(Integer userId, CollectionDeleteRequest request) {
 		Integer collectionId = request.getCollectionId();
-
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
 
+		List<Integer> quizSourceIdList = quizSourceRepository.findByCollectionId(collectionId)
+			.stream().map(QuizSource::getSourceId).toList();
+
+		if (!quizSourceIdList.isEmpty()) {
+			List<Long> quizIdList = quizRepository.findBySourceIdIn(quizSourceIdList)
+				.stream().map(Quiz::getQuizId).toList();
+			if (!quizIdList.isEmpty()) {
+				// 1. History 삭제
+				historyRepository.deleteAllByQuizIdIn(quizIdList);
+
+				// 2. Quiz 삭제
+				quizRepository.deleteByQuizIdIn(quizIdList);
+			}
+
+			// 3. QuizSource 삭제
+			quizSourceRepository.deleteBySourceIdIn(quizSourceIdList);
+		}
+
+		// 4. Collection 삭제
 		collectionRepository.delete(collection);
 	}
 

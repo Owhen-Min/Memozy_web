@@ -33,5 +33,6 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 
 	@Query("SELECT MIN(q.sourceId) FROM QuizSource q" + " WHERE q.userId = :userId " + "GROUP BY q.url")
 	List<Integer> findSourceIdsByUserId(@Param("userId") Integer userId);
-
+	
+	List<QuizSource> findByCollectionId(Integer collectionId);
 }
