@@ -32,7 +32,7 @@ public class PersonalQuizController {
 
 	@Operation(
 		summary = "개인 퀴즈 생성하기",
-		description = "특정 컬렉션의 개인 퀴즈 생성"
+		description = "특정 컬렉션의 개인 퀴즈 생성, 모든 컬렉션을 통해 퀴즈를 생성하고 싶은 경우 collectionId를 0으로!"
 	)
 	@GetMapping("/{collectionId}")
 	public ApiResponse<PersonalQuizAndSessionResponse> getPersonalQuizzes(
@@ -41,6 +41,7 @@ public class PersonalQuizController {
 		@RequestParam(defaultValue = "10") int count,
 		@Parameter(description = "새로 푼 문제만 가져올지 여부 (기본값: false)", example = "false")
 		@RequestParam(defaultValue = "false") boolean newOnly) {
+		collectionId = (collectionId == null) ? 0 : collectionId;
 
 		PersonalQuizAndSessionResponse responses = personalQuizService.getPersonalQuizzes(user.getUserId(),
 			collectionId,
