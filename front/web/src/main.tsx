@@ -4,10 +4,6 @@ import "./index.css";
 import App from "./App.tsx";
 import "./styles/global.css";
 
-if (typeof window !== "undefined" && !window.global) {
-  window.global = window;
-}
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />

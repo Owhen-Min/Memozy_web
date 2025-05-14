@@ -66,7 +66,7 @@ function CreateQuizShowModal({
           <img src={closeIcon} alt="close" className="w-3 h-3" />
         </button>
 
-        <h1 className="text-[24px] font-pre-bold text-center mb-4">퀴즈쇼 생성하기</h1>
+        <h1 className="text-24 font-pre-bold text-center mb-4">퀴즈쇼 생성하기</h1>
 
         <p className="text-14 font-pre-regular text-gray200 text-center mb-8">
           해당 컬렉션에서 설정한 퀴즈 수만큼 랜덤한 퀴즈를 선정합니다

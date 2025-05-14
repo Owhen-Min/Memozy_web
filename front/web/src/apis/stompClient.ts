@@ -15,9 +15,11 @@ const useWebSocket = () => {
       reconnectDelay: 10000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      connectHeaders: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      connectHeaders: accessToken
+        ? {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        : {},
 
       onConnect: () => {
         console.log("웹소켓 연결");
@@ -32,6 +34,9 @@ const useWebSocket = () => {
       onStompError: (frame) => {
         console.error("에러 발생:", frame);
       },
+      // debug: (str) => {
+      //   console.log(str);
+      // },
     });
 
     client.activate();

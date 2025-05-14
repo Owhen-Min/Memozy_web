@@ -50,7 +50,7 @@ function QuizShowResultSharedPage() {
 
   return (
     <>
-      <h1 className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
+      <div className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
         <div className="flex items-center gap-1 md:gap-2 w-full overflow-hidden">
           <img src={small_logo} alt="logo" className="w-6 md:w-10 flex-shrink-0" />
           <span className="whitespace-nowrap flex-shrink-0">Quiz : </span>
@@ -61,7 +61,7 @@ function QuizShowResultSharedPage() {
             {quizShowData.data.collectionName}
           </span>
         </div>
-      </h1>
+      </div>
       <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[80vh] md:h-[70vh] justify-between relative">
         {/* 캐릭터 이미지 - 모바일에서는 숨김 */}
         <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">

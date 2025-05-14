@@ -1,4 +1,3 @@
-import { useLocation, useNavigate, useParams } from "react-router";
 import small_logo from "../../assets/images/small_logo.png";
 import { Quiz } from "../../types/quizShow";
 import { useState, useEffect } from "react";
@@ -8,17 +7,8 @@ import Objective from "../../components/quizShowPage/Objective";
 import Progress from "../../components/quizShowPage/Progress";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
-interface QuizShowPersonalPageProps {
-  collectionName: string;
-  quizList: Quiz[];
-  quizSessionId: string;
-}
 
 function QuizShowSharedShow() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const collectionId = useParams().collectionId;
-  const { collectionName, quizList, quizSessionId } = location.state as QuizShowPersonalPageProps;
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
@@ -72,13 +62,6 @@ function QuizShowSharedShow() {
       setUserAnswer(null);
       setCurrentQuizIndex(currentQuizIndex + 1);
       setCurrentQuiz(quizList[currentQuizIndex + 1]);
-      if (currentQuizIndex === quizList.length - 1) {
-        navigate(`/quiz-result/personal/${collectionId}`, {
-          state: {
-            quizSessionId: quizSessionId,
-          },
-        });
-      }
     };
 
     const isLastQuiz = currentQuizIndex === quizList.length - 1;
