@@ -18,6 +18,7 @@ import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
@@ -106,8 +107,21 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			request.isCorrect());
 	}
 
+	@Transactional
+	@Override
+	public void changeNickname(String showId, String userId, boolean isMember, String nickname) {
+		if (isMember) {
+			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
+		}
+		log.info("[service] changeNickname() called with showId: {}, userId: {}, nickname : {}", showId, userId,
+			nickname);
+		multiQuizShowRedisRepository.updateParticipantNickname(showId, userId, nickname);
+		applicationEventPublisher.publishEvent(new QuizShowParticipantEvent(showId, userId, nickname));
+	}
+
 	private String generateRandomCode() {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
 	}
+
 }

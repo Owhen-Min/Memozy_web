@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
+import site.memozy.memozy_api.domain.quiz.dto.NicknameUpdateRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowRunner;
 import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowServiceImpl;
@@ -75,6 +76,18 @@ public class MultiQuizShowController {
 
 		log.info("Answer received -> {}, {}", userId, request);
 		multiQuizShowService.submitAnswer(showId, userId, request);
+	}
+
+	@MessageMapping("/quiz/show/{showId}/nickname")
+	public void changeNickname(@DestinationVariable String showId, @Payload NicknameUpdateRequest request,
+		Message<?> message) {
+		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+		String userId = (String)accessor.getSessionAttributes().get("userId");
+		boolean isMember = (boolean)accessor.getSessionAttributes().get("isMember");
+
+		log.info("[Controller] changeNickname() called with showId: {}, nickname : {}", showId, request.nickname());
+
+		multiQuizShowService.changeNickname(showId, userId, isMember, request.nickname());
 	}
 
 	@GetMapping("/quiz/show")

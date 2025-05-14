@@ -54,7 +54,7 @@ public class MultiQuizShowRunner {
 			}
 
 			try {
-				String quiz = redisRepository.getQuizByIndex(showId, index);
+				String quiz = redisRepository.getQuizByIndex(showId, index).toString();
 				log.info("{} 퀴즈쇼 {}번째 퀴즈 전송: {}", showId, index, quiz);
 				if (quiz == null) {
 					log.error("퀴즈쇼 문제 오류 = {}번째 문제부터", index);

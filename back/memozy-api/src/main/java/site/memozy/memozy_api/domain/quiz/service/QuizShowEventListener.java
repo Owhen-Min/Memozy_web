@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MyMultiQuizShowResultResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowResultEvent;
 import site.memozy.memozy_api.domain.quiz.dto.TopQuizResultResponse;
-import site.memozy.memozy_api.domain.quiz.dto.TotalMultiQuizShowResultResponse;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 
 @Slf4j
@@ -41,39 +41,33 @@ public class QuizShowEventListener {
 			type = "host";
 		}
 
+		sendToParticipant(showId, type, event);
+		broadcastParticipants(showId);
+	}
+
+	@EventListener
+	public void handleParticipantNicknameEvent(QuizShowParticipantEvent event) {
+		String showId = event.showId();
+		String userId = event.userId();
+		String nickname = event.nickname();
+
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/join",
 			Map.of(
-				"type", type,
-				"userId", event.userId(),
-				"nickname", event.nickname(),
-				"hostName", event.hostName(),
-				"collectionName", event.collectionName(),
-				"quizCount", event.quizCount()
+				"type", "NICKNAME",
+				"userId", userId,
+				"nickname", nickname
 			)
 		);
 
-		Set<Object> members = multiQuizShowRedisRepository.findMembers(showId);
-		List<String> users = members.stream()
-			.map(id -> redisTemplate.opsForHash().entries("show:" + showId + ":user:" + id))
-			.filter(Objects::nonNull)
-			.map(user -> (String)user.get("nickname"))
-			.toList();
-
-		messagingTemplate.convertAndSend(
-			"/sub/quiz/show/" + showId + "/participants",
-			Map.of(
-				"type", "PARTICIPANT_LIST",
-				"participants", users
-			)
-		);
+		broadcastParticipants(showId);
 	}
 
 	@EventListener
 	public void handleQuizShowResultEvent(QuizShowResultEvent event) {
 		String showId = event.showId();
 		int quizCount = multiQuizShowRedisRepository.getQuizCount(showId);
-		Set<Object> userIds = multiQuizShowRedisRepository.findMembers(showId);
+		Set<Object> userIds = multiQuizShowRedisRepository.findParticipants(showId);
 
 		List<MyMultiQuizShowResultResponse> results = new ArrayList<>();
 		Map<Integer, Integer> wrongCounts = new HashMap<>();
@@ -115,23 +109,65 @@ public class QuizShowEventListener {
 			topRanks.add(new TopQuizResultResponse(i + 1, response.nickname(), response.myScore()));
 		}
 
-		int mostWrongIndex = wrongCounts.entrySet().stream()
-			.max(Map.Entry.comparingByValue())
-			.map(Map.Entry::getKey)
-			.orElse(0); // default index 0
-
-		String mostWrongQuizJson = multiQuizShowRedisRepository.getQuizByIndex(showId, mostWrongIndex);
-		log.info("Most wrong quiz index: {}", mostWrongIndex);
 		for (MyMultiQuizShowResultResponse result : results) {
 			messagingTemplate.convertAndSend(
 				"/sub/quiz/show/" + showId + "/result/" + result.userId(),
-				result
+				Map.of(
+					"type", "MYRESULT",
+					"result", result
+				)
 			);
 		}
 
+		int mostWrongIndex = wrongCounts.entrySet().stream()
+			.max(Map.Entry.comparingByValue())
+			.map(Map.Entry::getKey)
+			.orElse(0);
+
+		Map<String, Object> mostWrongQuiz = new HashMap<>(
+			multiQuizShowRedisRepository.getQuizByIndex(showId, mostWrongIndex));
+		log.info("Most wrong quiz index: {}", mostWrongIndex);
+		mostWrongQuiz.put("wrongRate", (double)wrongCounts.get(mostWrongIndex) / userIds.size());
+
 		messagingTemplate.convertAndSend(
 			"/sub/quiz/show/" + showId + "/result",
-			new TotalMultiQuizShowResultResponse("RESULT", mostWrongQuizJson, topRanks)
+			Map.of(
+				"type", "RESULT",
+				"mostWrongQuiz", mostWrongQuiz,
+				"topRanking", topRanks
+			)
 		);
 	}
+
+	private void sendToParticipant(String showId, String type, QuizShowJoinEvent event) {
+		messagingTemplate.convertAndSend(
+			"/sub/quiz/show/" + showId + "/join",
+			Map.of(
+				"type", type,
+				"userId", event.userId(),
+				"nickname", event.nickname(),
+				"hostName", event.hostName(),
+				"collectionName", event.collectionName(),
+				"quizCount", event.quizCount()
+			)
+		);
+	}
+
+	private void broadcastParticipants(String showId) {
+		Set<Object> members = multiQuizShowRedisRepository.findParticipants(showId);
+		List<String> users = members.stream()
+			.map(id -> redisTemplate.opsForHash().entries("show:" + showId + ":user:" + id))
+			.filter(Objects::nonNull)
+			.map(user -> (String)user.get("nickname"))
+			.toList();
+
+		messagingTemplate.convertAndSend(
+			"/sub/quiz/show/" + showId + "/participants",
+			Map.of(
+				"type", "PARTICIPANT_LIST",
+				"participants", users
+			)
+		);
+	}
+
 }

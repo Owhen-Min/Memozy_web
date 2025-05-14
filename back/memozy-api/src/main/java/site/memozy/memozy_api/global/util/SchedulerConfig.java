@@ -1,6 +1,4 @@
-package site.memozy.memozy_api.domain.quiz.service;
-
-// Config 클래스
+package site.memozy.memozy_api.global.util;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
