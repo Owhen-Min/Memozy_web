@@ -27,7 +27,7 @@ public class PersonalQuizResponse {
 		this.content = content;
 		this.type = type;
 		if (choice != null) {
-			this.choice = Arrays.asList(choice.split(","));
+			this.choice = Arrays.asList(choice.split("№"));
 		}
 		this.answer = answer;
 		this.commentary = commentary;

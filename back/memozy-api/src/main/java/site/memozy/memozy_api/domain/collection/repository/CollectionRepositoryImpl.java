@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -314,7 +314,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 					q.getType().name(),
 					h.getUserSelect(),
 					(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
-						? List.of(q.getOption().split(","))
+						? List.of(q.getOption().split("№"))
 						: null,
 					q.getAnswer(),
 					q.getCommentary()

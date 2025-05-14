@@ -26,7 +26,7 @@ public class MultiQuizResponse {
 		this.quizId = quizId;
 		this.content = content;
 		this.type = type;
-		this.choice = Arrays.asList(choice.split(",")); // 문자열을 List로 변환
+		this.choice = Arrays.asList(choice.split("№")); // 문자열을 List로 변환
 		this.answer = answer;
 		this.commentary = commentary;
 	}

@@ -76,7 +76,7 @@ public class Quiz extends BaseTimeEntity {
 		quiz.type = QuizType.fromCode(response.quizType());
 		quiz.answer = response.answer();
 		quiz.commentary = response.explanation();
-		quiz.option = String.join(",", Optional.ofNullable(response.options()).orElse(List.of()));
+		quiz.option = String.join("№", Optional.ofNullable(response.options()).orElse(List.of()));
 		quiz.sourceId = sourceId;
 
 		return quiz;
