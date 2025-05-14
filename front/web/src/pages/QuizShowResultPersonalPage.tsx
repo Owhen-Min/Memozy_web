@@ -27,9 +27,7 @@ function QuizShowResultPersonalPage() {
     navigate("/my");
   };
 
-  const handleMoreQuizClick = () => {
-    // 퀴즈 더 풀어보기 클릭 시 퀴즈 쇼 페이지로 이동
-  };
+  const handleReStartQuizClick = () => {};
 
   const renderContent = () => {
     if (isLoading) {
@@ -101,30 +99,8 @@ function QuizShowResultPersonalPage() {
               <p className="font-pre-medium text-14 md:text-20">
                 틀린 퀴즈 수 : {myWrongQuizCount}개
               </p>
-
-              <button
-                onClick={handleWrongNoteClick}
-                className="group flex items-center mt-6 md:mt-8 font-pre-medium hover:text-blue-600 text-14 md:text-20"
-              >
-                마이페이지 바로가기
-                <img
-                  src={book}
-                  alt="책아이콘"
-                  className="w-3 md:w-4 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
-                />
-              </button>
-
-              <button
-                onClick={handleMoreQuizClick}
-                className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
-              >
-                지금 컬렉션 퀴즈 더 풀어보기
-                <img
-                  src={openbook}
-                  alt="열린책아이콘"
-                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
-                />
-              </button>
+              <p>틀린문제 content</p>
+              <p>지난 회차 대비 점수 차이</p>
             </div>
           </div>
 
