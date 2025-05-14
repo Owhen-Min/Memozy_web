@@ -14,20 +14,14 @@ function CollectionPage() {
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
 
   // store에서 데이터와 함수 가져오기
-  const { collections, loading, error, fetchCollections } = useCollectionStore();
+  const { collections, loading, error, fetchCollections, fetchAllCollection, allCollection } =
+    useCollectionStore();
 
   // 컴포넌트 마운트 시 컬렉션 데이터 가져오기
   useEffect(() => {
     fetchCollections();
-  }, [fetchCollections]);
-
-  // 모든 컬렉션의 memozyCount와 quizCount 총합 계산
-  const totalMemozyCount = (collections || []).reduce((sum, item) => sum + item.memozyCount, 0);
-  const totalQuizCount = (collections || []).reduce((sum, item) => sum + item.quizCount, 0);
-
-  const handleAllCollectionsClick = () => {
-    navigate("/collection/all");
-  };
+    fetchAllCollection();
+  }, [fetchCollections, fetchAllCollection]);
 
   const handleAddCollectionClick = () => {
     setIsAddCollectionModalOpen(true);
@@ -68,24 +62,13 @@ function CollectionPage() {
         initial="hidden"
         animate="show"
       >
-        {/* 컬렉션 모두보기 */}
-        <motion.div
-          variants={item}
-          className="w-full p-5 border border-normal rounded-xl bg-white relative cursor-pointer hover:bg-lighthover shadow-md"
-          onClick={handleAllCollectionsClick}
-        >
-          <h3 className="text-24 font-pre-bold mb-5 text-normalactive">모두 보기</h3>
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2">
-              <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
-              <span className="text-16 font-pre-semibold">Memozy</span>
-              <span className="text-16 font-pre-semibold text-normal">{totalMemozyCount}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-16 font-pre-semibold">퀴즈</span>
-              <span className="text-16 font-pre-semibold text-normal">{totalQuizCount}</span>
-            </div>
-          </div>
+        <motion.div>
+          <CollectionCard
+            id={allCollection?.id ?? 0}
+            name={allCollection?.name ?? ""}
+            memozyCount={allCollection?.memozyCount ?? 0}
+            quizCount={allCollection?.quizCount ?? 0}
+          />
         </motion.div>
 
         {(collections || []).map((collection) => (

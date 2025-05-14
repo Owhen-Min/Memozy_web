@@ -3,6 +3,7 @@ import summaryIcon from "../../assets/icons/summaryIcon.svg";
 import dropDownIcon from "../../assets/icons/dropDownIcon.svg";
 import NoteModal from "./NoteModal";
 import DropDownBox from "./DropDownBox";
+import urlIcon from "../../assets/icons/urlIcon.svg";
 
 interface MemozyCardProps {
   sourceId: number;
@@ -12,6 +13,7 @@ interface MemozyCardProps {
   isEditMode: boolean;
   isSelected: boolean;
   onSelect: () => void;
+  url: string;
 }
 
 function MemozyCard({
@@ -21,6 +23,7 @@ function MemozyCard({
   quizCount,
   isEditMode,
   isSelected,
+  url,
   onSelect,
 }: MemozyCardProps) {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -51,6 +54,14 @@ function MemozyCard({
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  window.open(url, "_blank");
+                }}
+                className="p-2 hover:bg-light rounded-lg transition-colors"
+              >
+                <img src={urlIcon} alt="url" className="w-5 h-5" />
+              </button>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
