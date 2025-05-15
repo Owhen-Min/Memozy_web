@@ -5,6 +5,7 @@ import QuizShowSharedEntry from "../features/quizShowSharedPage/QuizShowSharedEn
 import QuizShowSharedShow from "../features/quizShowSharedPage/QuizShowSharedShow";
 import QuizShowSharedResult from "../features/quizShowSharedPage/QuizShowSharedResult";
 import { useAuthStore } from "../stores/authStore";
+import { useQuizShowSharedStore } from "../stores/quizShowShared/quizShowSharedStore";
 import { QuizShared } from "../types/quizShow";
 
 // 알림 인터페이스 정의
@@ -14,11 +15,6 @@ interface Notification {
   type: "success" | "info" | "warning" | "error";
 }
 
-interface User {
-  userId: string;
-  nickname: string;
-}
-
 interface Answer {
   type: "SUBMIT";
   index: number;
@@ -26,51 +22,51 @@ interface Answer {
   isCorrect: boolean;
 }
 
-interface QuizShowMyResult {
-  myCorrectQuizCount: number;
-  myScore: number;
-  totalQuizCount: number;
-}
-
-interface QuizShowResult {
-  mostWrongQuiz: {
-    type: "OX" | "MULTIPLE";
-    content: string;
-    answer: string;
-  };
-  topRanking: {
-    rank: number;
-    name: string;
-    score: number;
-  }[];
-}
-
 const QuizShowSharedPage = () => {
+  // Zustand 스토어에서 상태와 액션 가져오기
+  const {
+    isLoading,
+    isShowStarted,
+    isShowEnded,
+    isHost,
+    quizCount,
+    collectionName,
+    participants,
+    nickname,
+    hostId,
+    userId,
+    currentQuizIndex,
+    quizSessionId,
+    quizzes,
+    myResult,
+    result,
+    isResultReady,
+    setIsLoading,
+    setIsShowStarted,
+    setIsShowEnded,
+    setIsHost,
+    setQuizCount,
+    setCollectionName,
+    setParticipants,
+    setNickname,
+    setHostId,
+    setUserId,
+    setCurrentQuizIndex,
+    setQuizSessionId,
+    addQuiz,
+    setMyResult,
+    setResult,
+    setIsResultReady,
+    resetStore,
+  } = useQuizShowSharedStore();
+
   const { showId } = useParams();
-  const { stompClient, isConnected } = useWebSocket();
-  const [isShowStarted, setIsShowStarted] = useState(false);
-  const [isShowEnded, setIsShowEnded] = useState(false);
-  const [isHost, setIsHost] = useState(false);
-  const [quizCount, setQuizCount] = useState<number>(0);
-  const [collectionName, setCollectionName] = useState<string>("");
-  const [participants, setParticipants] = useState<User[]>([]);
-  const [nickname, setNickname] = useState<string>("");
-  const [hostId, setHostId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const { stompClient, isConnected } = useWebSocket(showId as string, userId);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const [userId, setUserId] = useState<string>("");
-  const [myResult, setMyResult] = useState<QuizShowMyResult | {}>({});
-  const [result, setResult] = useState<QuizShowResult | {}>({});
-  const [isResultReady, setIsResultReady] = useState(false);
 
   // 알림 상태 관리
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [nextNotificationId, setNextNotificationId] = useState(1);
-
-  // 추가된 상태
-  const [quizzes, setQuizzes] = useState<QuizShared[]>([]);
-  const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
-  const [quizSessionId, setQuizSessionId] = useState<string>("");
 
   // 알림 추가 함수
   const addNotification = (
@@ -120,12 +116,13 @@ const QuizShowSharedPage = () => {
       return () => clearTimeout(timer);
     }
   }, [showId, stompClient, isConnected]);
+
   // 푼 문제 제출하기
-  const submitAnswer = async (answer: Answer) => {
+  const submitAnswer = (answer: Answer) => {
     if (!stompClient || !isConnected || !showId) return;
 
     try {
-      await stompClient.publish({
+      stompClient.publish({
         destination: `/pub/quiz/show/${showId}/submit`,
         body: JSON.stringify(answer),
       });
@@ -134,6 +131,7 @@ const QuizShowSharedPage = () => {
       return false;
     }
   };
+
   // 새로 참가한 인원 알림 받기
   useEffect(() => {
     if (stompClient && isConnected && showId) {
@@ -200,13 +198,8 @@ const QuizShowSharedPage = () => {
           const quiz = data.quiz;
           const quizObj = parseQuizString(quiz);
 
-          // 퀴즈 배열에 추가
-          setQuizzes((prev) => {
-            // 인덱스 위치에 퀴즈 추가
-            const newQuizzes = [...prev];
-            newQuizzes[data.index] = quizObj;
-            return newQuizzes;
-          });
+          // 퀴즈 추가
+          addQuiz(quizObj, data.index);
 
           // 세션 ID 설정 (필요하다면)
           if (data.quizSessionId) {
@@ -283,7 +276,6 @@ const QuizShowSharedPage = () => {
 
           setResult(resultData);
           setIsResultReady(true);
-          addNotification("모든 결과가 도착했습니다!", "success");
         }
       });
       return () => subscription.unsubscribe();
@@ -344,6 +336,13 @@ const QuizShowSharedPage = () => {
       return false;
     }
   };
+
+  // 컴포넌트 언마운트 시 스토어 초기화
+  useEffect(() => {
+    return () => {
+      resetStore();
+    };
+  }, []);
 
   return (
     <div className="content-quiz">
