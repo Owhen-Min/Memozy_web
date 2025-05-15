@@ -17,7 +17,8 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 
 	List<QuizSource> findBySourceIdInAndUserId(List<Integer> sourceIds, Integer userId);
 
-	boolean existsByUrlAndUserId(String url, Integer userId);
+	@Query("SELECT q.sourceId FROM QuizSource q WHERE q.url = :url AND q.userId = :userId")
+	Optional<Integer> findSourceIdByUrlAndUserId(String url, Integer userId);
 
 	Optional<QuizSource> findBySourceIdAndUserId(Integer sourceId, Integer userId);
 

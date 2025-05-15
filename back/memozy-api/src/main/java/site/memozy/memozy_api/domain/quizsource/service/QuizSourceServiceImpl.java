@@ -1,6 +1,5 @@
 package site.memozy.memozy_api.domain.quizsource.service;
 
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.QUIZ_SOURCE_EXISTS;
 import static site.memozy.memozy_api.global.payload.code.ErrorStatus.QUIZ_SOURCE_NOT_FOUND;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import site.memozy.memozy_api.domain.quizsource.dto.QuizSourceResponse;
 import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 import site.memozy.memozy_api.global.openai.OpenAiService;
+import site.memozy.memozy_api.global.payload.code.ErrorStatus;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
@@ -31,9 +31,11 @@ public class QuizSourceServiceImpl implements QuizSourceService {
 	@Override
 	@Transactional
 	public Integer saveQuizSourceSummary(QuizSourceCreateRequest request, Integer userId) {
-		if (quizSourceRepository.existsByUrlAndUserId(request.getUrl(), userId)) {
-			throw new GeneralException(QUIZ_SOURCE_EXISTS);
-		}
+
+		quizSourceRepository.findSourceIdByUrlAndUserId(request.getUrl(), userId)
+			.ifPresent(quizSourceId -> {
+				throw new GeneralException(ErrorStatus.QUIZ_SOURCE_EXISTS.withMessage(quizSourceId.toString()));
+			});
 
 		QuizSource quizSource = QuizSource.toEntity(request, userId);
 		QuizSource saveQuizSource = quizSourceRepository.save(quizSource);

@@ -34,4 +34,6 @@ public interface CollectionRepositoryCustom {
 	QuizCountAnalysisResponse getTopQuizCollectionsByIds(List<Integer> collectionIds);
 
 	List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId);
+
+	List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail);
 }
