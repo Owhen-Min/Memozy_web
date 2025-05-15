@@ -89,9 +89,4 @@ public class MultiQuizShowController {
 
 		multiQuizShowService.changeNickname(showId, userId, isMember, request.nickname());
 	}
-
-	@GetMapping("/quiz/show")
-	public String getMultiQuizShow() {
-		return "redirect:/test.html";
-	}
 }
