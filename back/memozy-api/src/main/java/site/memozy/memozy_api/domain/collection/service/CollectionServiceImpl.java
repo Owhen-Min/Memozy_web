@@ -111,9 +111,8 @@ public class CollectionServiceImpl implements CollectionService {
 	@Transactional(readOnly = true)
 	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
 		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
-		
-		long uniqueCount = quizRepository.findBySourceIdIn(sourceIds)
-			.stream()
+
+		long uniqueCount = quizRepository.findBySourceIdIn(sourceIds).stream()
 			.map(this::generateQuizKey)
 			.distinct()
 			.count();
