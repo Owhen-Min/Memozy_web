@@ -45,16 +45,17 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (!collection.getUserId().equals(user.getUserId())) {
 			throw new GeneralException(COLLECTION_INVALID_USER);
 		}
-
-		String quizShowCode = generateRandomCode();
-		log.info("생성된 퀴즈 코드: {}", quizShowCode);
-		collection.setCode(quizShowCode);
-
+		log.info("[service] createMultiQuizShow() called user = {} with collectionId: {}, count: {}", user.getUserId(),
+			collectionId, count);
 		List<MultiQuizResponse> quizzes = quizRepository.getMultiQuizzes(user.getUserId(), collectionId, count);
 		log.info("quizzes count: {}", quizzes.size());
 		if (quizzes.isEmpty() || quizzes.size() < count) {
 			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
+
+		String quizShowCode = generateRandomCode();
+		log.info("생성된 퀴즈 코드: {}", quizShowCode);
+		collection.setCode(quizShowCode);
 
 		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getName(), user.getName(),
 			count, quizzes);
