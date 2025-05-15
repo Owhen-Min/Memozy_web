@@ -6,9 +6,10 @@ import { useCollectionStore } from "../../stores/collection/collectionStore";
 
 interface DropDownBoxProps {
   sourceId: number;
+  collectionId?: string;
 }
 
-function DropDownBox({ sourceId }: DropDownBoxProps) {
+function DropDownBox({ sourceId, collectionId }: DropDownBoxProps) {
   const { quizzes, fetchQuizList, loading } = useCollectionStore();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteQuizId, setDeleteQuizId] = useState<number | null>(null);
@@ -42,15 +43,19 @@ function DropDownBox({ sourceId }: DropDownBoxProps) {
                       ? "주관식"
                       : "O/X"}
                 </span>
-                <span
-                  className="flex items-center hover:cursor-pointer"
-                  onClick={() => {
-                    setDeleteQuizId(quiz.quizId);
-                    setIsDeleteModalOpen(true);
-                  }}
-                >
-                  <img src={trashIcon} alt="trash" className="w-3 h-3" />
-                </span>
+                <div className="flex gap-2">
+                  {collectionId !== "0" && (
+                    <span
+                      className="flex items-center hover:cursor-pointer"
+                      onClick={() => {
+                        setDeleteQuizId(quiz.quizId);
+                        setIsDeleteModalOpen(true);
+                      }}
+                    >
+                      <img src={trashIcon} alt="trash" className="w-3 h-3" />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))

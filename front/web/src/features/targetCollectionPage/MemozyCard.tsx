@@ -3,6 +3,7 @@ import summaryIcon from "../../assets/icons/summaryIcon.svg";
 import dropDownIcon from "../../assets/icons/dropDownIcon.svg";
 import NoteModal from "./NoteModal";
 import DropDownBox from "./DropDownBox";
+import urlIcon from "../../assets/icons/urlIcon.svg";
 
 interface MemozyCardProps {
   sourceId: number;
@@ -12,6 +13,8 @@ interface MemozyCardProps {
   isEditMode: boolean;
   isSelected: boolean;
   onSelect: () => void;
+  url: string;
+  collectionId?: string;
 }
 
 function MemozyCard({
@@ -22,12 +25,14 @@ function MemozyCard({
   isEditMode,
   isSelected,
   onSelect,
+  url,
+  collectionId,
 }: MemozyCardProps) {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <>
+    <div className="relative">
       <div className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
         <div className="p-6">
           <div className="flex justify-between items-start">
@@ -52,6 +57,14 @@ function MemozyCard({
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => {
+                  window.open(url, "_blank");
+                }}
+                className="p-2 hover:bg-light rounded-lg transition-colors"
+              >
+                <img src={urlIcon} alt="url" className="w-5 h-5" />
+              </button>
+              <button
                 onClick={() => setIsModalOpen(true)}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
               >
@@ -73,7 +86,7 @@ function MemozyCard({
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropDownOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
         >
-          <DropDownBox sourceId={sourceId} />
+          <DropDownBox sourceId={sourceId} collectionId={collectionId} />
         </div>
       </div>
       <div className="h-4" />
@@ -84,7 +97,7 @@ function MemozyCard({
           onClose={() => setIsModalOpen(false)}
         />
       )}
-    </>
+    </div>
   );
 }
 
