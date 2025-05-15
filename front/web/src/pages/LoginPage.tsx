@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import Memozy_logo from "../assets/images/Memozylogo.svg";
 import monster1 from "../assets/images/monster1.png";
+import rightmonster from "../assets/images/rightmonster.png";
 import profile_monster from "../assets/images/profile_monster.png";
 import google_icon from "../assets/icons/google_icon.png";
 import ServiceCards from "../features/LoginPage/ServiceCard";
@@ -55,7 +56,7 @@ function LoginPage() {
     <div className="max-h-screen flex flex-col">
       {/* 메인 컨텐츠 */}
       <div className="flex-1 flex flex-col items-center pt-12">
-        <div className="mb-8 w-52 self-start ml-4 md:ml-36">
+        <div className="mb-4 md:mb-8 w-40 md:w-52 self-start ml-4 md:ml-36">
           <img src={Memozy_logo} alt="Memozy 로고" />
         </div>
 
@@ -161,9 +162,14 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* 서비스 카드 섹션 - md 이상에서만 표시 */}
-        <div className="w-full relative hidden md:block">
+        {/* 서비스 카드 섹션 - 데스크톱에서만 표시 */}
+        <div className="w-full relative mt-[400px] md:mt-0 hidden md:block">
           <ServiceCards />
+        </div>
+
+        {/* 모바일에서만 보이는 오른쪽 아래 몬스터 */}
+        <div className="fixed bottom-4 right-4 md:hidden">
+          <img src={rightmonster} alt="오른쪽 몬스터" className="w-32" />
         </div>
       </div>
     </div>
