@@ -35,6 +35,32 @@ function QuizShowPersonalPage() {
     }
   }, [quizList]);
 
+  // 새로고침 감지 및 플래그 저장
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.setItem("quiz_refresh", "true");
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
+  // 마운트 시 플래그 확인 및 상태 초기화
+  useEffect(() => {
+    if (localStorage.getItem("quiz_refresh") === "true") {
+      setCurrentQuiz(null);
+      setCurrentQuizIndex(0);
+      alert("세션이 만료되었습니다. 컬렉션 리스트로 이동합니다.");
+      navigate(`/collection/${collectionId}`);
+      localStorage.removeItem("quiz_refresh");
+    }
+  }, [navigate, collectionId]);
+
+  const handleExitQuiz = () => {
+    if (window.confirm("퀴즈 진행 중입니다. 정말로 종료하시겠습니까?")) {
+      navigate(`/collection/${collectionId}`);
+    }
+  };
+
   const handleShowAnswer = async () => {
     if (userAnswer === null) {
       alert("답을 선택해주세요!");
@@ -74,9 +100,8 @@ function QuizShowPersonalPage() {
       setCurrentQuizIndex(currentQuizIndex + 1);
       setCurrentQuiz(quizList[currentQuizIndex + 1]);
       if (currentQuizIndex === quizList.length - 1) {
-        navigate(`/quiz-result/personal/${collectionId}`, {
+        navigate(`/quiz-result/personal/${collectionId}/${quizSessionId}`, {
           state: {
-            quizSessionId,
             collectionName,
           },
         });
@@ -140,10 +165,10 @@ function QuizShowPersonalPage() {
         </h1>
         <button
           className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
-          onClick={() => navigate(`/collection/${collectionId}`)}
+          onClick={handleExitQuiz}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
-          컬렉션 리스트로 돌아가기
+          퀴즈 종료하기
         </button>
       </div>
       <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">

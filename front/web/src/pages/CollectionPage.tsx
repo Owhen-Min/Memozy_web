@@ -82,10 +82,14 @@ function CollectionPage() {
         {/* 새 컬렉션 추가 카드 */}
         <motion.div
           variants={item}
-          className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC] shadow-md"
+          className="w-full p-5 border border-gray300 rounded-xl bg-white flex flex-col justify-between cursor-pointer hover:bg-[#ECECEC] shadow-md h-[120px]"
           onClick={handleAddCollectionClick}
         >
-          <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
+          <div className="h-[24px]" /> {/* 제목 영역과 동일한 높이 */}
+          <div className="flex items-center justify-center">
+            <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
+          </div>
+          <div className="h-[32px]" /> {/* 통계 영역과 동일한 높이 */}
         </motion.div>
       </motion.div>
 

@@ -2,10 +2,12 @@ import { create } from "zustand";
 import { quizShowPersonalApi } from "../../apis/quizShowPersonal/quizShowPersonalApi";
 import { QuizShowPersonalState, QuizShowPersonalData } from "./types";
 
+const STORAGE_KEY = "quiz_result_data";
+
 export const useQuizShowPersonalStore = create<QuizShowPersonalState>((set, get) => ({
   // 초기 상태
   quizData: null,
-  quizResult: null,
+  quizResult: JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
   currentQuizIndex: 0,
   isLoading: false,
   error: null,
@@ -58,7 +60,10 @@ export const useQuizShowPersonalStore = create<QuizShowPersonalState>((set, get)
       const response = await quizShowPersonalApi.getQuizShowPersonalResult(quizSessionId);
 
       if (response.data.success && response.data.data) {
-        set({ quizResult: response.data.data, isLoading: false });
+        const resultData = response.data.data;
+        set({ quizResult: resultData, isLoading: false });
+        // 로컬 스토리지에 저장
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(resultData));
       } else {
         set({ error: response.data.errorMsg || "결과 조회에 실패했습니다.", isLoading: false });
       }
@@ -74,5 +79,7 @@ export const useQuizShowPersonalStore = create<QuizShowPersonalState>((set, get)
       currentQuizIndex: 0,
       error: null,
     });
+    // 로컬 스토리지도 초기화
+    localStorage.removeItem(STORAGE_KEY);
   },
 }));
