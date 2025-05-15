@@ -1,6 +1,7 @@
 export type QuizType = "MULTIPLE_CHOICE" | "OX" | "OBJECTIVE";
 
 export interface Quiz {
+  quizId: number;
   answer: string;
   commentary: string;
   content: string;
@@ -9,6 +10,7 @@ export interface Quiz {
 }
 
 export interface QuizShared {
+  quizId: number;
   answer: string;
   commentary: string;
   content: string;

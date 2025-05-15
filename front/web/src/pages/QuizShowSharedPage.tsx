@@ -300,6 +300,7 @@ const QuizShowSharedPage = () => {
     const choiceMatch = quiz.choice ? quiz.choice.slice(1, -1).split(",") : [];
 
     return {
+      quizId: quiz.quizId,
       type: typeMatch,
       content: contentMatch ? contentMatch : "",
       answer: answerMatch ? answerMatch : "",
