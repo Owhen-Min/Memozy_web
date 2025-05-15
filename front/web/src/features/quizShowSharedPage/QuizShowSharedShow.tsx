@@ -42,7 +42,7 @@ function QuizShowSharedShow({
   >(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingCount, setLoadingCount] = useState(3);
-  const [timeLeft, setTimeLeft] = useState(20); // 20초 타이머
+  const [timeLeft, setTimeLeft] = useState(30); // 20초 타이머
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isCommentaryShow, setIsCommentaryShow] = useState(false);
   const [answerTime, setAnswerTime] = useState(0);
@@ -83,7 +83,7 @@ function QuizShowSharedShow({
     setUserAnswer(null);
     setCurrentQuizIndex(nextIndex);
     setCurrentQuiz(quizList[nextIndex]);
-    setTimeLeft(20); // 타이머 리셋
+    setTimeLeft(30); // 타이머 리셋
     setIsTimerRunning(true); // 타이머 다시 시작
     setIsCommentaryShow(false); // 해설 숨기기
     if (nextIndex >= quizCount) {
@@ -249,7 +249,7 @@ function QuizShowSharedShow({
                 {loadingCount > 0 ? `잠시 후 퀴즈가 시작됩니다...` : "퀴즈를 시작합니다!"}
               </div>
               <div className="mt-4">
-                <div className="w-16 h-16 border-4 border-main200 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <div className="w-16 h-16 border-4 border-main200 border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             </div>
           </div>
@@ -260,7 +260,7 @@ function QuizShowSharedShow({
             {/* 타이머 진행 바 */}
             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
               <div
-                className={`h-2.5 rounded-full transition-all duration-500 ${
+                className={`h-2.5 rounded-full transition-all duration-300 ${
                   isCommentaryShow ? "bg-green-600" : "bg-blue-600"
                 }`}
                 style={{
