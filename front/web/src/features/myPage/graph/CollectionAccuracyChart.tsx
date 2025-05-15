@@ -112,7 +112,7 @@ export default function CollectionAccuracyChart({
         <div className="overflow-x-auto">
           <div
             style={{
-              width: `${Math.max(collectionAccuracy.length * 60, 300)}px`,
+              width: `${Math.max(collectionAccuracy.length * 80, 300)}px`,
               minWidth: "100%",
               height: "250px",
             }}
@@ -122,12 +122,20 @@ export default function CollectionAccuracyChart({
                 ...barChartData,
                 datasets: barChartData.datasets.map((dataset) => ({
                   ...dataset,
-                  barThickness: undefined,
+                  barThickness: 40,
                   categoryPercentage: 0.8,
                   barPercentage: 0.9,
                 })),
               }}
-              options={barChartOptions}
+              options={{
+                ...barChartOptions,
+                layout: {
+                  padding: {
+                    left: 20,
+                    right: 20,
+                  },
+                },
+              }}
             />
           </div>
         </div>

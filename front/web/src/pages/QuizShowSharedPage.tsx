@@ -97,15 +97,6 @@ const QuizShowSharedPage = () => {
   // 핸들 Show Ended 함수
   const handleShowEnded = () => {
     setIsShowEnded(true);
-    // 퀴즈가 끝나면 결과 요청 보내기
-    if (stompClient && isConnected && showId) {
-      stompClient.publish({
-        destination: `/pub/quiz/show/${showId}/result`,
-        body: JSON.stringify({
-          type: "REQUEST_RESULT",
-        }),
-      });
-    }
   };
 
   // 웹소켓 연결 상태 감지

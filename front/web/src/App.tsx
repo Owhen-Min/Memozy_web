@@ -29,9 +29,12 @@ function App() {
             path="/quiz-entry/personal/:collectionId"
             element={<QuizShowEntryPersonalPage />}
           />
-          <Route path="/quiz-show/personal/:collectionId" element={<QuizShowPersonalPage />} />
           <Route
-            path="/quiz-result/personal/:collectionId"
+            path="/quiz-show/personal/:collectionId/:quizSessionId"
+            element={<QuizShowPersonalPage />}
+          />
+          <Route
+            path="/quiz-result/personal/:collectionId/:quizSessionId"
             element={<QuizShowResultPersonalPage />}
           />
           <Route path="/quiz/show/:showId" element={<QuizShowSharedPage />} />
