@@ -23,6 +23,7 @@ import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
+import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
@@ -111,8 +112,14 @@ public class CollectionServiceImpl implements CollectionService {
 	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
 		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
 
-		int quizCount = quizRepository.findBySourceIdIn(sourceIds).size();
-		return CollectionSummaryResponse.of((long)sourceIds.size(), (long)quizCount);
+		List<Quiz> quizList = quizRepository.findBySourceIdIn(sourceIds);
+		long uniqueCount = quizRepository.findBySourceIdIn(sourceIds)
+			.stream()
+			.map(this::generateQuizKey)
+			.distinct()
+			.count();
+
+		return CollectionSummaryResponse.of((long)sourceIds.size(), uniqueCount);
 	}
 
 	@Override
@@ -266,5 +273,23 @@ public class CollectionServiceImpl implements CollectionService {
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
 		List<Long> validQuizIds = collectionRepository.findValidQuizIdsByUser(quizIds, userId);
 		quizRepository.deleteByQuizIdIn(validQuizIds);
+	}
+
+	private String generateQuizKey(PersonalQuizResponse response) {
+		return String.join("|",
+			response.getContent(),
+			response.getType().name(),
+			response.getAnswer(),
+			response.getCommentary()
+		);
+	}
+
+	private String generateQuizKey(Quiz quiz) {
+		return String.join("|",
+			quiz.getContent(),
+			quiz.getType().name(),
+			quiz.getAnswer(),
+			quiz.getCommentary()
+		);
 	}
 }
