@@ -74,9 +74,8 @@ function QuizShowPersonalPage() {
       setCurrentQuizIndex(currentQuizIndex + 1);
       setCurrentQuiz(quizList[currentQuizIndex + 1]);
       if (currentQuizIndex === quizList.length - 1) {
-        navigate(`/quiz-result/personal/${collectionId}`, {
+        navigate(`/quiz-result/personal/${collectionId}/${quizSessionId}`, {
           state: {
-            quizSessionId,
             collectionName,
           },
         });

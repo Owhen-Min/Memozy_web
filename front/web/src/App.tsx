@@ -26,35 +26,23 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/collection" element={<CollectionPage />} />
-          <Route
-            path="/collection/:collectionId"
-            element={<TargetCollectionPage />}
-          />
+          <Route path="/collection/:collectionId" element={<TargetCollectionPage />} />
           <Route
             path="/quiz-entry/personal/:collectionId"
             element={<QuizShowEntryPersonalPage />}
           />
+          <Route path="/quiz-entry/shared/:collectionId" element={<QuizShowEntrySharedPage />} />
           <Route
-            path="/quiz-entry/shared/:collectionId"
-            element={<QuizShowEntrySharedPage />}
-          />
-          <Route
-            path="/quiz-show/personal/:collectionId"
+            path="/quiz-show/personal/:collectionId/:quizSessionId"
             element={<QuizShowPersonalPage />}
           />
+          <Route path="/quiz-show/shared/:collectionId" element={<QuizShowSharedPage />} />
           <Route
-            path="/quiz-show/shared/:collectionId"
-            element={<QuizShowSharedPage />}
-          />
-          <Route
-            path="/quiz-result/personal/:collectionId"
+            path="/quiz-result/personal/:collectionId/:quizSessionId"
             element={<QuizShowResultPersonalPage />}
           />
         </Route>
-        <Route
-          path="/quiz-result/shared/:collectionId"
-          element={<QuizShowResultSharedPage />}
-        />
+        <Route path="/quiz-result/shared/:collectionId" element={<QuizShowResultSharedPage />} />
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>
