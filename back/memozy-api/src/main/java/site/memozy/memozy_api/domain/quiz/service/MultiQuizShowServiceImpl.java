@@ -18,6 +18,8 @@ import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowStartEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
@@ -43,16 +45,17 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (!collection.getUserId().equals(user.getUserId())) {
 			throw new GeneralException(COLLECTION_INVALID_USER);
 		}
-
-		String quizShowCode = generateRandomCode();
-		log.info("생성된 퀴즈 코드: {}", quizShowCode);
-		collection.setCode(quizShowCode);
-
+		log.info("[service] createMultiQuizShow() called user = {} with collectionId: {}, count: {}", user.getUserId(),
+			collectionId, count);
 		List<MultiQuizResponse> quizzes = quizRepository.getMultiQuizzes(user.getUserId(), collectionId, count);
 		log.info("quizzes count: {}", quizzes.size());
 		if (quizzes.isEmpty() || quizzes.size() < count) {
 			throw new GeneralException(QUIZ_COUNT_NOT_ENOUGH);
 		}
+
+		String quizShowCode = generateRandomCode();
+		log.info("생성된 퀴즈 코드: {}", quizShowCode);
+		collection.setCode(quizShowCode);
 
 		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getName(), user.getName(),
 			count, quizzes);
@@ -93,6 +96,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (!hostUserId.equals(userId)) {
 			throw new GeneralException(QUIZ_NOT_HOST);
 		}
+		applicationEventPublisher.publishEvent(new QuizShowStartEvent(showId));
 		multiQuizShowRunner.startQuizShow(showId);
 	}
 
@@ -104,6 +108,18 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		}
 		multiQuizShowRedisRepository.saveParticipantAnswer(showId, userId, request.index(), request.choice(),
 			request.isCorrect());
+	}
+
+	@Transactional
+	@Override
+	public void changeNickname(String showId, String userId, boolean isMember, String nickname) {
+		if (isMember) {
+			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
+		}
+		log.info("[service] changeNickname() called with showId: {}, userId: {}, nickname : {}", showId, userId,
+			nickname);
+		multiQuizShowRedisRepository.updateParticipantNickname(showId, userId, nickname);
+		applicationEventPublisher.publishEvent(new QuizShowParticipantEvent(showId, userId, nickname));
 	}
 
 	private String generateRandomCode() {

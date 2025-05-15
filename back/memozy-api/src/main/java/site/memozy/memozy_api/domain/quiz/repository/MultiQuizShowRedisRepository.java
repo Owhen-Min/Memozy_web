@@ -75,6 +75,7 @@ public class MultiQuizShowRedisRepository {
 				String quizKey = "quiz:" + quizId;
 				Map<String, String> quizData = new HashMap<>();
 				quizData.put("quizIndex", quizId);
+				quizData.put("type", String.valueOf(quiz.getType()));
 				quizData.put("content", quiz.getContent());
 				quizData.put("choice", quiz.getChoice().toString());
 				quizData.put("answer", quiz.getAnswer());
@@ -122,7 +123,22 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public Set<Object> findMembers(String showId) {
+	public String updateParticipantNickname(String showId, String userId, String newNickname) {
+		log.info("[Redis] updateParticipantNickname() called with showId: {}, userId: {}, newNickname: {}", showId,
+			userId, newNickname);
+		String participantInfoKey = "show:" + showId + ":user:" + userId;
+
+		try {
+			redisTemplate.opsForHash().put(participantInfoKey, "nickname", newNickname);
+			redisTemplate.expire(participantInfoKey, Duration.ofDays(1));
+			return redisTemplate.opsForHash().get(participantInfoKey, "nickname").toString();
+		} catch (Exception e) {
+			log.error("[Redis] Error updating participant nickname: {}", e.getMessage());
+			throw new GeneralException(REDIS_SAVE_ERROR);
+		}
+	}
+
+	public Set<Object> findParticipants(String showId) {
 		log.info("[Redis] saveMembers() called with showId: {}", showId);
 		String participantKey = "show:" + showId + ":participants";
 		try {
@@ -156,7 +172,7 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public String getQuizByIndex(String showId, int index) {
+	public Map<String, Object> getQuizByIndex(String showId, int index) {
 		log.info("[Redis] getQuizByIndex() called with showId: {}", showId);
 		String quizKey = "show:" + showId + ":quiz";
 		try {
@@ -167,18 +183,18 @@ public class MultiQuizShowRedisRepository {
 			String quizByIndexKey = "quiz:" + quizId;
 
 			Map<Object, Object> quizData = redisTemplate.opsForHash().entries(quizByIndexKey);
-			if (quizData == null || quizData.isEmpty()) {
+			if (quizData.isEmpty()) {
 				throw new GeneralException(REDIS_QUIZ_NOT_FOUND);
 			}
 
-			String choice = (String)quizData.getOrDefault("choice", "");
-
 			return Map.of(
 				"quizId", quizId,
+				"type", quizData.getOrDefault("type", ""),
 				"content", quizData.getOrDefault("content", ""),
-				"choice", choice,
-				"answer", quizData.getOrDefault("answer", "")
-			).toString();
+				"choice", quizData.getOrDefault("choice", ""),
+				"answer", quizData.getOrDefault("answer", ""),
+				"commentary", quizData.getOrDefault("commentary", "")
+			);
 
 		} catch (Exception e) {
 			log.error("[Redis] Error getting quiz by index: {}", e.getMessage());
