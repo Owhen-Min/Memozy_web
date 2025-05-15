@@ -1,21 +1,15 @@
 import small_logo from "../assets/images/small_logo.png";
 import rightmonster from "../assets/images/rightmonster.png";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
-import { useNavigate, useParams, useLocation } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
 import { useEffect } from "react";
 import folder from "../assets/icons/folder.svg";
 
-interface QuizShowResultPersonalPageProps {
-  collectionName: string;
-}
-
 function QuizShowResultPersonalPage() {
-  const location = useLocation();
   const navigate = useNavigate();
   const collectionId = useParams().collectionId;
   const quizSessionId = useParams().quizSessionId;
-  const { collectionName } = location.state as QuizShowResultPersonalPageProps;
   const { getQuizResult, quizResult, isLoading, error } = useQuizShowPersonalStore();
 
   useEffect(() => {
@@ -51,7 +45,8 @@ function QuizShowResultPersonalPage() {
     }
 
     // API 응답 데이터 구조에 맞게 데이터 추출
-    const { totalQuizCount, myWrongQuizCount, round, point, previousPoint } = quizResult;
+    const { totalQuizCount, myWrongQuizCount, round, point, previousPoint, collectionName } =
+      quizResult;
 
     return (
       <>

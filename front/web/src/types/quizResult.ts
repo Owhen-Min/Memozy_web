@@ -15,6 +15,7 @@ export interface QuizResultData {
   point: number;
   incorrectQuizList: string[];
   previousPoint: number;
+  collectionName: string;
 }
 
 // 단체 퀴즈 전체 결과 (RESULT 타입)
