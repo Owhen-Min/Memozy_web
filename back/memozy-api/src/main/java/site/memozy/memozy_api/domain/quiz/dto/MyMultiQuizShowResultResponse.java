@@ -12,3 +12,4 @@ public record MyMultiQuizShowResultResponse(
 		this("MYRESULT", userId, nickname, correct, total, score);
 	}
 }
+
