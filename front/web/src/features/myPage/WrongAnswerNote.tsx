@@ -3,7 +3,11 @@ import small_logo from "../../assets/images/small_logo.png";
 import folder from "../../assets/images/folder.png";
 import Modal from "./WrongAnswerModal";
 import { QuizHistoryData, WrongAnswer } from "../../types/wrongAnswer";
-import { fetchWrongAnswerCollections, fetchWrongAnswerDetail } from "../../apis/history/historyApi";
+import {
+  fetchWrongAnswerCollections,
+  fetchWrongAnswerDetail,
+  fetchAllWrongAnswers,
+} from "../../apis/history/historyApi";
 
 function WrongAnswerNote() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +22,16 @@ function WrongAnswerNote() {
       try {
         setIsLoading(true);
         const data = await fetchWrongAnswerCollections();
-        setCollectionList(data);
+
+        // 모두보기 컬렉션의 오답 내역 확인
+        const allWrongAnswers = await fetchAllWrongAnswers();
+
+        // 오답이 있는 경우에만 모두보기 컬렉션 추가
+        if (allWrongAnswers.length > 0) {
+          setCollectionList([{ id: -1, name: "모두보기" }, ...data]);
+        } else {
+          setCollectionList(data);
+        }
       } catch (error) {
         console.error("오답노트 컬렉션을 가져오는 중 오류 발생:", error);
       } finally {
@@ -36,8 +49,14 @@ function WrongAnswerNote() {
       const collection = collectionList.find((item) => item.id === id);
       if (!collection) return;
 
-      // 해당 컬렉션의 오답 내역 가져오기
-      const historyData = await fetchWrongAnswerDetail(id);
+      let historyData;
+      // 모두보기 컬렉션인 경우
+      if (id === -1) {
+        historyData = await fetchAllWrongAnswers();
+      } else {
+        // 일반 컬렉션인 경우
+        historyData = await fetchWrongAnswerDetail(id);
+      }
 
       // 모달에 표시할 데이터 설정
       setModalData({
