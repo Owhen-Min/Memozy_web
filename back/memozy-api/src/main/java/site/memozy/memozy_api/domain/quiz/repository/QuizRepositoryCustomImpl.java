@@ -4,8 +4,10 @@ import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
 import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
 import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -40,34 +42,19 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			.fetch();
 	}
 
+	// todo: 모든 데이터를 가져온 후, 중복을 제거함.(비효율적), 추후에 리팩토링
 	@Override
 	public List<PersonalQuizResponse> getPersonalQuizzes(int userId, Integer collectionId, int count, boolean newOnly) {
-		// 1. QuizSource 유효성 검사
-		List<Integer> sourceIds = jpaQueryFactory
+		List<Integer> quizSourceIdList = jpaQueryFactory
 			.select(quizSource.sourceId)
 			.from(quizSource)
 			.where(
-				// 1단계: URL 별 최소 sourceId 필터링
-				quizSource.sourceId.in(
-					jpaQueryFactory
-						.select(quizSource.sourceId.min())
-						.from(quizSource)
-						.where(
-							quizSource.userId.eq(userId),
-							collectionId != 0 ? quizSource.collectionId.eq(collectionId) : null // collectionId 체크 추가
-						)
-						.groupBy(quizSource.url)
-				)
+				quizSource.userId.eq(userId),
+				collectionId == 0 ? null : quizSource.collectionId.eq(collectionId)
 			)
-			.orderBy(quizSource.createdAt.desc())
 			.fetch();
 
-		if (sourceIds == null || sourceIds.isEmpty()) {
-			return new ArrayList<>();
-		}
-
-		// 2. 랜덤 퀴즈 조회
-		return jpaQueryFactory
+		List<PersonalQuizResponse> quizShowKeyList = jpaQueryFactory
 			.select(new QPersonalQuizResponse(
 				quiz.quizId,
 				quiz.content,
@@ -78,7 +65,7 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			))
 			.from(quiz)
 			.where(
-				quiz.sourceId.in(sourceIds),
+				quiz.sourceId.in(quizSourceIdList),
 				newOnly ? quiz.quizId.notIn(
 					JPAExpressions
 						.select(history.quizId)
@@ -90,8 +77,23 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 				) : null // newOnly가 false일 때는 조건 생략
 			)
 			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
-			.limit(count)
 			.fetch();
+
+		Set<String> uniqueKeys = new HashSet<>();
+		List<PersonalQuizResponse> uniqueList = quizShowKeyList.stream()
+			.filter(response -> {
+				String key = generateQuizKey(response);
+				if (uniqueKeys.contains(key)) {
+					return false;  // 이미 존재하면 스킵
+				} else {
+					uniqueKeys.add(key);  // 없으면 추가하고 유지
+					return true;
+				}
+			})
+			.limit(count)
+			.collect(Collectors.toList());
+
+		return uniqueList;
 	}
 
 	@Override
@@ -131,5 +133,14 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			.where(quiz.sourceId.eq(sourceId)
 				.and(quiz.quizId.notIn(quizIds)))
 			.execute();
+	}
+
+	private String generateQuizKey(PersonalQuizResponse response) {
+		return String.join("|",
+			response.getContent(),
+			response.getType().name(),
+			response.getAnswer(),
+			response.getCommentary()
+		);
 	}
 }
