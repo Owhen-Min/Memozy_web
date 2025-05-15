@@ -45,7 +45,8 @@ public class HistoryController {
 	public ApiResponse<QuizStatsResponse> getUserQuizStats(
 		@Parameter(hidden = true) @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
-		QuizStatsResponse quizStats = historyService.getUserQuizStats(customOAuth2User.getUserId());
+		QuizStatsResponse quizStats = historyService.getUserQuizStats(customOAuth2User.getUserId(),
+			customOAuth2User.getEmail());
 
 		return ApiResponse.success(quizStats);
 	}
