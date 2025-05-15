@@ -61,6 +61,7 @@ public class MultiQuizShowRedisRepository {
 			metadata.put("hostName", String.valueOf(hostName));
 			metadata.put("collectionName", String.valueOf(collectionName));
 			metadata.put("quizCount", String.valueOf(count));
+			metadata.put("status", "WAITING");
 			metadata.put("startTime", LocalDateTime.now().toString());
 
 			redisTemplate.opsForHash().putAll(metaDataKey, metadata);
@@ -79,6 +80,7 @@ public class MultiQuizShowRedisRepository {
 				quizData.put("content", quiz.getContent());
 				quizData.put("choice", quiz.getChoice().toString());
 				quizData.put("answer", quiz.getAnswer());
+				quizData.put("commentary", quiz.getCommentary());
 
 				redisTemplate.opsForHash().putAll(quizKey, quizData);
 				redisTemplate.expire(quizKey, DURATION);
@@ -107,19 +109,6 @@ public class MultiQuizShowRedisRepository {
 		} catch (Exception e) {
 			log.info("[Redis] Error saving participantAnswer: {}", e.getMessage());
 			throw new GeneralException(REDIS_SAVE_ERROR);
-		}
-	}
-
-	public String getHostMemberId(String showId) {
-		log.info("[Redis] getHostMember() called for showId = {}", showId);
-		String metaKey = "show:" + showId + ":metadata";
-		try {
-			String hostUserId = (String)redisTemplate.opsForHash().get(metaKey, "hostUserId");
-			log.info("[Redis] Host member ID: {}", hostUserId);
-			return hostUserId;
-		} catch (Exception e) {
-			log.error("[Redis] Error getting host member: {}", e.getMessage());
-			throw new GeneralException(REDIS_INVALID_METADATA);
 		}
 	}
 

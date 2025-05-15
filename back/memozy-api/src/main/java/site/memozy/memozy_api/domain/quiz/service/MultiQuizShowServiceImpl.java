@@ -71,6 +71,10 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
 
+		if (!multiQuizShowRedisRepository.getQuizMetaData(showId).get("status").equals("WAITING")) {
+			throw new GeneralException(QUIZ_CANNOT_JOIN);
+		}
+
 		Map<String, String> participantInfo = Map.of(
 			"nickname", nickname,
 			"userId", userId,
@@ -104,7 +108,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	@Transactional
 	public void submitAnswer(String showId, String userId, QuizAnswerRequest request) {
 		if (!collectionRepository.existsByCode(showId)) {
-			throw new IllegalArgumentException("Invalid code" + showId);
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
 		multiQuizShowRedisRepository.saveParticipantAnswer(showId, userId, request.index(), request.choice(),
 			request.isCorrect());
