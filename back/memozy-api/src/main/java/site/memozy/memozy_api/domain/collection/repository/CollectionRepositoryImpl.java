@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +162,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				queryFactory
 					.select(quizSource.sourceId.min())
 					.from(quizSource)
-					.where(quizSource.userId.eq(userId))
+					.where(quizSource.userId.eq(userId),
+						quizSource.collectionId.isNotNull())
 					.groupBy(quizSource.url)
 			))
 			.orderBy(quizSource.createdAt.desc())
