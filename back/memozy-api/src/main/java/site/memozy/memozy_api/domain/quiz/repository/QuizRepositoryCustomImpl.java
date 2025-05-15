@@ -4,6 +4,7 @@ import static site.memozy.memozy_api.domain.history.entity.QHistory.*;
 import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
 import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
