@@ -41,11 +41,11 @@ public class HistoryServiceImpl implements HistoryService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public QuizStatsResponse getUserQuizStats(Integer userId) {
+	public QuizStatsResponse getUserQuizStats(Integer userId, String email) {
 		List<Integer> collectionIds = collectionRepository.findCollectionIdsByUserId(userId);
 
 		long totalQuiz = quizRepository.countDistinctQuiz(collectionIds);
-		long solvedQuiz = historyRepository.countDistinctSolvedQuiz(collectionIds);
+		long solvedQuiz = historyRepository.countDistinctSolvedQuiz(collectionIds, email);
 
 		return new QuizStatsResponse(totalQuiz, solvedQuiz);
 	}
