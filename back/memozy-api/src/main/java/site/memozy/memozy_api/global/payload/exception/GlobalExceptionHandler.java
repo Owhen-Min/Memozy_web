@@ -26,37 +26,46 @@ public class GlobalExceptionHandler {
 			.findFirst()
 			.orElse("유효성 검증 실패");
 
-		logError(VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
+		logError(e, VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
 		return errorResponse(VALIDATION_ERROR.getErrorCode(), message);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ApiResponse<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
-		String message = exception.getBindingResult().getFieldErrors().stream()
+	public ApiResponse<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+		String message = ex.getBindingResult().getFieldErrors().stream()
 			.map(fieldError -> Optional.ofNullable(fieldError.getDefaultMessage()).orElse("잘못된 값입니다"))
 			.findFirst()
 			.orElse("요청 필드 유효성 검증 실패");
 
-		logError(VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
+		logError(ex, VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
 		return errorResponse(VALIDATION_ERROR.getErrorCode(), message);
 	}
 
 	@ExceptionHandler(GeneralException.class)
-	public ApiResponse<Object> handleGeneralException(GeneralException exception) {
-		BaseErrorCode error = exception.getCode();
+	public ApiResponse<Object> handleGeneralException(GeneralException ex) {
+		BaseErrorCode error = ex.getCode();
 
-		logError(error.getHttpStatusCode(), error.getErrorCode(), error.getErrorMsg());
+		logError(ex, error.getHttpStatusCode(), error.getErrorCode(), error.getErrorMsg());
 		return errorResponse(error.getErrorCode(), error.getErrorMsg());
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ApiResponse<Object> handleGlobalException(Exception ex) {
-		logError(INTERNAL_SERVER_ERROR.getHttpStatusCode(), INTERNAL_SERVER_ERROR.getErrorCode(), ex.getMessage());
+		logError(ex, INTERNAL_SERVER_ERROR.getHttpStatusCode(), INTERNAL_SERVER_ERROR.getErrorCode(), ex.getMessage());
 		return errorResponse(INTERNAL_SERVER_ERROR.getErrorCode(), INTERNAL_SERVER_ERROR.getErrorMsg());
 	}
 
-	private void logError(Object status, String code, Object message) {
-		log.error("Error occurred - Status: {}, Code: {}, Message: {}", status, code, message);
+	private void logError(Throwable t, Object status, String code, Object message) {
+		StackTraceElement origin = t.getStackTrace()[0];
+		log.error(
+			"Exception in {}.{}({}:{}): Status={}, Code={}, Message={}",
+			origin.getClassName(),
+			origin.getMethodName(),
+			origin.getFileName(),
+			origin.getLineNumber(),
+			status, code, message,
+			t      // 마지막에 Throwable 을 넘기면 스택트레이스 전체가 찍힙니다.
+		);
 	}
 
 	private ApiResponse<Object> errorResponse(String code, String message) {

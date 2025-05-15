@@ -11,7 +11,7 @@ import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailRespo
 public interface HistoryService {
 	LearningContributionResponse getUserStreaks(Integer userId, String userEmail);
 
-	QuizStatsResponse getUserQuizStats(Integer userId);
+	QuizStatsResponse getUserQuizStats(Integer userId, String email);
 
 	List<UnsolvedCollectionDtoResponse> getUnsolvedCollections(Integer userId);
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -22,6 +23,12 @@ import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final JwtUtil jwtUtil;
+
+	@Value("${spring.chrome.extension.url}")
+	private String CHROME_EXTENSION_URL;
+
+	@Value("${spring.redirect.url}")
+	private String WEB_URL;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -50,7 +57,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void respondToExtension(HttpServletResponse response, String token) throws IOException {
-		String redirectUri = "https://edkigpibifokljeefiomnfadenbfcchj.chromiumapp.org/";
+		String redirectUri = CHROME_EXTENSION_URL;
 		String tokenParam = "access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 		String finalRedirectUrl = redirectUri + "#" + tokenParam;
 		response.setStatus(HttpServletResponse.SC_FOUND);
@@ -59,7 +66,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	private void respondToWeb(HttpServletResponse response, String token) throws IOException {
-		String redirectUrl = "http://localhost:5173/?token=" + token;
+		String redirectUrl = WEB_URL + "?token=" + token;
 		response.sendRedirect(redirectUrl);
 	}
 }

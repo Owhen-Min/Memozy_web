@@ -102,10 +102,23 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 			.select(quizSource.sourceId)
 			.from(quizSource)
 			.where(
-				quizSource.collectionId.eq(collectionId),
-				quizSource.userId.eq(userId)
+				quizSource.sourceId.in(
+					jpaQueryFactory
+						.select(quizSource.sourceId.min())
+						.from(quizSource)
+						.where(
+							quizSource.userId.eq(userId),
+							collectionId != 0 ? quizSource.collectionId.eq(collectionId) : null
+						)
+						.groupBy(quizSource.url)
+				)
 			)
+			.orderBy(quizSource.createdAt.desc())
 			.fetch();
+
+		if (sourceIds == null || sourceIds.isEmpty()) {
+			return new ArrayList<>();
+		}
 
 		// 2. 랜덤 퀴즈 조회
 		return jpaQueryFactory
@@ -113,15 +126,15 @@ public class QuizRepositoryCustomImpl implements QuizRepositoryCustom {
 				quiz.quizId,
 				quiz.content,
 				quiz.type,
+				quiz.option,
 				quiz.answer,
-				quiz.commentary,
-				quiz.option
+				quiz.commentary
 			))
 			.from(quiz)
 			.where(
 				quiz.sourceId.in(sourceIds)
 			)
-			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc()) // 랜덤 정렬
+			.orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
 			.limit(count)
 			.fetch();
 	}

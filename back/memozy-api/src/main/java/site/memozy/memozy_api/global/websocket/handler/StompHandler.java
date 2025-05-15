@@ -29,6 +29,7 @@ public class StompHandler implements ChannelInterceptor {
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+		log.debug("[StompHandler] preSend() called with command: {}", accessor.getCommand());
 
 		if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
 			log.info("STOMP 정상 종료 요청: {}", accessor.getSessionId());
@@ -48,6 +49,8 @@ public class StompHandler implements ChannelInterceptor {
 			.map(t -> t.substring(BEARER.length()))
 			.filter(t -> !jwtUtil.isExpired(t))
 			.orElse(null);
+
+		log.debug("[StompHandler] token: {}", token);
 
 		if (token != null) {
 			userId = String.valueOf(jwtUtil.getUserId(token));
