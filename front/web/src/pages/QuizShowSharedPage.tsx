@@ -26,6 +26,25 @@ interface Answer {
   isCorrect: boolean;
 }
 
+interface QuizShowMyResult {
+  myCorrectQuizCount: number;
+  myScore: number;
+  totalQuizCount: number;
+}
+
+interface QuizShowResult {
+  mostWrongQuiz: {
+    type: "OX" | "MULTIPLE";
+    content: string;
+    answer: string;
+  };
+  topRanking: {
+    rank: number;
+    name: string;
+    score: number;
+  }[];
+}
+
 const QuizShowSharedPage = () => {
   const { showId } = useParams();
   const { stompClient, isConnected } = useWebSocket();
@@ -40,6 +59,9 @@ const QuizShowSharedPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const [userId, setUserId] = useState<string>("");
+  const [myResult, setMyResult] = useState<QuizShowMyResult | {}>({});
+  const [result, setResult] = useState<QuizShowResult | {}>({});
+  const [isResultReady, setIsResultReady] = useState(false);
 
   // 알림 상태 관리
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -70,6 +92,20 @@ const QuizShowSharedPage = () => {
         prev.filter((notification) => notification.id !== newNotification.id)
       );
     }, 3000);
+  };
+
+  // 핸들 Show Ended 함수
+  const handleShowEnded = () => {
+    setIsShowEnded(true);
+    // 퀴즈가 끝나면 결과 요청 보내기
+    if (stompClient && isConnected && showId) {
+      stompClient.publish({
+        destination: `/pub/quiz/show/${showId}/result`,
+        body: JSON.stringify({
+          type: "REQUEST_RESULT",
+        }),
+      });
+    }
   };
 
   // 웹소켓 연결 상태 감지
@@ -191,17 +227,6 @@ const QuizShowSharedPage = () => {
     }
   }, [showId, stompClient, isConnected]);
 
-  // 전체 퀴즈 결과 응답받기
-  useEffect(() => {
-    if (stompClient && isConnected && showId) {
-      const subscription = stompClient.subscribe(`/sub/quiz/show/${showId}/result`, (message) => {
-        const data = JSON.parse(message.body);
-        console.log(data);
-      });
-      return () => subscription.unsubscribe();
-    }
-  }, [stompClient, isConnected, userId]);
-
   // 내 퀴즈 결과 응답받기
   useEffect(() => {
     if (stompClient && isConnected && showId) {
@@ -210,11 +235,69 @@ const QuizShowSharedPage = () => {
         (message) => {
           const data = JSON.parse(message.body);
           console.log(data);
+          if (data.type === "MYRESULT") {
+            // 중첩된 구조 처리
+            const myResultData = {
+              myCorrectQuizCount: data.result.myCorrectQuizCount,
+              myScore: data.result.myScore,
+              totalQuizCount: data.result.totalQuizCount,
+            };
+            setMyResult(myResultData);
+          }
         }
       );
       return () => subscription.unsubscribe();
     }
-  }, [stompClient, isConnected, userId]);
+  }, [stompClient, isConnected, userId, showId]);
+
+  // 전체 퀴즈 결과 응답받기
+  useEffect(() => {
+    if (stompClient && isConnected && showId) {
+      const subscription = stompClient.subscribe(`/sub/quiz/show/${showId}/result`, (message) => {
+        const data = JSON.parse(message.body);
+        if (data.type === "RESULT") {
+          console.log(data);
+
+          // 문자열로 된 choice 배열을 실제 배열로 변환
+          let choiceArray: string[] = [];
+          if (
+            data.mostWrongQuiz &&
+            data.mostWrongQuiz.choice &&
+            typeof data.mostWrongQuiz.choice === "string"
+          ) {
+            try {
+              // 문자열에서 대괄호 제거 후 쉼표로 분할
+              choiceArray = data.mostWrongQuiz.choice
+                .replace("[", "")
+                .replace("]", "")
+                .split(", ")
+                .map((item: string) => item.trim());
+            } catch (e) {
+              console.error("선택지 파싱 오류:", e);
+              choiceArray = [];
+            }
+          }
+
+          const resultData = {
+            mostWrongQuiz: data.mostWrongQuiz
+              ? {
+                  ...data.mostWrongQuiz,
+                  choice: choiceArray,
+                  commentary: data.mostWrongQuiz.commentary || "",
+                }
+              : {},
+            topRanking: data.topRanking || [],
+            collectionName: collectionName,
+          };
+
+          setResult(resultData);
+          setIsResultReady(true);
+          addNotification("모든 결과가 도착했습니다!", "success");
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
+  }, [stompClient, isConnected, userId, showId, collectionName]);
 
   // 퀴즈 문자열 파싱 함수
   const parseQuizString = (quiz: any): QuizShared => {
@@ -314,11 +397,18 @@ const QuizShowSharedPage = () => {
           collectionName={collectionName}
           currentQuizIndex={currentQuizIndex}
           setCurrentQuizIndex={setCurrentQuizIndex}
-          setIsShowEnded={setIsShowEnded}
+          handleShowEnded={handleShowEnded}
           submitAnswer={submitAnswer}
         />
       )}
-      {isShowEnded && <QuizShowSharedResult />}
+      {isShowEnded && (
+        <QuizShowSharedResult
+          myResult={myResult}
+          result={result}
+          collectionName={collectionName}
+          isLoading={!isResultReady}
+        />
+      )}
     </div>
   );
 };

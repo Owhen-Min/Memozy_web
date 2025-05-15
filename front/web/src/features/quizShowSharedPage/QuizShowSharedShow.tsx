@@ -21,7 +21,7 @@ interface QuizShowSharedShowProps {
   collectionName: string;
   currentQuizIndex: number;
   setCurrentQuizIndex: (index: number) => void;
-  setIsShowEnded: (isEnded: boolean) => void;
+  handleShowEnded: () => void;
   submitAnswer: (answer: Answer) => void;
 }
 
@@ -32,7 +32,7 @@ function QuizShowSharedShow({
   collectionName,
   currentQuizIndex,
   setCurrentQuizIndex,
-  setIsShowEnded,
+  handleShowEnded,
   submitAnswer,
 }: QuizShowSharedShowProps) {
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
@@ -185,7 +185,7 @@ function QuizShowSharedShow({
     setIsCommentaryShow(false); // 해설 숨기기
     if (nextIndex >= quizCount) {
       // 마지막 퀴즈 이후 종료 처리
-      setIsShowEnded(true);
+      handleShowEnded();
       return;
     }
   };
