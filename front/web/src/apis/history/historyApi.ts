@@ -75,3 +75,18 @@ export const fetchWrongAnswerDetail = async (collectionId: number): Promise<Quiz
     throw error;
   }
 };
+
+// 모두보기컬렉션 오답 내역 가져오기
+export const fetchAllWrongAnswers = async (): Promise<QuizHistory[]> => {
+  try {
+    const response = await httpClient.get(`/history/collection/all`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.errorMsg || "Unknown error");
+    }
+  } catch (error) {
+    console.error("전체 오답 내역 요청 중 오류 발생:", error);
+    throw error;
+  }
+};

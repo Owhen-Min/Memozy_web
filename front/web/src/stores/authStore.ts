@@ -25,8 +25,7 @@ interface AuthState {
 }
 
 // 구글 로그인 URL
-const GOOGLE_AUTH_URL =
-  "http://memozy.site/oauth2/authorization/google?state=mode:web";
+const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google?state=mode:web`;
 
 // Auth 스토어 생성
 export const useAuthStore = create<AuthState>((set, get) => ({

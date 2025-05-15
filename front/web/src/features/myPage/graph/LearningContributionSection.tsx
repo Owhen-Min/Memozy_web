@@ -61,7 +61,7 @@ export default function LearningContributionSection({
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-14 md:text-[18px] font-pre-semibold">학습 참여도</h3>
         <select
-          className="border border-normal rounded px-1 py-1 text-12 md:text-14 font-pre-regular"
+          className="border border-normal rounded px-1 py-1 text-12 md:text-14 font-pre-regular focus:outline-none focus:border-normal focus:ring-1 focus:ring-normal"
           value={selectedView}
           onChange={(e) => setSelectedView(e.target.value)}
         >
