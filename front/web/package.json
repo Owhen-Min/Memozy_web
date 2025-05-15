@@ -28,6 +28,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
+    "rollup": "^4.40.2",
     "sockjs-client": "^1.6.1",
     "tailwindcss": "^3.4.17",
     "zustand": "^5.0.4"
