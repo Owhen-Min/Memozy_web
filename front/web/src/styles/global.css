@@ -136,10 +136,7 @@ body {
 
 .content-quiz {
   flex-grow: 1;
-  padding-top: 60px;
-  padding-bottom: 60px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 20px;
   width: 100%;
   max-width: 1440px;
   box-sizing: border-box;
