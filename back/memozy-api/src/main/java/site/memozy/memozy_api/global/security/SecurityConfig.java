@@ -96,7 +96,8 @@ public class SecurityConfig {
 			"chrome-extension://edkigpibifokljeefiomnfadenbfcchj",
 			"http://localhost:5173",
 			"https://localhost:5173",
-			"https://memozy.site"
+			"https://memozy.site",
+			"https://test.memozy.site"
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(Collections.singletonList("*"));
