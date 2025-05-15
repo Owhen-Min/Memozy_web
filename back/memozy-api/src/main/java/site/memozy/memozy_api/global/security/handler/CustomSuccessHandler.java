@@ -24,7 +24,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	private final JwtUtil jwtUtil;
 
-	@Value("${CHROME_EXTENSION_URL}")
+	@Value("${spring.chrome.extension.url}")
 	private String CHROME_EXTENSION_URL;
 
 	@Value("${spring.redirect.url}")
