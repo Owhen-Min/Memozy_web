@@ -28,6 +28,14 @@ function CollectionPage() {
     setIsAddCollectionModalOpen(false);
   };
 
+  // 바깥 영역 클릭 시 모달 닫기 처리
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
+    if (e.currentTarget === e.target) {
+      handleCloseModal();
+    }
+  };
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -93,9 +101,16 @@ function CollectionPage() {
         </motion.div>
       </motion.div>
 
-      <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
+      {isAddCollectionModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleOutsideClick}
+        >
+          <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
+        </div>
+      )}
     </div>
   );
 }
-//ejt
+
 export default CollectionPage;
