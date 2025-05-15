@@ -123,8 +123,8 @@ body {
 
   /* 태블릿 크기 이상일 때 */
   @media (min-width: 768px) {
-    padding-left: 60px;
-    padding-right: 60px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   /* 데스크탑 크기 이상일 때 */
