@@ -31,4 +31,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 	List<History> findByCollectionIdAndRound(Integer collectionId, Integer round);
 
 	void deleteAllByQuizIdIn(List<Long> quizIds);
+
+	List<Long> findQuizIdByQuizIdIn(List<Long> quizIds);
 }

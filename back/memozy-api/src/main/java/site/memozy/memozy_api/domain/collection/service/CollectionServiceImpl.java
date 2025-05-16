@@ -172,14 +172,14 @@ public class CollectionServiceImpl implements CollectionService {
 		if (request.hasQuizIds()) { // Quiz 삭제하기
 			deleteValidQuizzes(request.getQuizId(), userId);
 		} else if (request.hasSourceIds()) { // 문제 원본 삭제 + 문제 원본에 포함된 Quiz 삭제하기
+			List<Integer> validSourceIds = collectionRepository.findValidSourceIdsByUser(request.getSourceId(), userId);
 			// 문제 원본의 문제들 삭제하기
-			List<Long> quizIds = quizRepository.findBySourceIdIn(request.getSourceId()).stream()
+			List<Long> quizIds = quizRepository.findBySourceIdIn(validSourceIds).stream()
 				.map(Quiz::getQuizId)
 				.toList();
 			deleteValidQuizzes(quizIds, userId);
 
 			// 문제 원본들 삭제하기
-			List<Integer> validSourceIds = collectionRepository.findValidSourceIdsByUser(request.getSourceId(), userId);
 			quizSourceRepository.deleteBySourceIdIn(validSourceIds);
 		} else {
 			throw new GeneralException(MISSING_REQUIRED_PARAMETERS);
@@ -279,6 +279,16 @@ public class CollectionServiceImpl implements CollectionService {
 
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
 		List<Long> validQuizIds = collectionRepository.findValidQuizIdsByUser(quizIds, userId);
+		if (validQuizIds.isEmpty()) {
+			return;
+		}
+
+		List<Long> existingHistoryIds = historyRepository.findQuizIdByQuizIdIn(validQuizIds);
+
+		if (!existingHistoryIds.isEmpty()) {
+			historyRepository.deleteAllByQuizIdIn(existingHistoryIds);
+		}
+
 		quizRepository.deleteByQuizIdIn(validQuizIds);
 	}
 
