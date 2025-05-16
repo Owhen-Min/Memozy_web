@@ -1,9 +1,9 @@
 import small_logo from "../../assets/images/small_logo.png";
 import { Quiz } from "../../types/quizShow";
 import { useState, useEffect, useCallback } from "react";
-import MultipleChoice from "../../components/quizShowPage/MultipleChoice";
-import OX from "../../components/quizShowPage/OX";
-import Objective from "../../components/quizShowPage/Objective";
+import MultipleChoice from "../../components/quizShowSharedPage/MultipleChoice";
+import OX from "../../components/quizShowSharedPage/OX";
+import Objective from "../../components/quizShowSharedPage/Objective";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
 
@@ -28,7 +28,6 @@ interface QuizShowSharedShowProps {
 function QuizShowSharedShow({
   quizCount,
   quizList,
-  quizSessionId,
   collectionName,
   currentQuizIndex,
   setCurrentQuizIndex,
@@ -40,6 +39,13 @@ function QuizShowSharedShow({
   const [userAnswer, setUserAnswer] = useState<
     string | number | { index: number; value: string } | null
   >(null);
+  // OX 퀴즈 선택 상태 추적
+  const [selectedOX, setSelectedOX] = useState<"O" | "X" | null>(null);
+  // 객관식 퀴즈 선택 상태 추적
+  const [selectedMultipleChoice, setSelectedMultipleChoice] = useState<number | null>(null);
+  // 주관식 퀴즈 입력값 추적
+  const [objectiveInput, setObjectiveInput] = useState<string>("");
+
   const [isLoading, setIsLoading] = useState(true);
   const [loadingCount, setLoadingCount] = useState(3);
   const [timeLeft, setTimeLeft] = useState(30); // 20초 타이머
@@ -81,6 +87,11 @@ function QuizShowSharedShow({
     console.log(quizCount, currentQuizIndex, nextIndex);
     setShowAnswer(false);
     setUserAnswer(null);
+    // 선택 상태 초기화
+    setSelectedOX(null);
+    setSelectedMultipleChoice(null);
+    setObjectiveInput("");
+
     setCurrentQuizIndex(nextIndex);
     setCurrentQuiz(quizList[nextIndex]);
     setTimeLeft(30); // 타이머 리셋
@@ -125,6 +136,24 @@ function QuizShowSharedShow({
     return () => clearTimeout(commentaryTimer);
   }, [isTimerRunning, isCommentaryShow]);
 
+  // OX 선택 핸들러
+  const handleOXSelect = (value: "O" | "X") => {
+    setSelectedOX(value);
+    setUserAnswer(value);
+  };
+
+  // 객관식 선택 핸들러
+  const handleMultipleChoiceSelect = (answer: { index: number; value: string }) => {
+    setSelectedMultipleChoice(answer.index - 1);
+    setUserAnswer(answer);
+  };
+
+  // 주관식 입력 핸들러
+  const handleObjectiveInput = (value: string) => {
+    setObjectiveInput(value);
+    setUserAnswer(value);
+  };
+
   const handleShowAnswer = () => {
     if (userAnswer === null) {
       alert("답을 선택해주세요!");
@@ -154,6 +183,7 @@ function QuizShowSharedShow({
       isCorrect: isCorrect,
     });
 
+    setShowAnswer(true); // 정답/오답 표시를 위해 showAnswer 활성화
     setIsCommentaryShow(true); // 선택 완료 시 해설 표시
     setAnswerTime(timeLeft);
   };
@@ -161,10 +191,23 @@ function QuizShowSharedShow({
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
 
-    const isLastQuiz = currentQuizIndex === quizCount - 1;
+    // 사용자 답변이 정답인지 체크
+    let isCorrect: boolean | undefined = undefined;
 
-    // 빈 함수를 전달하여 onNext prop 오류 해결
-    const emptyNextHandler = () => {};
+    if (showAnswer && userAnswer !== null) {
+      const currentQuizData = quizList[currentQuizIndex];
+      let answerValue = "";
+
+      if (typeof userAnswer === "object" && "value" in userAnswer) {
+        // 객관식 답변
+        answerValue = userAnswer.value;
+      } else {
+        // OX, 주관식 답변
+        answerValue = userAnswer.toString();
+      }
+
+      isCorrect = currentQuizData.answer === answerValue;
+    }
 
     switch (currentQuiz.type) {
       case "MULTIPLE_CHOICE":
@@ -173,12 +216,10 @@ function QuizShowSharedShow({
             content={currentQuiz.content}
             choice={currentQuiz.choice}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            isLastQuiz={isLastQuiz}
-            onNext={emptyNextHandler}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleMultipleChoiceSelect}
+            isCorrect={isCorrect}
+            selected={selectedMultipleChoice}
           />
         );
       case "OX":
@@ -186,12 +227,10 @@ function QuizShowSharedShow({
           <OX
             content={currentQuiz.content}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            onNext={handleNextQuiz}
-            isLastQuiz={isLastQuiz}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleOXSelect}
+            isCorrect={isCorrect}
+            selected={selectedOX}
           />
         );
       case "OBJECTIVE":
@@ -199,12 +238,10 @@ function QuizShowSharedShow({
           <Objective
             content={currentQuiz.content}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            isLastQuiz={isLastQuiz}
-            onNext={emptyNextHandler}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleObjectiveInput}
+            isCorrect={isCorrect}
+            inputValue={objectiveInput}
           />
         );
       default:
@@ -238,7 +275,7 @@ function QuizShowSharedShow({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -265,7 +302,7 @@ function QuizShowSharedShow({
                 }`}
                 style={{
                   width: `${
-                    isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 10) * 100
+                    isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 20) * 100
                   }%`,
                 }}
               ></div>
@@ -285,7 +322,7 @@ function QuizShowSharedShow({
 
             {/* 해설 영역 */}
             {isCommentaryShow && currentQuiz && (
-              <div className="absolute bottom-0 left-0 right-0 bg-pink-100 p-4 rounded-b-xl">
+              <div className="absolute bottom-3 left-0 right-0 bg-pink-100 mx-2 p-4 rounded-xl">
                 <div className="text-lg font-bold mb-2">해설</div>
                 <p className="text-gray-800">{currentQuiz.commentary || currentQuiz.answer}</p>
               </div>
