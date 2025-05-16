@@ -31,6 +31,8 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_NOT_HOST(HttpStatus.BAD_REQUEST, "QUIZ406", "해당 퀴즈의 호스트가 아닙니다."),
 	QUIZ_INVALID_STATE(HttpStatus.BAD_REQUEST, "QUIZ407", "퀴즈 상태가 유효하지 않습니다."),
 	QUIZ_NICKNAME_CANNOT_CHANGE(HttpStatus.BAD_REQUEST, "QUIZ_408", "닉네임은 변경할 수 없습니다."),
+	QUIZ_CANNOT_JOIN(HttpStatus.BAD_REQUEST, "QUIZ409", "해당 퀴즈는 이미 시작되었거나 종료되었습니다."),
+
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
 	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),
@@ -59,5 +61,5 @@ public enum ErrorStatus implements BaseErrorCode {
 	private final HttpStatus httpStatusCode;
 	private final String errorCode;
 	private final String errorMsg;
-	
+
 }

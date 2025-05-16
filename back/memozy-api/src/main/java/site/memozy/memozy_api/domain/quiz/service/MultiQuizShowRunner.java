@@ -29,7 +29,7 @@ public class MultiQuizShowRunner {
 	private final TaskScheduler quizTaskScheduler;
 	private final Map<String, ScheduledFuture<?>> activeTasks = new ConcurrentHashMap<>();
 	private final Map<String, Integer> activeQuestionIndex = new ConcurrentHashMap<>();
-	private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(10); // 10초
+	private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(20); // 20초
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public void startQuizShow(String showId) {
