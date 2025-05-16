@@ -8,7 +8,7 @@ interface ErrorStore {
   error: string | null;
   isModalOpen: boolean;
   showButtons: boolean;
-  setError: (error: string, options?: ErrorOptions) => void;
+  setError: (error: string | null, options?: ErrorOptions) => void;
   setIsModalOpen: (isModalOpen: boolean) => void;
   clearError: () => void;
 }
