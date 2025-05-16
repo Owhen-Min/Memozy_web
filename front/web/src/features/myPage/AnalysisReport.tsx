@@ -63,7 +63,7 @@ function AnalysisReport() {
 
   // 데이터 로딩 중인 경우
   if (isLoading || !reportData) {
-    return <div>데이터를 불러오는 중입니다...</div>;
+    return null;
   }
 
   return (

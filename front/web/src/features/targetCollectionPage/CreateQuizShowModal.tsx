@@ -5,6 +5,7 @@ import {
   sharedQuizShowApi,
   SharedQuizShowCreateResponse,
 } from "../../apis/sharedQuizShow/sharedQuizShowApi";
+import { useErrorStore } from "../../stores/errorStore";
 
 interface CreateQuizShowModalProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ function CreateQuizShowModal({
   const navigate = useNavigate();
   const [isShared, setIsShared] = useState(false);
   const [quizCount, setQuizCount] = useState(1);
+  const { setError } = useErrorStore();
 
   const handleQuizShowCreate = async () => {
     onClose();
@@ -33,7 +35,7 @@ function CreateQuizShowModal({
         if (response.success) {
           navigate(`/quiz/show/${response.data.showId}`);
         } else {
-          alert(response.errorMsg);
+          setError(response.errorMsg, { showButtons: false });
         }
       } catch (error) {
         console.error("퀴즈쇼 생성 실패 : ", error);

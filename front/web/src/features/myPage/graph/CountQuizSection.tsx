@@ -17,7 +17,9 @@ export default function CountQuizSection({
       <div className="flex items-center overflow-hidden">
         <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
           <img src={small_logo} alt="로고" className="w-8 md:w-10" />
-          <h2 className="text-24 md:text-[28px] font-pre-medium whitespace-nowrap">분석 레포트</h2>
+          <h2 className="text-24 md:text-[28px] font-pre-semibold whitespace-nowrap">
+            분석 레포트
+          </h2>
         </div>
 
         {/* 통계박스 - 데스크탑에서만 표시 */}
