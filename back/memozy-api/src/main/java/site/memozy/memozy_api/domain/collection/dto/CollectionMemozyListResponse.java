@@ -11,12 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CollectionMemozyListResponse {
 	private String collectionName;
+	private int duplicateQuizCount;
 	private List<MemozyContentResponse> content;
 	private boolean last;
 
 	@Builder
-	public CollectionMemozyListResponse(String collectionName, List<MemozyContentResponse> content, boolean last) {
+	public CollectionMemozyListResponse(String collectionName, int duplicateQuizCount,
+		List<MemozyContentResponse> content, boolean last) {
 		this.collectionName = collectionName;
+		this.duplicateQuizCount = duplicateQuizCount;
 		this.content = content;
 		this.last = last;
 	}
