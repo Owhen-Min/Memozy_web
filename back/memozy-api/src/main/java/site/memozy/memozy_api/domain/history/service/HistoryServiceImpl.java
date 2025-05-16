@@ -1,6 +1,6 @@
 package site.memozy.memozy_api.domain.history.service;
 
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.COLLECTION_NOT_FOUND;
 
 import java.util.List;
 
@@ -18,9 +18,7 @@ import site.memozy.memozy_api.domain.history.dto.QuizStatsResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
-import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
-import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
@@ -31,7 +29,6 @@ public class HistoryServiceImpl implements HistoryService {
 	private final HistoryRepository historyRepository;
 	private final CollectionRepository collectionRepository;
 	private final QuizRepository quizRepository;
-	private final QuizSourceRepository quizSourceRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -46,15 +43,7 @@ public class HistoryServiceImpl implements HistoryService {
 	@Transactional(readOnly = true)
 	public QuizStatsResponse getUserQuizStats(Integer userId, String email) {
 		List<Integer> collectionIds = collectionRepository.findCollectionIdsByUserId(userId);
-
-		//long totalQuiz = quizRepository.countDistinctQuiz(collectionIds);
-
-		// 학준
-		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
-		long totalQuiz = quizRepository.findBySourceIdIn(sourceIds).stream()
-			.map(this::generateQuizKey)
-			.distinct()
-			.count();
+		long totalQuiz = quizRepository.countDistinctQuiz(collectionIds);
 		long solvedQuiz = historyRepository.countDistinctSolvedQuiz(collectionIds, email);
 
 		return new QuizStatsResponse(totalQuiz, solvedQuiz);
@@ -95,14 +84,5 @@ public class HistoryServiceImpl implements HistoryService {
 	@Override
 	public List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail) {
 		return collectionRepository.findAllHistoryWithQuizzes(userEmail);
-	}
-
-	private String generateQuizKey(Quiz quiz) {
-		return String.join("|",
-			quiz.getContent(),
-			quiz.getType().name(),
-			quiz.getAnswer(),
-			quiz.getCommentary()
-		);
 	}
 }
