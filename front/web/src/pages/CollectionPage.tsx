@@ -52,8 +52,8 @@ function CollectionPage() {
   };
 
   // 로딩 중이거나 에러가 있을 때 처리
-  if (loading) return <div className="content">로딩 중...</div>;
-  if (error) return <div className="content">에러: {error}</div>;
+  // if (loading) return <div className="content">로딩 중...</div>;
+  // if (error) return <div className="content">에러: {error}</div>;
 
   return (
     <div className="content">
