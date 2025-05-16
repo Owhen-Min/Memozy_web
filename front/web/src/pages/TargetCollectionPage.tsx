@@ -12,6 +12,7 @@ function TargetCollectionPage() {
   const { collectionId } = useParams();
   const {
     collectionName,
+    duplicateQuizCount,
     memozies = [],
     fetchMemozyList,
     fetchAllMemozyList,
@@ -122,10 +123,15 @@ function TargetCollectionPage() {
         </h1>
         <hr className="border-t border-gray100 my-4" />
         <div className="flex gap-2 mb-4 justify-between">
-          <div className="flex items-center gap-2">
-            <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
-            <span className="text-16 font-pre-semibold">Memozy</span>
-            <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
+              <span className="text-16 font-pre-semibold">Memozy</span>
+              <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
+            </div>
+            <span className="text-16 font-pre-semibold text-gray200">
+              {duplicateQuizCount}개의 중복 퀴즈
+            </span>
           </div>
           {memozies.length > 0 && (
             <div className="flex gap-2">

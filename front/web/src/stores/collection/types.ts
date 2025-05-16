@@ -24,6 +24,7 @@ export interface MemozyListResponse {
   errorCode: null | string;
   data: {
     collectionName: string;
+    duplicateQuizCount: number;
     content: Memozy[];
     last: boolean;
   };
@@ -44,6 +45,7 @@ export interface CollectionState {
   loading: boolean;
   error: string | null;
   collectionName: string | null;
+  duplicateQuizCount: number;
   currentPage: number;
   pageSize: number;
   hasMore: boolean;
