@@ -11,8 +11,7 @@ function CollectionPage() {
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
 
   // store에서 데이터와 함수 가져오기
-  const { collections, loading, error, fetchCollections, fetchAllCollection, allCollection } =
-    useCollectionStore();
+  const { collections, fetchCollections, fetchAllCollection, allCollection } = useCollectionStore();
 
   // 컴포넌트 마운트 시 컬렉션 데이터 가져오기
   useEffect(() => {
