@@ -43,6 +43,7 @@ function QuizShowPersonalPage() {
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+  const [isCorrect, setIsCorrect] = useState<boolean>(false);
   const [userAnswer, setUserAnswer] = useState<
     string | number | { index: number; value: string } | null
   >(null);
@@ -77,6 +78,7 @@ function QuizShowPersonalPage() {
   const handleNextQuiz = () => {
     setShowAnswer(false);
     setUserAnswer(null);
+    setIsCorrect(false);
     setCurrentQuizIndex(currentQuizIndex + 1);
     setCurrentQuiz(quizList[currentQuizIndex + 1]);
     if (currentQuizIndex === quizList.length - 1) {
@@ -117,22 +119,20 @@ function QuizShowPersonalPage() {
     }
 
     const currentQuizData = quizList[currentQuizIndex];
-    let isCorrect = false;
     let answerValue = "";
+    let correct = false;
 
     if (typeof userAnswer === "object" && "value" in userAnswer) {
-      // 객관식 답변
       answerValue = userAnswer.value;
-      // 정답이 보기 내용인 경우
-      isCorrect = currentQuizData.answer === answerValue;
+      correct = currentQuizData.answer === answerValue;
     } else {
-      // OX, 주관식 답변
       answerValue = userAnswer.toString();
-      isCorrect = currentQuizData.answer === answerValue;
+      correct = currentQuizData.answer === answerValue;
     }
 
     try {
-      await submitAnswer(currentQuizData.quizId, answerValue, isCorrect);
+      await submitAnswer(currentQuizData.quizId, answerValue, correct);
+      setIsCorrect(correct);
       setShowAnswer(true);
     } catch (error) {
       console.error("답안 제출 중 오류 발생:", error);
@@ -150,6 +150,7 @@ function QuizShowPersonalPage() {
             content={currentQuiz.content}
             choice={currentQuiz.choice}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
@@ -163,6 +164,7 @@ function QuizShowPersonalPage() {
           <OX
             content={currentQuiz.content}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
@@ -176,6 +178,7 @@ function QuizShowPersonalPage() {
           <Objective
             content={currentQuiz.content}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
