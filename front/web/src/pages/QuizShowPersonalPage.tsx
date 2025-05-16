@@ -91,7 +91,7 @@ function QuizShowPersonalPage() {
 
   // 브라우저 뒤로가기 이벤트 처리
   useEffect(() => {
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = () => {
       if (!window.confirm("진행 중인 퀴즈 쇼가 종료됩니다. 정말로 나가시겠습니까?")) {
         // 취소 시 현재 상태를 다시 푸시
         window.history.pushState(null, "", window.location.href);
