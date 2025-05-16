@@ -26,11 +26,11 @@ export default function CollectionAccuracyChart({
   collectionAccuracy,
 }: CollectionAccuracyChartProps) {
   const barChartData = {
-    labels: collectionAccuracy.map((item) => item.name),
+    labels: [...collectionAccuracy].reverse().map((item) => item.name),
     datasets: [
       {
         label: "정답률 (%)",
-        data: collectionAccuracy.map((item) => item.latestAccuracy),
+        data: [...collectionAccuracy].reverse().map((item) => item.latestAccuracy),
         backgroundColor: ["#FFCE56", "#6A5ACD", "#CCCCCC", "#3CB371", "#3E6FFA"],
       },
     ],

@@ -1,5 +1,5 @@
 import Answer from "./Answer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ObjectiveProps {
   content: string;
@@ -22,6 +22,12 @@ const Objective = ({
   onAnswerSelect,
 }: ObjectiveProps) => {
   const [inputValue, setInputValue] = useState<string>("");
+
+  useEffect(() => {
+    if (showAnswer) {
+      setInputValue("");
+    }
+  }, [showAnswer]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

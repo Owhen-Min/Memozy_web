@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Answer from "./Answer";
 
 interface MultipleChoiceProps {
@@ -24,6 +24,12 @@ const MultipleChoice = ({
   onAnswerSelect,
 }: MultipleChoiceProps) => {
   const [selected, setSelected] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (showAnswer) {
+      setSelected(null);
+    }
+  }, [showAnswer]);
 
   const handleSelect = (index: number) => {
     setSelected(index);

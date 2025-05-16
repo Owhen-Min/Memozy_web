@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import OIcon from "../../assets/icons/OIcon.svg";
 import XIcon from "../../assets/icons/XIcon.svg";
 import Answer from "./Answer";
@@ -24,6 +24,12 @@ const OX = ({
   onAnswerSelect,
 }: OXProps) => {
   const [selected, setSelected] = useState<null | "O" | "X">(null);
+
+  useEffect(() => {
+    if (showAnswer) {
+      setSelected(null);
+    }
+  }, [showAnswer]);
 
   const handleSelect = (value: "O" | "X") => {
     setSelected(value);
