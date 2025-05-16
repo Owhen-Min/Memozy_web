@@ -120,7 +120,7 @@ function QuizShowSharedShow({
     const commentaryTimer = setTimeout(() => {
       setIsCommentaryShow(true);
       setAnswerTime(Math.max(answerTime, 10));
-    }, 10000); // 10초 후 해설 표시
+    }, 20000); // 20초 후 해설 표시
 
     return () => clearTimeout(commentaryTimer);
   }, [isTimerRunning, isCommentaryShow]);

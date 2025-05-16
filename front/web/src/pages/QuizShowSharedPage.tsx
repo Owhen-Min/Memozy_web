@@ -394,6 +394,8 @@ const QuizShowSharedPage = () => {
       )}
       {isShowEnded && (
         <QuizShowSharedResult
+          isHost={isHost}
+          isLoggedIn={isLoggedIn}
           myResult={myResult}
           result={result}
           collectionName={collectionName}
