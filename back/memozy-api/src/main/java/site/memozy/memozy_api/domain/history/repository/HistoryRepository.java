@@ -32,5 +32,6 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 
 	void deleteAllByQuizIdIn(List<Long> quizIds);
 
-	List<Long> findQuizIdByQuizIdIn(List<Long> quizIds);
+	@Query("SELECT h.quizId FROM History h WHERE h.quizId IN :quizIds")
+	List<Long> findQuizIdByQuizIdIn(@Param("quizIds") List<Long> quizIds);
 }
