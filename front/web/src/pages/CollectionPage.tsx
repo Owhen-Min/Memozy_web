@@ -90,7 +90,7 @@ function CollectionPage() {
         {/* 새 컬렉션 추가 카드 */}
         <motion.div
           variants={item}
-          className="w-full p-5 border border-gray300 rounded-xl bg-white flex flex-col justify-between cursor-pointer hover:bg-[#ECECEC] shadow-md h-[120px]"
+          className="w-full p-5 border border-gray300 rounded-xl bg-white flex flex-col justify-between cursor-pointer hover:bg-[#ECECEC] shadow-md h-[138px]"
           onClick={handleAddCollectionClick}
         >
           <div className="h-[24px]" /> {/* 제목 영역과 동일한 높이 */}
