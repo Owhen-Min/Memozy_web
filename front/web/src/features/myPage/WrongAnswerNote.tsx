@@ -75,22 +75,14 @@ function WrongAnswerNote() {
 
   // 로딩 중일 때 표시할 내용
   if (isLoading) {
-    return (
-      <div>
-        <div className="flex items-center gap-2 mb-10">
-          <img src={small_logo} alt="로고" className="w-8 md:w-10" />
-          <h2 className="text-24 md:text-[28px] font-pre-medium">오답노트</h2>
-        </div>
-        <div>데이터를 불러오는 중입니다...</div>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div>
       <div className="flex items-center gap-2 mb-10">
         <img src={small_logo} alt="로고" className="w-8 md:w-10" />
-        <h2 className="text-24 md:text-[28px] font-pre-medium">오답노트</h2>
+        <h2 className="text-24 md:text-[28px] font-pre-semibold">오답노트</h2>
       </div>
 
       <div className="max-w-full mx-auto">

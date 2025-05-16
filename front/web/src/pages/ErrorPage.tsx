@@ -2,19 +2,15 @@ import errorPageImage from "../assets/images/errorPageImage.svg";
 
 function ErrorPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center p-4 sm:p-5 bg-bg overflow-hidden">
-      <div className="w-full max-w-[1200px] flex flex-col items-center justify-center gap-4 sm:gap-6 md:gap-8">
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6 sm:p-10 bg-bg overflow-hidden">
+      <div className="w-full max-w-[1200px] flex flex-col items-center justify-evenly">
         <h1 className="text-[40px] sm:text-[60px] md:text-[80px] font-pre-semibold text-normal">
           Error
         </h1>
 
         <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 w-full">
-          <p className="text-12 sm:text-14 md:text-16 font-pre-medium text-main200">
-            이런! 문제가 발생했어요.
-          </p>
-          <p className="text-12 sm:text-14 md:text-16 font-pre-medium text-red">
-            error message : 존재하지 않는 주소입니다.
-          </p>
+          <p className="text-[28px] font-pre-medium text-main200">이런! 문제가 발생했어요.</p>
+          <p className="text-24 font-pre-medium text-red">존재하지 않는 주소입니다.</p>
         </div>
 
         <div className="w-full max-w-full px-4 sm:px-8 md:px-12">
