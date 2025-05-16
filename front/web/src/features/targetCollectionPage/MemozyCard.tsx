@@ -41,7 +41,10 @@ function MemozyCard({
 
   return (
     <div className="relative">
-      <div className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
+      <div
+        className={`w-full bg-white rounded-2xl shadow-md overflow-hidden ${isEditMode ? "cursor-pointer" : ""}`}
+        onClick={() => isEditMode && onSelect()}
+      >
         <div className="p-6">
           <div className="flex justify-between items-start">
             <div className="flex-1 flex items-start gap-4">
@@ -49,7 +52,10 @@ function MemozyCard({
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={onSelect}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onSelect();
+                  }}
                   className="w-5 h-5 mt-1 accent-normal"
                 />
               )}
@@ -63,9 +69,10 @@ function MemozyCard({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   window.open(url, "_blank");
                 }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
@@ -73,13 +80,19 @@ function MemozyCard({
                 <img src={urlIcon} alt="url" className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
               >
                 <img src={summaryIcon} alt="summary" className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setIsDropDownOpen(!isDropDownOpen)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsDropDownOpen(!isDropDownOpen);
+                }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
               >
                 <img
