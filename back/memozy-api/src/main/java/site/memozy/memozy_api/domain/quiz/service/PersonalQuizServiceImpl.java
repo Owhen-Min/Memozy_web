@@ -147,7 +147,7 @@ public class PersonalQuizServiceImpl implements PersonalQuizService {
 
 		String collectionName = collectionRepository.findByCollectionIdAndUserId(collectionId, userId)
 			.map(Collection::getName)
-			.orElse("전체 퀴즈");
+			.orElse("전체");
 
 		return PersonalQuizResultResponse.of(totalQuizCount, incorrectQuizIds.size(), nextRound, point,
 			incorrectQuizList, previousPoint, collectionName);

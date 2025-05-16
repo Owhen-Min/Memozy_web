@@ -154,18 +154,31 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 	@Override
 	public List<MemozyContentResponse> findAllWithPaging(Integer userId, Pageable pageable) {
-		// 1. 중복 제거한 sourceId 목록 조회 (페이지 적용)
-		List<Integer> minSourceIds = queryFactory
+		// 1. sourceId 목록 조회(동일한 메모지는 제거한 버전)
+		// List<Integer> sourceIds = queryFactory
+		// 	.select(quizSource.sourceId)
+		// 	.from(quizSource)
+		// 	.where(quizSource.sourceId.in(
+		// 		queryFactory
+		// 			.select(quizSource.sourceId.min())
+		// 			.from(quizSource)
+		// 			.where(quizSource.userId.eq(userId),
+		// 				quizSource.collectionId.isNotNull())
+		// 			.groupBy(quizSource.url)
+		// 	))
+		// 	.orderBy(quizSource.createdAt.desc())
+		// 	.offset(pageable.getOffset())
+		// 	.limit(pageable.getPageSize())
+		// 	.fetch();
+
+		// 1. sourceId 목록 조회(동일한 메모지도 보여주도록)
+		List<Integer> sourceIds = queryFactory
 			.select(quizSource.sourceId)
 			.from(quizSource)
-			.where(quizSource.sourceId.in(
-				queryFactory
-					.select(quizSource.sourceId.min())
-					.from(quizSource)
-					.where(quizSource.userId.eq(userId),
-						quizSource.collectionId.isNotNull())
-					.groupBy(quizSource.url)
-			))
+			.where(
+				quizSource.userId.eq(userId),
+				quizSource.collectionId.isNotNull()  // collectionId가 null이 아닌 경우만
+			)
 			.orderBy(quizSource.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -182,7 +195,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			))
 			.from(quizSource)
 			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
-			.where(quizSource.sourceId.in(minSourceIds))
+			.where(quizSource.sourceId.in(sourceIds))
 			.groupBy(quizSource.sourceId)
 			.orderBy(quizSource.createdAt.desc())
 			.fetch();
