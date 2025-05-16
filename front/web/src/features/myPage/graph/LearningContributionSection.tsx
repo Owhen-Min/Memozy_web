@@ -42,13 +42,18 @@ export default function LearningContributionSection({
     } else {
       // 특정 연도 보기 (1월 1일부터 12월 31일까지)
       const year = parseInt(selectedView);
-      const startDate = new Date(year, 0, 1); // 1월 1일
-      const endDate = new Date(year, 11, 31); // 12월 31일
+      // 해당 연도의 1월 1일이 속한 주의 일요일을 시작일로 설정
+      const firstDayOfYear = new Date(year, 0, 1);
+      const dayOfWeek = firstDayOfYear.getDay();
+      const startDate = new Date(year, 0, 1 - dayOfWeek);
+      const endDate = new Date(year, 11, 31);
       return { startDate, endDate };
     }
   };
 
   const { startDate, endDate } = getDateRange();
+
+  console.log("startDate:", startDate);
 
   // 선택된 날짜 범위에 맞는 데이터만 필터링
   const filteredContributions = learningContribution.filter((contrib) => {
