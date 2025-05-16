@@ -52,10 +52,6 @@ function MemozyCard({
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    onSelect();
-                  }}
                   className="w-5 h-5 mt-1 accent-normal"
                 />
               )}
