@@ -194,10 +194,13 @@ public class CollectionServiceImpl implements CollectionService {
 		// 1. 복사할 source들 조회
 		List<QuizSource> originalSources = quizSourceRepository.findBySourceIdInAndUserId(sourceIds, userId);
 
+		Collection collection = collectionRepository.findByCollectionIdAndUserId(copyCollectionId, userId)
+			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
+
 		for (QuizSource original : originalSources) {
 			// 2. source 복사
 			QuizSource copiedSource = QuizSource.builder()
-				.title(original.getTitle())
+				.title(original.getTitle() + "(" + collection.getCollectionId() + ")")
 				.summary(original.getSummary())
 				.url(original.getUrl())
 				.userId(userId)
