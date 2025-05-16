@@ -58,10 +58,12 @@ function CollectionCard({ id, name, memozyCount, quizCount }: CollectionCardProp
   return (
     <>
       <div
-        className="w-full p-5 border border-normal rounded-xl bg-white relative cursor-pointer hover:bg-lighthover shadow-md"
+        className="w-full p-5 border border-normal rounded-xl bg-white relative cursor-pointer hover:bg-lighthover shadow-md group"
         onClick={handleClick}
       >
-        <h3 className="text-24 font-pre-bold mb-5 text-normalactive">{name}</h3>
+        <h3 className="text-24 font-pre-bold mb-5 text-normalactive pt-4 line-clamp-1 group-hover:line-clamp-none break-words">
+          {name}
+        </h3>
 
         {/* 수정/삭제 아이콘 - id가 0이 아닐 때만 표시 */}
         {id !== 0 && (
