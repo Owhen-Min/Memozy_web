@@ -2,11 +2,20 @@ export type QuizType = "MULTIPLE_CHOICE" | "OX" | "OBJECTIVE";
 
 export interface Quiz {
   quizId: number;
-  content: string;
-  type: QuizType;
-  choice: string[] | null;
   answer: string;
   commentary: string;
+  content: string;
+  choice: string[] | null;
+  type: QuizType;
+}
+
+export interface QuizShared {
+  quizId: number;
+  answer: string;
+  commentary: string;
+  content: string;
+  choice: string[] | null;
+  type: QuizType;
 }
 
 export interface QuizShowResponse {

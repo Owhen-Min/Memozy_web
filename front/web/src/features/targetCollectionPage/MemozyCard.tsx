@@ -31,9 +31,20 @@ function MemozyCard({
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // 바깥 영역 클릭 시 모달 닫기 처리
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
+    if (e.currentTarget === e.target) {
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <div className="relative">
-      <div className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
+      <div
+        className={`w-full bg-white rounded-2xl shadow-md overflow-hidden ${isEditMode ? "cursor-pointer" : ""}`}
+        onClick={() => isEditMode && onSelect()}
+      >
         <div className="p-6">
           <div className="flex justify-between items-start">
             <div className="flex-1 flex items-start gap-4">
@@ -41,7 +52,10 @@ function MemozyCard({
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={onSelect}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    onSelect();
+                  }}
                   className="w-5 h-5 mt-1 accent-normal"
                 />
               )}
@@ -55,9 +69,10 @@ function MemozyCard({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   window.open(url, "_blank");
                 }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
@@ -65,13 +80,19 @@ function MemozyCard({
                 <img src={urlIcon} alt="url" className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModalOpen(true);
+                }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
               >
                 <img src={summaryIcon} alt="summary" className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setIsDropDownOpen(!isDropDownOpen)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsDropDownOpen(!isDropDownOpen);
+                }}
                 className="p-2 hover:bg-light rounded-lg transition-colors"
               >
                 <img
@@ -91,11 +112,16 @@ function MemozyCard({
       </div>
       <div className="h-4" />
       {isModalOpen && (
-        <NoteModal
-          sourceTitle={sourceTitle}
-          summary={summary}
-          onClose={() => setIsModalOpen(false)}
-        />
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleOutsideClick}
+        >
+          <NoteModal
+            sourceTitle={sourceTitle}
+            summary={summary}
+            onClose={() => setIsModalOpen(false)}
+          />
+        </div>
       )}
     </div>
   );

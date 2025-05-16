@@ -25,7 +25,7 @@ const QuizShowEntryPersonalPage = () => {
   const handleStartQuizShow = () => {
     if (!quizData) return;
 
-    navigate(`/quiz-show/personal/${collectionId}`, {
+    navigate(`/quiz-show/personal/${collectionId}/${quizData.quizSessionId}`, {
       state: {
         collectionName: quizData.collectionName,
         quizList: quizData.quizList,

@@ -28,6 +28,14 @@ function CollectionPage() {
     setIsAddCollectionModalOpen(false);
   };
 
+  // 바깥 영역 클릭 시 모달 닫기 처리
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
+    if (e.currentTarget === e.target) {
+      handleCloseModal();
+    }
+  };
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -82,16 +90,27 @@ function CollectionPage() {
         {/* 새 컬렉션 추가 카드 */}
         <motion.div
           variants={item}
-          className="w-full p-5 border border-gray300 rounded-xl bg-white flex items-center justify-center cursor-pointer hover:bg-[#ECECEC] shadow-md"
+          className="w-full p-5 border border-gray300 rounded-xl bg-white flex flex-col justify-between cursor-pointer hover:bg-[#ECECEC] shadow-md h-[138px]"
           onClick={handleAddCollectionClick}
         >
-          <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
+          <div className="h-[24px]" /> {/* 제목 영역과 동일한 높이 */}
+          <div className="flex items-center justify-center">
+            <img src={collectionPlusIcon} alt="새 컬렉션 추가" className="w-12 h-12" />
+          </div>
+          <div className="h-[32px]" /> {/* 통계 영역과 동일한 높이 */}
         </motion.div>
       </motion.div>
 
-      <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
+      {isAddCollectionModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleOutsideClick}
+        >
+          <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
+        </div>
+      )}
     </div>
   );
 }
-//ejt
+
 export default CollectionPage;

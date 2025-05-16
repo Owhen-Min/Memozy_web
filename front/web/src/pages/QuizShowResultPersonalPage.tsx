@@ -1,25 +1,37 @@
 import small_logo from "../assets/images/small_logo.png";
 import rightmonster from "../assets/images/rightmonster.png";
 import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
-import { useNavigate, useParams, useLocation } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
 import { useEffect } from "react";
-
-interface QuizShowResultPersonalPageProps {
-  quizSessionId: string;
-  collectionName: string;
-}
+import folder from "../assets/icons/folder.svg";
 
 function QuizShowResultPersonalPage() {
-  const location = useLocation();
   const navigate = useNavigate();
   const collectionId = useParams().collectionId;
-  const { quizSessionId, collectionName } = location.state as QuizShowResultPersonalPageProps;
+  const quizSessionId = useParams().quizSessionId;
   const { getQuizResult, quizResult, isLoading, error } = useQuizShowPersonalStore();
 
   useEffect(() => {
-    getQuizResult(quizSessionId);
-  }, [getQuizResult, quizSessionId]);
+    // quizResult가 없고 quizSessionId가 있을 때만 API 호출
+    if (quizSessionId && !quizResult) {
+      getQuizResult(quizSessionId);
+    }
+  }, [quizSessionId, quizResult, getQuizResult]);
+
+  // 브라우저 뒤로가기 이벤트 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      alert("만료된 세션입니다.");
+      navigate(`/collection/${collectionId}`);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate, collectionId]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -47,7 +59,8 @@ function QuizShowResultPersonalPage() {
     }
 
     // API 응답 데이터 구조에 맞게 데이터 추출
-    const { totalQuizCount, myWrongQuizCount, round, point } = quizResult;
+    const { totalQuizCount, myWrongQuizCount, round, point, previousPoint, collectionName } =
+      quizResult;
 
     return (
       <>
@@ -91,8 +104,32 @@ function QuizShowResultPersonalPage() {
               <p className="font-pre-medium text-14 md:text-20">
                 틀린 퀴즈 수 : {myWrongQuizCount}개
               </p>
-              <p>틀린문제 content</p>
-              <p>지난 회차 대비 점수 차이</p>
+              <p className="font-pre-medium text-14 md:text-20">
+                지난 회차 대비 점수 차이 :{" "}
+                <span
+                  className={`font-pre-bold text-16 md:text-24 ${
+                    point - previousPoint > 0
+                      ? "text-green-600"
+                      : point - previousPoint < 0
+                        ? "text-red"
+                        : "text-gray-600"
+                  }`}
+                >
+                  {point - previousPoint > 0
+                    ? `+${point - previousPoint}`
+                    : point - previousPoint < 0
+                      ? `${point - previousPoint}`
+                      : "0"}
+                  점
+                </span>
+              </p>
+              <p
+                className="font-pre-semibold text-14 md:text-20 flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:scale-110 text-normalactive"
+                onClick={() => navigate(`/my`)}
+              >
+                회차별 오답노트 확인하러 가기
+                <img src={folder} alt="folder" className="w-6 h-6" />
+              </p>
             </div>
           </div>
 

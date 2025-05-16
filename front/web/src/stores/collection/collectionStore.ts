@@ -59,6 +59,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
       set({ loading: true, error: null });
       await collectionApi.deleteCollection(collectionId);
       await get().fetchCollections(); // 컬렉션 목록 새로고침
+      await get().fetchAllCollection(); // 전체 컬렉션 목록 새로고침
     } catch (error) {
       set({ error: "컬렉션 삭제에 실패했습니다.", loading: false });
       console.error("컬렉션 삭제 오류:", error);
