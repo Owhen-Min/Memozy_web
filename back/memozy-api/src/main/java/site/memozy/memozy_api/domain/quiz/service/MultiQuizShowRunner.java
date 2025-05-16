@@ -29,9 +29,7 @@ public class MultiQuizShowRunner {
 	private final TaskScheduler quizTaskScheduler;
 	private final Map<String, ScheduledFuture<?>> activeTasks = new ConcurrentHashMap<>();
 	private final Map<String, Integer> activeQuestionIndex = new ConcurrentHashMap<>();
-	private static final Duration QUIZ_INTERVAL = Duration.ofSeconds(30);
-	private static final Duration START_INTERVAL = Duration.ofSeconds(3);
-	private static final Duration FINISH_INTERVAL = Duration.ofSeconds(5);
+	private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(25);
 
 	private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -42,35 +40,33 @@ public class MultiQuizShowRunner {
 		}
 		log.info("퀴즈쇼 시작: {}", showId);
 
-		quizTaskScheduler.schedule(() -> {
-			log.info("퀴즈쇼 {} 시작!", showId);
-			int quizCount = redisRepository.getQuizCount(showId);
-			activeQuestionIndex.put(showId, 0);
+		int quizCount = redisRepository.getQuizCount(showId);
+		activeQuestionIndex.put(showId, 0);
 
-			ScheduledFuture<?> future = quizTaskScheduler.scheduleAtFixedRate(() -> {
-				int index = activeQuestionIndex.get(showId);
-				if (index >= quizCount) {
-					stopQuizShow(showId);
-					return;
+		ScheduledFuture<?> future = quizTaskScheduler.scheduleAtFixedRate(() -> {
+			int index = activeQuestionIndex.get(showId);
+			if (index >= quizCount) {
+				stopQuizShow(showId);
+				applicationEventPublisher.publishEvent(new QuizShowResultEvent(showId));
+				return;
+			}
+
+			try {
+				Map<String, Object> quiz = redisRepository.getQuizByIndex(showId, index);
+				log.info("{} 퀴즈쇼 {}번째 퀴즈 전송: {}", showId, index, quiz);
+				if (quiz == null) {
+					log.error("퀴즈쇼 문제 오류 = {}번째 문제부터", index);
+					throw new GeneralException(QUIZ_INVALID_STATE);
 				}
+				sendQuiz(showId, index, quiz);
+				activeQuestionIndex.put(showId, index + 1);
+			} catch (Exception e) {
+				log.error("퀴즈쇼 {} 에서 오류 발생: {}", showId, e.getMessage());
+				stopQuizShow(showId);
+			}
+		}, DEFAULT_INTERVAL);
 
-				try {
-					Map<String, Object> quiz = redisRepository.getQuizByIndex(showId, index);
-					log.info("{} 퀴즈쇼 {}번째 퀴즈 전송: {}", showId, index, quiz);
-					if (quiz == null) {
-						log.error("퀴즈쇼 문제 오류 = {}번째 문제부터", index);
-						throw new GeneralException(QUIZ_INVALID_STATE);
-					}
-					sendQuiz(showId, index, quiz);
-					activeQuestionIndex.put(showId, index + 1);
-				} catch (Exception e) {
-					log.error("퀴즈쇼 {} 에서 오류 발생: {}", showId, e.getMessage());
-					stopQuizShow(showId);
-				}
-			}, QUIZ_INTERVAL);
-
-			activeTasks.put(showId, future);
-		}, java.util.Date.from(java.time.Instant.now().plus(START_INTERVAL)));
+		activeTasks.put(showId, future);
 	}
 
 	private void sendQuiz(String showId, int index, Map<String, Object> quiz) {
@@ -97,10 +93,6 @@ public class MultiQuizShowRunner {
 		if (future != null) {
 			future.cancel(false);
 		}
-		quizTaskScheduler.schedule(
-			() -> applicationEventPublisher.publishEvent(new QuizShowResultEvent(showId)),
-			java.util.Date.from(java.time.Instant.now().plus(FINISH_INTERVAL))
-		);
 		activeQuestionIndex.remove(showId);
 		log.info("퀴즈쇼 {} 종료", showId);
 	}
