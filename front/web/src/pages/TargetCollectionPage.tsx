@@ -127,29 +127,31 @@ function TargetCollectionPage() {
             <span className="text-16 font-pre-semibold">Memozy</span>
             <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setIsQuizShowModalOpen(true)}
-              className="text-16 font-pre-medium text-white bg-normal rounded-xl px-4 py-1"
-              disabled={loading}
-            >
-              퀴즈쇼 생성
-            </button>
-            {collectionId !== "0" && (
+          {memozies.length > 0 && (
+            <div className="flex gap-2">
               <button
-                onClick={() => {
-                  setIsEditMode(!isEditMode);
-                  if (!isEditMode) {
-                    setSelectedMemozyIds([]);
-                  }
-                }}
-                className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
+                onClick={() => setIsQuizShowModalOpen(true)}
+                className="text-16 font-pre-medium text-white bg-normal rounded-xl px-4 py-1"
                 disabled={loading}
               >
-                {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+                퀴즈쇼 생성
               </button>
-            )}
-          </div>
+              {collectionId !== "0" && (
+                <button
+                  onClick={() => {
+                    setIsEditMode(!isEditMode);
+                    if (!isEditMode) {
+                      setSelectedMemozyIds([]);
+                    }
+                  }}
+                  className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
+                  disabled={loading}
+                >
+                  {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
         {isEditMode && (
           <div className="flex gap-4 mb-4">
