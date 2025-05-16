@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 
-const useWebSocket = () => {
+const useWebSocket = (showId: string, userId: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const clientRef = useRef<Client | null>(null);
@@ -18,8 +18,11 @@ const useWebSocket = () => {
       connectHeaders: accessToken
         ? {
             Authorization: `Bearer ${accessToken}`,
+            showId: showId,
           }
-        : {},
+        : userId
+          ? { Authorization: `Bearer ${userId}`, showId: showId }
+          : { showId: showId },
 
       onConnect: () => {
         console.log("웹소켓 연결");
@@ -34,9 +37,9 @@ const useWebSocket = () => {
       onStompError: (frame) => {
         console.error("에러 발생:", frame);
       },
-      // debug: (str) => {
-      //   console.log(str);
-      // },
+      debug: (str) => {
+        console.log(str);
+      },
     });
 
     client.activate();
