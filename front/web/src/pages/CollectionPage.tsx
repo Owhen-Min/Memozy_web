@@ -11,8 +11,7 @@ function CollectionPage() {
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
 
   // store에서 데이터와 함수 가져오기
-  const { collections, loading, error, fetchCollections, fetchAllCollection, allCollection } =
-    useCollectionStore();
+  const { collections, fetchCollections, fetchAllCollection, allCollection } = useCollectionStore();
 
   // 컴포넌트 마운트 시 컬렉션 데이터 가져오기
   useEffect(() => {
@@ -30,8 +29,8 @@ function CollectionPage() {
 
   // 바깥 영역 클릭 시 모달 닫기 처리
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
-    if (e.currentTarget === e.target) {
+    // mousedown 이벤트이고, 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
+    if (e.type === "mousedown" && e.currentTarget === e.target) {
       handleCloseModal();
     }
   };
@@ -52,8 +51,8 @@ function CollectionPage() {
   };
 
   // 로딩 중이거나 에러가 있을 때 처리
-  if (loading) return <div className="content">로딩 중...</div>;
-  if (error) return <div className="content">에러: {error}</div>;
+  // if (loading) return <div className="content">로딩 중...</div>;
+  // if (error) return <div className="content">에러: {error}</div>;
 
   return (
     <div className="content">
@@ -104,7 +103,7 @@ function CollectionPage() {
       {isAddCollectionModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <AddCollection isOpen={isAddCollectionModalOpen} onClose={handleCloseModal} />
         </div>

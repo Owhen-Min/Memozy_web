@@ -106,7 +106,7 @@ function TargetCollectionPage() {
   // 바깥 영역 클릭 시 모달 닫기 처리
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
-    if (e.currentTarget === e.target) {
+    if (e.type === "mousedown" && e.currentTarget === e.target) {
       setIsQuizShowModalOpen(false);
       setIsDeleteModalOpen(false);
       setIsCopyModalOpen(false);
@@ -127,29 +127,31 @@ function TargetCollectionPage() {
             <span className="text-16 font-pre-semibold">Memozy</span>
             <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setIsQuizShowModalOpen(true)}
-              className="text-16 font-pre-medium text-white bg-normal rounded-xl px-4 py-1"
-              disabled={loading}
-            >
-              퀴즈쇼 생성
-            </button>
-            {collectionId !== "0" && (
+          {memozies.length > 0 && (
+            <div className="flex gap-2">
               <button
-                onClick={() => {
-                  setIsEditMode(!isEditMode);
-                  if (!isEditMode) {
-                    setSelectedMemozyIds([]);
-                  }
-                }}
-                className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
+                onClick={() => setIsQuizShowModalOpen(true)}
+                className="text-16 font-pre-medium text-white bg-normal rounded-xl px-4 py-1"
                 disabled={loading}
               >
-                {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+                퀴즈쇼 생성
               </button>
-            )}
-          </div>
+              {collectionId !== "0" && (
+                <button
+                  onClick={() => {
+                    setIsEditMode(!isEditMode);
+                    if (!isEditMode) {
+                      setSelectedMemozyIds([]);
+                    }
+                  }}
+                  className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
+                  disabled={loading}
+                >
+                  {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
         {isEditMode && (
           <div className="flex gap-4 mb-4">
@@ -196,7 +198,7 @@ function TargetCollectionPage() {
       {isQuizShowModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <CreateQuizShowModal
             onClose={() => setIsQuizShowModalOpen(false)}
@@ -209,7 +211,7 @@ function TargetCollectionPage() {
       {isDeleteModalOpen && selectedMemozyIds.length > 0 && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <DeleteMemozyModal
             quizId={null}
@@ -222,7 +224,7 @@ function TargetCollectionPage() {
       {isCopyModalOpen && selectedMemozyIds.length > 0 && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <CopyMemozyModal
             memozyIds={selectedMemozyIds}
