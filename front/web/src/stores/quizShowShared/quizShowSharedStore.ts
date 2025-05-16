@@ -21,26 +21,6 @@ const initialState = {
   isResultReady: false,
 };
 
-// 저장할 상태의 타입 정의
-type PersistedState = Pick<
-  QuizShowSharedStore,
-  | "isShowStarted"
-  | "isShowEnded"
-  | "isHost"
-  | "quizCount"
-  | "collectionName"
-  | "participants"
-  | "nickname"
-  | "hostId"
-  | "userId"
-  | "currentQuizIndex"
-  | "quizSessionId"
-  | "quizzes"
-  | "myResult"
-  | "result"
-  | "isResultReady"
->;
-
 export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
   persist(
     (set) => ({

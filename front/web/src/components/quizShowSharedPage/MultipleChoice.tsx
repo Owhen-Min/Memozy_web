@@ -36,18 +36,6 @@ const MultipleChoice = ({
     }
   };
 
-  // 사용자가 선택한 답변이 정답인지 확인
-  const isCorrectAnswer = (index: number): boolean => {
-    return choice ? choice[index] === answer : false;
-  };
-
-  // 정답 인덱스 찾기
-  const getCorrectAnswerIndex = (): number | null => {
-    if (!choice) return null;
-    const index = choice.findIndex((item) => item === answer);
-    return index !== -1 ? index : null;
-  };
-
   return (
     <div>
       <div className="w-full h-[180px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
