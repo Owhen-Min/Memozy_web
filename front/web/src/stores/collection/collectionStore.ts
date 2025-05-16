@@ -10,6 +10,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   loading: false,
   error: null,
   collectionName: null,
+  duplicateQuizCount: 0,
   // 페이지네이션 초기 상태
   currentPage: 0,
   pageSize: 10,
@@ -90,6 +91,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         memozies:
           currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
         collectionName: response.data.data.collectionName,
+        duplicateQuizCount: response.data.data.duplicateQuizCount,
         currentPage: currentPage,
         pageSize: currentPageSize,
         hasMore: !response.data.data.last,
@@ -185,6 +187,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         memozies:
           currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
         collectionName: response.data.data.collectionName,
+        duplicateQuizCount: response.data.data.duplicateQuizCount,
         currentPage: currentPage,
         pageSize: currentPageSize,
         hasMore: !response.data.data.last,
