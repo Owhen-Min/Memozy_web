@@ -61,18 +61,20 @@ function CreateQuizShowModal({
       </p>
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <span className="text-16 font-pre-medium text-main200">친구들과 함께 풀기</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={isShared}
-              onChange={(e) => setIsShared(e.target.checked)}
-            />
-            <div className="w-11 h-6 bg-gray100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-normal"></div>
-          </label>
-        </div>
+        {collectionId && collectionId !== "0" && (
+          <div className="flex items-center justify-between">
+            <span className="text-16 font-pre-medium text-main200">친구들과 함께 풀기</span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={isShared}
+                onChange={(e) => setIsShared(e.target.checked)}
+              />
+              <div className="w-11 h-6 bg-gray100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-normal"></div>
+            </label>
+          </div>
+        )}
 
         <div className="flex items-center justify-between">
           <span className="text-16 font-pre-medium">퀴즈 수</span>
