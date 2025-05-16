@@ -9,9 +9,12 @@ import QuizShowEntryPersonalPage from "./pages/QuizShowEntryPersonalPage";
 import QuizShowPersonalPage from "./pages/QuizShowPersonalPage";
 import QuizShowSharedPage from "./pages/QuizShowSharedPage";
 import QuizShowResultPersonalPage from "./pages/QuizShowResultPersonalPage";
+import ErrorModal from "./components/ErrorModal"; // ErrorModal 컴포넌트 추가
+
 function App() {
   return (
     <BrowserRouter>
+      <ErrorModal /> {/* 전역 에러 모달 추가 */}
       <Routes>
         <Route
           element={
