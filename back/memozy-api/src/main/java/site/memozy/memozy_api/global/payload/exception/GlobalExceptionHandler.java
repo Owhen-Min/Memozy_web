@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ApiResponse<Object> handleGlobalException(Exception ex) {
 		logError(ex, INTERNAL_SERVER_ERROR.getHttpStatusCode(), INTERNAL_SERVER_ERROR.getErrorCode(), ex.getMessage());
-		return errorResponse(INTERNAL_SERVER_ERROR.getErrorCode(), INTERNAL_SERVER_ERROR.getErrorMsg());
+		return errorResponse(INTERNAL_SERVER_ERROR.getErrorCode(), "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
 	}
 
 	private void logError(Throwable t, Object status, String code, Object message) {
