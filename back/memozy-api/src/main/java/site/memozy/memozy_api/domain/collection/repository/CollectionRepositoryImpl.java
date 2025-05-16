@@ -145,7 +145,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			))
 			.from(quizSource)
 			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
-			.where(quizSource.collectionId.eq(collectionId))
+			.where(quizSource.collectionId.eq(collectionId),
+				quiz.collectionId.isNotNull())
 			.groupBy(quizSource.sourceId)
 			.orderBy(quizSource.createdAt.desc())
 			.offset(pageable.getOffset())
