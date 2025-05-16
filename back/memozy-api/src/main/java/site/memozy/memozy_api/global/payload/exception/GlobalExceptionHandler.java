@@ -63,8 +63,7 @@ public class GlobalExceptionHandler {
 			origin.getMethodName(),
 			origin.getFileName(),
 			origin.getLineNumber(),
-			status, code, message,
-			t      // 마지막에 Throwable 을 넘기면 스택트레이스 전체가 찍힙니다.
+			status, code, message
 		);
 	}
 
