@@ -146,9 +146,6 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       await collectionApi.deleteQuiz(quizId, sourceId);
-      if (sourceId.length > 0) {
-        await get().fetchQuizList(sourceId[0]); // 퀴즈 목록 새로고침
-      }
     } catch (error) {
       set({ error: "퀴즈 삭제에 실패했습니다.", loading: false });
       console.error("퀴즈 삭제 오류:", error);

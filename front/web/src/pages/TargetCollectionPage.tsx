@@ -159,7 +159,7 @@ function TargetCollectionPage() {
             </div>
           )}
         </div>
-        {isEditMode && (
+        {isEditMode && memozies.length > 0 && (
           <div className="flex gap-4 mb-4">
             <button
               className="border border-normal text-normal bg-bg rounded-xl px-4 py-1 font-pre-medium text-16 transition-colors hover:bg-normal hover:text-white"
