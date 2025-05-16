@@ -200,7 +200,7 @@ public class CollectionServiceImpl implements CollectionService {
 		for (QuizSource original : originalSources) {
 			// 2. source 복사
 			QuizSource copiedSource = QuizSource.builder()
-				.title(original.getTitle() + "(" + collection.getCollectionId() + ")")
+				.title(original.getTitle() + "(" + collection.getName() + ")")
 				.summary(original.getSummary())
 				.url(original.getUrl())
 				.userId(userId)
