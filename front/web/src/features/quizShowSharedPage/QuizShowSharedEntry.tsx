@@ -21,9 +21,9 @@ interface QuizShowSharedEntryProps {
   nickname: string;
   collectionName: string;
   quizCount: number;
+  isLoading: boolean;
   onStartQuizShow: () => void;
   onChangeNickname: (newNickname: string) => Promise<boolean | undefined>;
-  isLoading: boolean;
 }
 
 function QuizShowSharedEntry({
@@ -34,9 +34,9 @@ function QuizShowSharedEntry({
   nickname,
   collectionName,
   quizCount,
+  isLoading,
   onStartQuizShow,
   onChangeNickname,
-  isLoading,
 }: QuizShowSharedEntryProps) {
   const navigate = useNavigate();
   const [showParticipants, setShowParticipants] = useState(false);
@@ -87,33 +87,27 @@ function QuizShowSharedEntry({
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="w-full h-[70vh] flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-24 font-pre-bold text-main200 mb-4">퀴즈쇼 정보를 불러오는 중...</h2>
-          <p className="text-16 font-pre-medium text-gray-500">잠시만 기다려주세요</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center justify-center gap-2">
-          <img src={small_logo} alt="logo" className="w-10 h-10" />
-          Quiz : <span className="text-normalactive">{collectionName}</span>
-        </h1>
+        <div className="flex text-[28px] font-pre-semibold text-main200 flex items-center gap-1">
+          <img src={small_logo} alt="logo" className="h-full" />
+          <span
+            className="h-full break-all line-clamp-1 relative text-normalactive"
+            title={`${collectionName}`}
+          >
+            {collectionName}
+          </span>
+        </div>
         <button
-          className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
+          className="flex-shrink-0 border border-red text-red rounded-lg p-2 flex items-center gap-2 text-12 w-100"
           onClick={() => navigate(`/collection`)}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
+      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl">
         <div className="flex grid grid-cols-2 items-center">
           <div className="mb-8 w-52 self-start ml-1 md:ml-16 pt-12">
             <img src={Memozy_logo} alt="Memozy 로고" />
@@ -124,7 +118,9 @@ function QuizShowSharedEntry({
                 className="text-16 font-pre-bold pt-4 cursor-pointer"
                 onClick={() => setShowParticipants(!showParticipants)}
               >
-                현재 참여자 수 : {participants.length}명
+                {isLoading
+                  ? "퀴즈쇼 정보를 불러오는 중..."
+                  : `현재 참여자 수 : ${participants.length}명`}
               </span>
               <div
                 className={`absolute ${showParticipants ? "block" : "hidden"} md:hidden md:group-hover:block right-0 top-full bg-white shadow-lg rounded-lg p-4 z-50 min-w-[150px]`}
@@ -153,11 +149,17 @@ function QuizShowSharedEntry({
           </div>
 
           <div className="relative z-10 ml-4 md:ml-32">
-            {isHost ? (
+            {isLoading ? (
+              <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
+                <h2 className="text-20 mb-2 font-pre-medium">퀴즈쇼 정보를 불러오는 중...</h2>
+                <p className="text-14 font-pre-regular">잠시만 기다려주세요</p>
+              </div>
+            ) : isHost ? (
               <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
                 <h2 className="text-20 mb-2 font-pre-medium">단체 퀴즈쇼가 생성되었어요!</h2>
                 <p className="text-14 font-pre-regular">
-                  원하는 인원이 모두 모였다면 시작하기 버튼을 눌러주세요.
+                  원하는 인원이 모두 모였다면
+                  <br /> 시작하기 버튼을 눌러주세요.
                 </p>
               </div>
             ) : (

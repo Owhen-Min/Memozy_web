@@ -1,6 +1,6 @@
 import small_logo from "../../assets/images/small_logo.png";
 import { Quiz } from "../../types/quizShow";
-import { useState, useEffect, useCallback } from "react";
+import { useQuizShowSharedShow } from "../../hooks/sharedQuizShow";
 import MultipleChoice from "../../components/quizShowSharedPage/MultipleChoice";
 import OX from "../../components/quizShowSharedPage/OX";
 import Objective from "../../components/quizShowSharedPage/Objective";
@@ -34,180 +34,37 @@ function QuizShowSharedShow({
   handleShowEnded,
   submitAnswer,
 }: QuizShowSharedShowProps) {
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
-  const [showAnswer, setShowAnswer] = useState<boolean>(false);
-  const [userAnswer, setUserAnswer] = useState<
-    string | number | { index: number; value: string } | null
-  >(null);
-  // OX 퀴즈 선택 상태 추적
-  const [selectedOX, setSelectedOX] = useState<"O" | "X" | null>(null);
-  // 객관식 퀴즈 선택 상태 추적
-  const [selectedMultipleChoice, setSelectedMultipleChoice] = useState<number | null>(null);
-  // 주관식 퀴즈 입력값 추적
-  const [objectiveInput, setObjectiveInput] = useState<string>("");
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingCount, setLoadingCount] = useState(3);
-  const [timeLeft, setTimeLeft] = useState(30); // 20초 타이머
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isCommentaryShow, setIsCommentaryShow] = useState(false);
-  const [answerTime, setAnswerTime] = useState(0);
-
-  useEffect(() => {
-    if (quizList.length > 0) {
-      console.log("quizList", quizList);
-
-      // 카운트다운 시작
-      const countdownInterval = setInterval(() => {
-        setLoadingCount((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownInterval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      const timer = setTimeout(() => {
-        setCurrentQuiz(quizList[0]);
-        setIsLoading(false);
-        setIsTimerRunning(true);
-      }, 3000);
-
-      return () => {
-        clearTimeout(timer);
-        clearInterval(countdownInterval);
-      };
-    }
-  }, [quizList]);
-
-  // 다음 문제로 이동하는 함수
-  const handleNextQuiz = useCallback(() => {
-    const nextIndex = currentQuizIndex + 1;
-    console.log(quizCount, currentQuizIndex, nextIndex);
-    setShowAnswer(false);
-    setUserAnswer(null);
-    // 선택 상태 초기화
-    setSelectedOX(null);
-    setSelectedMultipleChoice(null);
-    setObjectiveInput("");
-
-    setCurrentQuizIndex(nextIndex);
-    setCurrentQuiz(quizList[nextIndex]);
-    setTimeLeft(30); // 타이머 리셋
-    setIsTimerRunning(true); // 타이머 다시 시작
-    setIsCommentaryShow(false); // 해설 숨기기
-    if (nextIndex >= quizCount) {
-      // 마지막 퀴즈 이후 종료 처리
-      handleShowEnded();
-      return;
-    }
-  }, [currentQuizIndex, quizCount, quizList, setCurrentQuizIndex, handleShowEnded]);
-
-  // 타이머 로직
-  useEffect(() => {
-    console.log("timeLeft", timeLeft);
-    console.log("isTimerRunning", isTimerRunning);
-    if (!isTimerRunning || timeLeft <= 0) return;
-
-    const timerInterval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timerInterval);
-          handleNextQuiz();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerInterval);
-  }, [isTimerRunning, timeLeft, handleNextQuiz]);
-
-  // 해설 표시 로직 - 10초 후 자동으로 해설 표시
-  useEffect(() => {
-    if (!isTimerRunning || isCommentaryShow) return;
-
-    const commentaryTimer = setTimeout(() => {
-      setIsCommentaryShow(true);
-      setAnswerTime(Math.max(answerTime, 10));
-    }, 20000); // 20초 후 해설 표시
-
-    return () => clearTimeout(commentaryTimer);
-  }, [isTimerRunning, isCommentaryShow]);
-
-  // OX 선택 핸들러
-  const handleOXSelect = (value: "O" | "X") => {
-    setSelectedOX(value);
-    setUserAnswer(value);
-  };
-
-  // 객관식 선택 핸들러
-  const handleMultipleChoiceSelect = (answer: { index: number; value: string }) => {
-    setSelectedMultipleChoice(answer.index - 1);
-    setUserAnswer(answer);
-  };
-
-  // 주관식 입력 핸들러
-  const handleObjectiveInput = (value: string) => {
-    setObjectiveInput(value);
-    setUserAnswer(value);
-  };
-
-  const handleShowAnswer = () => {
-    if (userAnswer === null) {
-      alert("답을 선택해주세요!");
-      return;
-    }
-
-    const currentQuizData = quizList[currentQuizIndex];
-    let isCorrect = false;
-    let answerValue = "";
-
-    if (typeof userAnswer === "object" && "value" in userAnswer) {
-      // 객관식 답변
-      answerValue = userAnswer.value;
-      // 정답이 보기 내용인 경우
-      isCorrect = currentQuizData.answer === answerValue;
-    } else {
-      // OX, 주관식 답변
-      answerValue = userAnswer.toString();
-      isCorrect = currentQuizData.answer === answerValue;
-    }
-
-    // 정답 제출
-    submitAnswer({
-      type: "SUBMIT",
-      index: currentQuizIndex,
-      choice: answerValue,
-      isCorrect: isCorrect,
-    });
-
-    setShowAnswer(true); // 정답/오답 표시를 위해 showAnswer 활성화
-    setIsCommentaryShow(true); // 선택 완료 시 해설 표시
-    setAnswerTime(timeLeft);
-  };
+  const {
+    currentQuiz,
+    showAnswer,
+    isLoading,
+    answerTime,
+    loadingCount,
+    displayTime,
+    isCommentaryShow,
+    selectedOX,
+    selectedMultipleChoice,
+    objectiveInput,
+    handleOXSelect,
+    handleMultipleChoiceSelect,
+    handleObjectiveInput,
+    handleShowAnswer,
+    checkAnswerCorrect,
+  } = useQuizShowSharedShow({
+    quizCount,
+    quizList,
+    collectionName,
+    currentQuizIndex,
+    setCurrentQuizIndex,
+    handleShowEnded,
+    submitAnswer,
+  });
 
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
 
     // 사용자 답변이 정답인지 체크
-    let isCorrect: boolean | undefined = undefined;
-
-    if (showAnswer && userAnswer !== null) {
-      const currentQuizData = quizList[currentQuizIndex];
-      let answerValue = "";
-
-      if (typeof userAnswer === "object" && "value" in userAnswer) {
-        // 객관식 답변
-        answerValue = userAnswer.value;
-      } else {
-        // OX, 주관식 답변
-        answerValue = userAnswer.toString();
-      }
-
-      isCorrect = currentQuizData.answer === answerValue;
-    }
+    const isCorrect = checkAnswerCorrect();
 
     switch (currentQuiz.type) {
       case "MULTIPLE_CHOICE":
@@ -249,17 +106,6 @@ function QuizShowSharedShow({
     }
   };
 
-  // 표시할 타이머 시간 계산
-  const [displayTime, setDisplayTime] = useState(timeLeft);
-
-  useEffect(() => {
-    if (isCommentaryShow) {
-      setDisplayTime(timeLeft);
-    } else {
-      setDisplayTime(Math.max(0, timeLeft - 10));
-    }
-  }, [isCommentaryShow, timeLeft]);
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -292,8 +138,6 @@ function QuizShowSharedShow({
           </div>
         ) : (
           <>
-            {/* 타이머 표시 영역 */}
-
             {/* 타이머 진행 바 */}
             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
               <div
@@ -301,9 +145,7 @@ function QuizShowSharedShow({
                   isCommentaryShow ? "bg-green-600" : "bg-blue-600"
                 }`}
                 style={{
-                  width: `${
-                    isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 20) * 100
-                  }%`,
+                  width: `${isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 20) * 100}%`,
                 }}
               ></div>
             </div>
