@@ -34,7 +34,7 @@ function MemozyCard({
   // 바깥 영역 클릭 시 모달 닫기 처리
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
-    if (e.currentTarget === e.target) {
+    if (e.type === "mousedown" && e.currentTarget === e.target) {
       setIsModalOpen(false);
     }
   };
@@ -110,7 +110,7 @@ function MemozyCard({
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <NoteModal
             sourceTitle={sourceTitle}

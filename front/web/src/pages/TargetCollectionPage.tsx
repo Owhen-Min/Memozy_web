@@ -106,7 +106,7 @@ function TargetCollectionPage() {
   // 바깥 영역 클릭 시 모달 닫기 처리
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
-    if (e.currentTarget === e.target) {
+    if (e.type === "mousedown" && e.currentTarget === e.target) {
       setIsQuizShowModalOpen(false);
       setIsDeleteModalOpen(false);
       setIsCopyModalOpen(false);
@@ -198,7 +198,7 @@ function TargetCollectionPage() {
       {isQuizShowModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <CreateQuizShowModal
             onClose={() => setIsQuizShowModalOpen(false)}
@@ -211,7 +211,7 @@ function TargetCollectionPage() {
       {isDeleteModalOpen && selectedMemozyIds.length > 0 && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <DeleteMemozyModal
             quizId={null}
@@ -224,7 +224,7 @@ function TargetCollectionPage() {
       {isCopyModalOpen && selectedMemozyIds.length > 0 && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleOutsideClick}
+          onMouseDown={handleOutsideClick}
         >
           <CopyMemozyModal
             memozyIds={selectedMemozyIds}

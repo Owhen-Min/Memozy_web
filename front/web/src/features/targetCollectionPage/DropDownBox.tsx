@@ -19,6 +19,12 @@ function DropDownBox({ sourceId, collectionId }: DropDownBoxProps) {
     fetchQuizList(sourceId);
   }, [sourceId, fetchQuizList]);
 
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.type === "mousedown" && e.currentTarget === e.target) {
+      setIsDeleteModalOpen(false);
+    }
+  };
+
   return (
     <div className="mt-4 bg-white rounded-b-xl shadow-lg overflow-hidden border border-light/50">
       <div className="max-h-[300px] overflow-y-auto">
@@ -62,14 +68,19 @@ function DropDownBox({ sourceId, collectionId }: DropDownBoxProps) {
         )}
       </div>
       {isDeleteModalOpen && (
-        <DeleteQuizModal
-          quizId={[deleteQuizId!]}
-          sourceId={[sourceId]}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-            setDeleteQuizId(null);
-          }}
-        />
+        <div
+          className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
+          onMouseDown={handleOutsideClick}
+        >
+          <DeleteQuizModal
+            quizId={[deleteQuizId!]}
+            sourceId={[sourceId]}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setDeleteQuizId(null);
+            }}
+          />
+        </div>
       )}
     </div>
   );
