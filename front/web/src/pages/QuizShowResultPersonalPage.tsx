@@ -19,6 +19,20 @@ function QuizShowResultPersonalPage() {
     }
   }, [quizSessionId, quizResult, getQuizResult]);
 
+  // 브라우저 뒤로가기 이벤트 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      alert("만료된 세션입니다.");
+      navigate(`/collection/${collectionId}`);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate, collectionId]);
+
   const renderContent = () => {
     if (isLoading) {
       return (
