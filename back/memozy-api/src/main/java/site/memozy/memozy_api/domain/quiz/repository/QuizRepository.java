@@ -22,6 +22,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositor
 
 	void deleteByQuizIdIn(List<Long> quizIds);
 
+	@Query("SELECT q FROM Quiz q WHERE q.sourceId IN :sourceIds AND q.collectionId IS NOT NULL")
+	List<Quiz> findBySourceIdInAndCollectionIdIsNotNull(@Param("sourceIds") List<Integer> sourceIds);
+
 	List<Quiz> findBySourceIdIn(List<Integer> sourceIds);
 
 	List<Quiz> findBySourceId(Integer sourceId);

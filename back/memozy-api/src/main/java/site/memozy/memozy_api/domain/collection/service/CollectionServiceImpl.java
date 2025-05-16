@@ -112,12 +112,10 @@ public class CollectionServiceImpl implements CollectionService {
 	public CollectionSummaryResponse findCollectionByUserId(Integer userId) {
 		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
 
-		long uniqueCount = quizRepository.findBySourceIdIn(sourceIds).stream()
-			.map(this::generateQuizKey)
-			.distinct()
-			.count();
+		List<Quiz> quizList = quizRepository.findBySourceIdInAndCollectionIdIsNotNull(sourceIds);
 
-		return CollectionSummaryResponse.of((long)sourceIds.size(), uniqueCount);
+		return CollectionSummaryResponse.of((long)sourceIds.size(), (long)quizList.size());
+
 	}
 
 	@Override
@@ -260,6 +258,13 @@ public class CollectionServiceImpl implements CollectionService {
 	public CollectionMemozyListResponse getAllMemozies(Integer userId, int page, int pageSize) {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+		List<Integer> sourceIds = quizSourceRepository.findSourceIdsByUserId(userId);
+		List<Quiz> quizList = quizRepository.findBySourceIdInAndCollectionIdIsNotNull(sourceIds);
+		int uniqueCount = (int)quizList.stream()
+			.map(this::generateQuizKey)
+			.distinct()
+			.count();
+
 		List<MemozyContentResponse> content = collectionRepository.findAllWithPaging(userId, pageable);
 
 		boolean isLast = content.size() < pageSize;
@@ -267,6 +272,7 @@ public class CollectionServiceImpl implements CollectionService {
 		return CollectionMemozyListResponse.builder()
 			.collectionName("모두 보기")
 			.content(content)
+			.duplicateQuizCount(quizList.size() - uniqueCount)
 			.last(isLast)
 			.build();
 	}
