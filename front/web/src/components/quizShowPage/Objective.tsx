@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 interface ObjectiveProps {
   content: string;
   answer: string;
+  isCorrect: boolean;
   commentary: string;
   quizSessionId: string;
   showAnswer: boolean;
@@ -15,6 +16,7 @@ interface ObjectiveProps {
 const Objective = ({
   content,
   answer,
+  isCorrect,
   commentary,
   showAnswer,
   onNext,
@@ -58,6 +60,7 @@ const Objective = ({
         <Answer
           content={content}
           answer={answer}
+          isCorrect={isCorrect}
           commentary={commentary}
           onNext={onNext}
           isLastQuiz={isLastQuiz}

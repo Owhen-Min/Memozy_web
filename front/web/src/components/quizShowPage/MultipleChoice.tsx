@@ -5,6 +5,7 @@ interface MultipleChoiceProps {
   content: string;
   choice: string[] | null;
   answer: string;
+  isCorrect: boolean;
   commentary: string;
   quizSessionId: string;
   showAnswer: boolean;
@@ -17,6 +18,7 @@ const MultipleChoice = ({
   content,
   choice,
   answer,
+  isCorrect,
   commentary,
   showAnswer,
   onNext,
@@ -60,6 +62,7 @@ const MultipleChoice = ({
         <Answer
           content={content}
           answer={answer}
+          isCorrect={isCorrect}
           commentary={commentary}
           onNext={onNext}
           isLastQuiz={isLastQuiz}

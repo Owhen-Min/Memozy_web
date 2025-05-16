@@ -20,14 +20,33 @@ function QuizShowPersonalPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const collectionId = useParams().collectionId;
-  const { collectionName, quizList, quizSessionId } = location.state as QuizShowPersonalPageProps;
+  const { submitAnswer } = useQuizShowPersonalStore();
+
+  // 로컬 스토리지에서 데이터 가져오기 또는 새로 저장
+  const [quizData] = useState<QuizShowPersonalPageProps>(() => {
+    const savedData = localStorage.getItem(`quiz_data_${collectionId}`);
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+    // 새로운 데이터가 있으면 저장
+    if (location.state) {
+      const newData = location.state as QuizShowPersonalPageProps;
+      localStorage.setItem(`quiz_data_${collectionId}`, JSON.stringify(newData));
+      return newData;
+    }
+    // 데이터가 없으면 컬렉션 페이지로 리다이렉트
+    navigate(`/collection/${collectionId}`);
+    return { collectionName: "", quizList: [], quizSessionId: "" };
+  });
+
+  const { collectionName, quizList, quizSessionId } = quizData;
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+  const [isCorrect, setIsCorrect] = useState<boolean>(false);
   const [userAnswer, setUserAnswer] = useState<
     string | number | { index: number; value: string } | null
   >(null);
-  const { submitAnswer } = useQuizShowPersonalStore();
 
   useEffect(() => {
     if (quizList.length > 0) {
@@ -37,29 +56,61 @@ function QuizShowPersonalPage() {
 
   // 새로고침 감지 및 플래그 저장
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.setItem("quiz_refresh", "true");
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // 브라우저 기본 확인 대화상자 표시
+      e.preventDefault();
+      e.returnValue = "진행 중인 퀴즈 쇼가 종료됩니다. 정말로 나가시겠습니까?";
+      return e.returnValue;
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
-  // 마운트 시 플래그 확인 및 상태 초기화
-  useEffect(() => {
-    if (localStorage.getItem("quiz_refresh") === "true") {
-      setCurrentQuiz(null);
-      setCurrentQuizIndex(0);
-      alert("세션이 만료되었습니다. 컬렉션 리스트로 이동합니다.");
-      navigate(`/collection/${collectionId}`);
-      localStorage.removeItem("quiz_refresh");
-    }
-  }, [navigate, collectionId]);
-
+  // 퀴즈 쇼 종료 시 로컬 스토리지 데이터 삭제
   const handleExitQuiz = () => {
     if (window.confirm("퀴즈 진행 중입니다. 정말로 종료하시겠습니까?")) {
+      localStorage.removeItem(`quiz_data_${collectionId}`);
       navigate(`/collection/${collectionId}`);
     }
   };
+
+  // 퀴즈 완료 시 로컬 스토리지 데이터 삭제
+  const handleNextQuiz = () => {
+    setShowAnswer(false);
+    setUserAnswer(null);
+    setIsCorrect(false);
+    setCurrentQuizIndex(currentQuizIndex + 1);
+    setCurrentQuiz(quizList[currentQuizIndex + 1]);
+    if (currentQuizIndex === quizList.length - 1) {
+      localStorage.removeItem(`quiz_data_${collectionId}`);
+      navigate(`/quiz-result/personal/${collectionId}/${quizSessionId}`, {
+        state: {
+          collectionName,
+        },
+      });
+    }
+  };
+
+  // 브라우저 뒤로가기 이벤트 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!window.confirm("진행 중인 퀴즈 쇼가 종료됩니다. 정말로 나가시겠습니까?")) {
+        // 취소 시 현재 상태를 다시 푸시
+        window.history.pushState(null, "", window.location.href);
+      } else {
+        localStorage.removeItem(`quiz_data_${collectionId}`);
+        navigate(`/collection/${collectionId}`);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    // 초기 상태 푸시
+    window.history.pushState(null, "", window.location.href);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate, collectionId]);
 
   const handleShowAnswer = async () => {
     if (userAnswer === null) {
@@ -68,22 +119,20 @@ function QuizShowPersonalPage() {
     }
 
     const currentQuizData = quizList[currentQuizIndex];
-    let isCorrect = false;
     let answerValue = "";
+    let correct = false;
 
     if (typeof userAnswer === "object" && "value" in userAnswer) {
-      // 객관식 답변
       answerValue = userAnswer.value;
-      // 정답이 보기 내용인 경우
-      isCorrect = currentQuizData.answer === answerValue;
+      correct = currentQuizData.answer === answerValue;
     } else {
-      // OX, 주관식 답변
       answerValue = userAnswer.toString();
-      isCorrect = currentQuizData.answer === answerValue;
+      correct = currentQuizData.answer === answerValue;
     }
 
     try {
-      await submitAnswer(currentQuizData.quizId, answerValue, isCorrect);
+      await submitAnswer(currentQuizData.quizId, answerValue, correct);
+      setIsCorrect(correct);
       setShowAnswer(true);
     } catch (error) {
       console.error("답안 제출 중 오류 발생:", error);
@@ -94,22 +143,6 @@ function QuizShowPersonalPage() {
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
 
-    const handleNextQuiz = () => {
-      setShowAnswer(false);
-      setUserAnswer(null);
-      setCurrentQuizIndex(currentQuizIndex + 1);
-      setCurrentQuiz(quizList[currentQuizIndex + 1]);
-      if (currentQuizIndex === quizList.length - 1) {
-        navigate(`/quiz-result/personal/${collectionId}/${quizSessionId}`, {
-          state: {
-            collectionName,
-          },
-        });
-      }
-    };
-
-    const isLastQuiz = currentQuizIndex === quizList.length - 1;
-
     switch (currentQuiz.type) {
       case "MULTIPLE_CHOICE":
         return (
@@ -117,11 +150,12 @@ function QuizShowPersonalPage() {
             content={currentQuiz.content}
             choice={currentQuiz.choice}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
             onNext={handleNextQuiz}
-            isLastQuiz={isLastQuiz}
+            isLastQuiz={currentQuizIndex === quizList.length - 1}
             onAnswerSelect={(answer) => setUserAnswer(answer)}
           />
         );
@@ -130,11 +164,12 @@ function QuizShowPersonalPage() {
           <OX
             content={currentQuiz.content}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
             onNext={handleNextQuiz}
-            isLastQuiz={isLastQuiz}
+            isLastQuiz={currentQuizIndex === quizList.length - 1}
             onAnswerSelect={(answer) => setUserAnswer(answer)}
           />
         );
@@ -143,11 +178,12 @@ function QuizShowPersonalPage() {
           <Objective
             content={currentQuiz.content}
             answer={currentQuiz.answer}
+            isCorrect={isCorrect}
             commentary={currentQuiz.commentary}
             quizSessionId={quizSessionId}
             showAnswer={showAnswer}
             onNext={handleNextQuiz}
-            isLastQuiz={isLastQuiz}
+            isLastQuiz={currentQuizIndex === quizList.length - 1}
             onAnswerSelect={(answer) => setUserAnswer(answer)}
           />
         );
