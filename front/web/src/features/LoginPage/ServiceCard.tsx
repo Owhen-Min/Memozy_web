@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router";
-import collectionIcon from "../../assets/images/collectionIcon.svg";
-import quizIcon from "../../assets/images/quizIcon.svg";
-import reportIcon from "../../assets/images/reportIcon.svg";
-import wrongIcon from "../../assets/images/wrongIcon.svg";
-import noteIcon from "../../assets/images/noteIcon.svg";
-import extensionIcon from "../../assets/images/extensionIcon.svg";
+import collectionIcon from "../../assets/images/collectionIcon.png";
+import quizIcon from "../../assets/images/quizIcon.png";
+import reportIcon from "../../assets/images/reportIcon.png";
+import wrongIcon from "../../assets/images/wrongIcon.png";
+import noteIcon from "../../assets/images/noteIcon.png";
+import extensionIcon from "../../assets/images/extensionIcon.png";
 
 const ServiceCards = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full max-w-[700px] mx-auto px-4 ml-44 relative">
+    <div className="w-full max-w-[700px] mx-auto px-4 ml-40 relative">
       {/* 상단 행 카드 */}
       <div className="flex flex-wrap justify-center gap-6 mb-6">
         <div
@@ -18,7 +18,7 @@ const ServiceCards = () => {
           onClick={() => navigate("/collection")}
         >
           <div className="mb-2 flex items-center justify-center">
-            <img src={collectionIcon} alt="컬렉션 아이콘" className="w-auto" />
+            <img src={collectionIcon} alt="컬렉션 아이콘" className="w-14" />
           </div>
           <h3 className="text-16 font-pre-semibold text-[#307DB4] mb-1">컬렉션리스트</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">
@@ -47,8 +47,8 @@ const ServiceCards = () => {
           className="bg-[#EDE7F6] pt-5 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate("/my")}
         >
-          <div className="mb-2 flex items-center justify-center">
-            <img src={reportIcon} alt="분석레포트 아이콘" className="w-auto" />
+          <div className="mb-1 flex items-center justify-center">
+            <img src={reportIcon} alt="분석레포트 아이콘" className="w-12" />
           </div>
           <h3 className="text-16 font-pre-semibold text-[#6A1B9A] mb-1">분석레포트</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">
@@ -65,7 +65,7 @@ const ServiceCards = () => {
           onClick={() => navigate("/my")}
         >
           <div className="mb-2 flex items-center justify-center">
-            <img src={wrongIcon} alt="오답노트 아이콘" className="w-auto" />
+            <img src={wrongIcon} alt="오답노트 아이콘" className="w-10" />
           </div>
           <h3 className="text-16 font-pre-semibold text-[#FF5722] mb-1">오답노트</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">
@@ -80,7 +80,7 @@ const ServiceCards = () => {
           onClick={() => navigate("/collection")}
         >
           <div className="mb-2 flex items-center justify-center">
-            <img src={noteIcon} alt="요약노트 아이콘" className="w-auto" />
+            <img src={noteIcon} alt="요약노트 아이콘" className="w-10" />
           </div>
           <h3 className="text-16 font-pre-semibold text-[#4CAF50] mb-1">요약노트</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">
@@ -100,7 +100,7 @@ const ServiceCards = () => {
           }
         >
           <div className="mb-2 flex items-center justify-center">
-            <img src={extensionIcon} alt="익스텐션 아이콘" className="w-auto" />
+            <img src={extensionIcon} alt="익스텐션 아이콘" className="w-12" />
           </div>
           <h3 className="text-16 font-pre-semibold text-[#2196F3] mb-1">익스텐션</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">

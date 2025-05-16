@@ -162,8 +162,8 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* 서비스 카드 섹션 - 데스크톱에서만 표시 */}
-        <div className="w-full relative mt-[400px] md:mt-0 hidden md:block">
+        {/* 서비스 카드 섹션 - 모바일에서는 숨김 */}
+        <div className="w-full relative mt-[0px] hidden xl:block">
           <ServiceCards />
         </div>
 
