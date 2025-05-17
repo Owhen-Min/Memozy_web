@@ -222,7 +222,7 @@ function QuizShowSharedEntry({
                 </>
               )}
               <p className="w-full line-clamp-1 text-center">
-                컬렉션 : <span className="text-16 font-pre-bold">{collectionName}</span>
+                컬렉션 : <span className="text-16 font-pre-bold break-all">{collectionName}</span>
               </p>
               <p>
                 퀴즈수 : <span className="text-16 font-pre-bold">{quizCount} 문항</span>

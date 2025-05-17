@@ -46,10 +46,15 @@ const QuizShowSharedPage = () => {
     }
   }, [isConnected, participants]);
 
-  // 컴포넌트 언마운트 시 스토어 초기화
+  // 페이지를 완전히 나갈 때만 스토어 초기화
   useEffect(() => {
-    return () => {
+    const handleBeforeUnload = () => {
       resetStore();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [resetStore]);
 
