@@ -1,4 +1,4 @@
-import { QuizShared, Quiz } from "../../types/quizShow";
+import { Quiz } from "../../types/quizShow";
 
 export interface User {
   userId: string;
