@@ -13,3 +13,43 @@
 .react-calendar-heatmap .color-scale-4 {
   fill: #002086;
 }
+
+/* 월 표시 행 고정 */
+.react-calendar-heatmap .react-calendar-heatmap-month-labels {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 툴팁 스타일 */
+.react-calendar-heatmap .react-calendar-heatmap-rect {
+  cursor: pointer;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-rect:hover {
+  stroke: #555;
+  stroke-width: 1px;
+}
+
+/* 스크롤 영역 */
+.overflow-x-auto {
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* 스크롤바 숨기기 */
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-x-auto {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
