@@ -108,7 +108,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
               </div>
               <div className="flex flex-col md:flex-row md:justify-between mt-1 md:mt-0">
                 <p className="text-12 md:text-14 text-gray-600">
-                  틀린 퀴즈 개수: {history.failCount}
+                  전체 퀴즈 개수: 틀린 퀴즈 개수:{history.failCount}
                 </p>
                 <p className="text-12 md:text-14 text-gray-500 mt-1 md:mt-0">{history.date}</p>
               </div>

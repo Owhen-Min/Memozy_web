@@ -26,7 +26,6 @@ function LoginPage() {
     }
   }, [location.search, handleAuthCallback]);
 
-  // 애니메이션 효과를 위한 useEffect 추가
   useEffect(() => {
     // 타이틀 애니메이션 - 첫번째로 표시
     setTimeout(() => {
