@@ -6,6 +6,7 @@ import Answer from "./Answer";
 interface OXProps {
   content: string;
   answer: string;
+  isCorrect: boolean;
   commentary: string;
   quizSessionId: string;
   showAnswer: boolean;
@@ -17,6 +18,7 @@ interface OXProps {
 const OX = ({
   content,
   answer,
+  isCorrect,
   commentary,
   showAnswer,
   onNext,
@@ -61,6 +63,7 @@ const OX = ({
         <Answer
           content={content}
           answer={answer}
+          isCorrect={isCorrect}
           commentary={commentary}
           onNext={onNext}
           isLastQuiz={isLastQuiz}

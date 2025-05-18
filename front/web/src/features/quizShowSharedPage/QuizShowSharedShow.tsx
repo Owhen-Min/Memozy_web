@@ -1,9 +1,9 @@
 import small_logo from "../../assets/images/small_logo.png";
 import { Quiz } from "../../types/quizShow";
-import { useState, useEffect } from "react";
-import MultipleChoice from "../../components/quizShowPage/MultipleChoice";
-import OX from "../../components/quizShowPage/OX";
-import Objective from "../../components/quizShowPage/Objective";
+import { useQuizShowSharedShow } from "../../hooks/sharedQuizShow";
+import MultipleChoice from "../../components/quizShowSharedPage/MultipleChoice";
+import OX from "../../components/quizShowSharedPage/OX";
+import Objective from "../../components/quizShowSharedPage/Objective";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
 
@@ -28,103 +28,43 @@ interface QuizShowSharedShowProps {
 function QuizShowSharedShow({
   quizCount,
   quizList,
-  quizSessionId,
   collectionName,
   currentQuizIndex,
   setCurrentQuizIndex,
   handleShowEnded,
   submitAnswer,
 }: QuizShowSharedShowProps) {
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
-  const [showAnswer, setShowAnswer] = useState<boolean>(false);
-  const [userAnswer, setUserAnswer] = useState<
-    string | number | { index: number; value: string } | null
-  >(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(20); // 20초 타이머
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isCommentaryShow, setIsCommentaryShow] = useState(false);
-
-  useEffect(() => {
-    if (quizList.length > 0) {
-      const timer = setTimeout(() => {
-        setCurrentQuiz(quizList[0]);
-        setIsLoading(false);
-        setIsTimerRunning(true); // 퀴즈 로딩 후 타이머 시작
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [quizList]);
-
-  // 타이머 로직
-  useEffect(() => {
-    if (!isTimerRunning || timeLeft <= 0) return;
-
-    const timerInterval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timerInterval);
-          handleNextQuiz();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerInterval);
-  }, [isTimerRunning, timeLeft]);
-
-  // 해설 표시 로직 - 10초 후 자동으로 해설 표시
-  useEffect(() => {
-    if (!isTimerRunning || isCommentaryShow) return;
-
-    const commentaryTimer = setTimeout(() => {
-      setIsCommentaryShow(true);
-    }, 10000); // 10초 후 해설 표시
-
-    return () => clearTimeout(commentaryTimer);
-  }, [isTimerRunning, isCommentaryShow]);
-
-  const handleShowAnswer = () => {
-    if (userAnswer === null) {
-      alert("답을 선택해주세요!");
-      return;
-    }
-
-    const currentQuizData = quizList[currentQuizIndex];
-    let isCorrect = false;
-    let answerValue = "";
-
-    if (typeof userAnswer === "object" && "value" in userAnswer) {
-      // 객관식 답변
-      answerValue = userAnswer.value;
-      // 정답이 보기 내용인 경우
-      isCorrect = currentQuizData.answer === answerValue;
-    } else {
-      // OX, 주관식 답변
-      answerValue = userAnswer.toString();
-      isCorrect = currentQuizData.answer === answerValue;
-    }
-
-    // 정답 제출
-    submitAnswer({
-      type: "SUBMIT",
-      index: currentQuizIndex,
-      choice: answerValue,
-      isCorrect: isCorrect,
-    });
-
-    setIsCommentaryShow(true); // 선택 완료 시 해설 표시
-  };
+  const {
+    currentQuiz,
+    showAnswer,
+    isLoading,
+    answerTime,
+    loadingCount,
+    displayTime,
+    isCommentaryShow,
+    selectedOX,
+    selectedMultipleChoice,
+    objectiveInput,
+    handleOXSelect,
+    handleMultipleChoiceSelect,
+    handleObjectiveInput,
+    handleShowAnswer,
+    checkAnswerCorrect,
+  } = useQuizShowSharedShow({
+    quizCount,
+    quizList,
+    collectionName,
+    currentQuizIndex,
+    setCurrentQuizIndex,
+    handleShowEnded,
+    submitAnswer,
+  });
 
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
 
-    const isLastQuiz = currentQuizIndex === quizCount - 1;
-
-    // 빈 함수를 전달하여 onNext prop 오류 해결
-    const emptyNextHandler = () => {};
+    // 사용자 답변이 정답인지 체크
+    const isCorrect = checkAnswerCorrect();
 
     switch (currentQuiz.type) {
       case "MULTIPLE_CHOICE":
@@ -133,12 +73,10 @@ function QuizShowSharedShow({
             content={currentQuiz.content}
             choice={currentQuiz.choice}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            isLastQuiz={isLastQuiz}
-            onNext={emptyNextHandler}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleMultipleChoiceSelect}
+            isCorrect={isCorrect}
+            selected={selectedMultipleChoice}
           />
         );
       case "OX":
@@ -146,12 +84,10 @@ function QuizShowSharedShow({
           <OX
             content={currentQuiz.content}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            onNext={handleNextQuiz}
-            isLastQuiz={isLastQuiz}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleOXSelect}
+            isCorrect={isCorrect}
+            selected={selectedOX}
           />
         );
       case "OBJECTIVE":
@@ -159,47 +95,16 @@ function QuizShowSharedShow({
           <Objective
             content={currentQuiz.content}
             answer={currentQuiz.answer}
-            commentary={currentQuiz.commentary}
-            quizSessionId={quizSessionId}
             showAnswer={showAnswer}
-            isLastQuiz={isLastQuiz}
-            onNext={emptyNextHandler}
-            onAnswerSelect={(answer) => setUserAnswer(answer)}
+            onAnswerSelect={handleObjectiveInput}
+            isCorrect={isCorrect}
+            inputValue={objectiveInput}
           />
         );
       default:
         return <div>지원하지 않는 퀴즈 타입입니다.</div>;
     }
   };
-
-  // 다음 문제로 이동하는 함수
-  const handleNextQuiz = () => {
-    const nextIndex = currentQuizIndex + 1;
-
-    setShowAnswer(false);
-    setUserAnswer(null);
-    setCurrentQuizIndex(nextIndex);
-    setCurrentQuiz(quizList[nextIndex]);
-    setTimeLeft(20); // 타이머 리셋
-    setIsTimerRunning(true); // 타이머 다시 시작
-    setIsCommentaryShow(false); // 해설 숨기기
-    if (nextIndex >= quizCount) {
-      // 마지막 퀴즈 이후 종료 처리
-      handleShowEnded();
-      return;
-    }
-  };
-
-  // 표시할 타이머 시간 계산
-  const [displayTime, setDisplayTime] = useState(timeLeft);
-
-  useEffect(() => {
-    if (isCommentaryShow) {
-      setDisplayTime(timeLeft);
-    } else {
-      setDisplayTime(Math.max(0, timeLeft - 10));
-    }
-  }, [isCommentaryShow, timeLeft]);
 
   return (
     <>
@@ -216,17 +121,36 @@ function QuizShowSharedShow({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-2xl font-pre-medium text-main200">
-              잠시 후 퀴즈가 시작됩니다...
+            <div className="text-center">
+              <div className="text-6xl font-pre-bold text-main200 mb-4 animate-bounce">
+                {loadingCount} 초
+              </div>
+              <div className="text-2xl font-pre-medium text-main200">
+                {loadingCount > 0 ? `잠시 후 퀴즈가 시작됩니다...` : "퀴즈를 시작합니다!"}
+              </div>
+              <div className="mt-4">
+                <div className="w-16 h-16 border-4 border-main200 border-t-transparent rounded-full animate-spin mx-auto" />
+              </div>
             </div>
           </div>
         ) : (
           <>
-            {/* 타이머 표시 영역 */}
-            <div className="absolute top-5 right-5 flex items-center">
+            {/* 타이머 진행 바 */}
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+              <div
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  isCommentaryShow ? "bg-green-600" : "bg-blue-600"
+                }`}
+                style={{
+                  width: `${isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 20) * 100}%`,
+                }}
+              ></div>
+            </div>
+
+            <div className="flex relative items-center justify-end mb-2">
               <div className="text-xl font-bold flex items-center gap-2">
                 <svg className="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7H11V13L16.2 16.2L17 14.9L12.5 12.2V7Z" />
@@ -235,20 +159,12 @@ function QuizShowSharedShow({
               </div>
             </div>
 
-            {/* 타이머 진행 바 */}
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000"
-                style={{ width: `${(displayTime / (isCommentaryShow ? 20 : 10)) * 100}%` }}
-              ></div>
-            </div>
-
             {/* 퀴즈 컴포넌트 */}
             {currentQuiz && renderQuizComponent(currentQuiz)}
 
             {/* 해설 영역 */}
             {isCommentaryShow && currentQuiz && (
-              <div className="absolute bottom-0 left-0 right-0 bg-pink-100 p-4 rounded-b-xl">
+              <div className="absolute bottom-3 left-0 right-0 bg-pink-100 mx-2 p-4 rounded-xl">
                 <div className="text-lg font-bold mb-2">해설</div>
                 <p className="text-gray-800">{currentQuiz.commentary || currentQuiz.answer}</p>
               </div>

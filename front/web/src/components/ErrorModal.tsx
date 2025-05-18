@@ -38,7 +38,7 @@ function ErrorModal() {
 
         <h1 className="text-24 font-pre-bold text-center mb-4">오류가 발생했습니다</h1>
 
-        <p className="text-18 font-pre-regular text-gray200 text-center">{error}</p>
+        <p className="text-20 font-pre-regular text-red text-center">{error}</p>
 
         {showButtons && (
           <div className="flex gap-4 mt-8">

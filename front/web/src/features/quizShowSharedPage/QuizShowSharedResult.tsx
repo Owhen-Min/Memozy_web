@@ -5,7 +5,7 @@ import book from "../../assets/icons/summaryIcon.svg";
 import first from "../../assets/images/first.png";
 import second from "../../assets/images/second.png";
 import third from "../../assets/images/third.png";
-import { useState, useEffect } from "react";
+import { useQuizShowSharedResult } from "../../hooks/sharedQuizShow";
 import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
 
 interface QuizShowMyResult {
@@ -37,6 +37,8 @@ interface QuizShowSharedResultProps {
   result: QuizShowResult | {};
   collectionName: string;
   isLoading?: boolean;
+  isHost: boolean;
+  isLoggedIn: boolean;
 }
 
 function QuizShowResultSharedPage({
@@ -44,70 +46,31 @@ function QuizShowResultSharedPage({
   result,
   collectionName,
   isLoading = true,
+  isHost,
+  isLoggedIn,
 }: QuizShowSharedResultProps) {
-  // 내 결과 데이터 상태
-  const [myScore, setMyScore] = useState<number>(0);
-  const [totalQuizCount, setTotalQuizCount] = useState<number>(0);
-  const [myWrongQuizCount, setMyWrongQuizCount] = useState<number>(0);
-  const [isResultLoading, setIsResultLoading] = useState<boolean>(isLoading);
-
-  // 단체 결과 데이터에서 가장 많이 틀린 퀴즈와 랭킹 정보 가져오기
-  const [mostWrongQuiz, setMostWrongQuiz] = useState<any>({});
-  const [topRanking, setTopRanking] = useState<any[]>([]);
-
-  // 모달 표시 상태
-  const [showMostWrongQuizModal, setShowMostWrongQuizModal] = useState(false);
-
-  useEffect(() => {
-    setIsResultLoading(isLoading);
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (Object.keys(result).length > 0 && "mostWrongQuiz" in result && "topRanking" in result) {
-      const typedResult = result as QuizShowResult;
-      setMostWrongQuiz(typedResult.mostWrongQuiz);
-      setTopRanking(typedResult.topRanking);
-      setIsResultLoading(false);
-    }
-  }, [result]);
-
-  useEffect(() => {
-    if (Object.keys(myResult).length > 0) {
-      const typedMyResult = myResult as QuizShowMyResult;
-      setMyScore(typedMyResult.myScore || 0);
-      setTotalQuizCount(typedMyResult.totalQuizCount || 0);
-      // Calculate wrong count from correct count
-      const correctCount = typedMyResult.myCorrectQuizCount || 0;
-      const totalCount = typedMyResult.totalQuizCount || 0;
-      setMyWrongQuizCount(totalCount - correctCount);
-    }
-  }, [myResult]);
-
-  const handleMostWrongQuizClick = () => {
-    setShowMostWrongQuizModal(true);
-  };
-
-  const handleCloseMostWrongQuiz = () => {
-    setShowMostWrongQuizModal(false);
-  };
+  const {
+    myScore,
+    totalQuizCount,
+    myWrongQuizCount,
+    isResultLoading,
+    mostWrongQuiz,
+    processedRanking,
+    showMostWrongQuizModal,
+    handleMostWrongQuizClick,
+    handleCloseMostWrongQuiz,
+  } = useQuizShowSharedResult({
+    myResult,
+    result,
+    isLoading,
+  });
 
   const handleSaveQuizClick = () => {
     console.log("나의 컬렉션에 저장하기 클릭"); //연결안함
   };
 
-  // 랭킹 데이터
-  const topRankers =
-    topRanking.length > 0
-      ? topRanking.map((ranker, index) => {
-          const images = [first, second, third];
-          return {
-            rank: ranker.rank,
-            name: ranker.name,
-            score: `${ranker.score}점`,
-            image: images[index] || images[2], // 기본은 3등 이미지
-          };
-        })
-      : [];
+  // 랭킹 데이터 이미지 매핑
+  const rankImages = [first, second, third];
 
   return (
     <>
@@ -170,26 +133,27 @@ function QuizShowResultSharedPage({
                   className="w-3 md:w-4 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                 />
               </button>
-
-              <button
-                onClick={handleSaveQuizClick}
-                className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
-              >
-                나의 컬렉션에 저장하기
-                <img
-                  src={save}
-                  alt="저장아이콘"
-                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
-                />
-              </button>
+              {!isHost && isLoggedIn && (
+                <button
+                  onClick={handleSaveQuizClick}
+                  className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
+                >
+                  나의 컬렉션에 저장하기
+                  <img
+                    src={save}
+                    alt="저장아이콘"
+                    className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                  />
+                </button>
+              )}
             </div>
           </div>
 
           {/* 랭킹 영역 - 모든 화면 크기 */}
           <div className="block md:absolute md:right-24 md:top-16 mt-4 md:mt-0">
-            {topRankers.map((ranker) => (
+            {processedRanking.map((ranker) => (
               <div key={ranker.rank} className="flex items-center mb-8">
-                <img src={ranker.image} alt={`${ranker.rank}`} className="w-4" />
+                <img src={rankImages[ranker.imageIndex]} alt={`${ranker.rank}`} className="w-4" />
                 <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.name}</span>
                 <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.score}</span>
               </div>

@@ -10,6 +10,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
   loading: false,
   error: null,
   collectionName: null,
+  duplicateQuizCount: 0,
   // 페이지네이션 초기 상태
   currentPage: 0,
   pageSize: 10,
@@ -90,6 +91,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         memozies:
           currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
         collectionName: response.data.data.collectionName,
+        duplicateQuizCount: response.data.data.duplicateQuizCount,
         currentPage: currentPage,
         pageSize: currentPageSize,
         hasMore: !response.data.data.last,
@@ -144,9 +146,6 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       await collectionApi.deleteQuiz(quizId, sourceId);
-      if (sourceId.length > 0) {
-        await get().fetchQuizList(sourceId[0]); // 퀴즈 목록 새로고침
-      }
     } catch (error) {
       set({ error: "퀴즈 삭제에 실패했습니다.", loading: false });
       console.error("퀴즈 삭제 오류:", error);
@@ -185,6 +184,7 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         memozies:
           currentPage === 0 ? response.data.data.content : [...get().memozies, ...newMemozyList],
         collectionName: response.data.data.collectionName,
+        duplicateQuizCount: response.data.data.duplicateQuizCount,
         currentPage: currentPage,
         pageSize: currentPageSize,
         hasMore: !response.data.data.last,

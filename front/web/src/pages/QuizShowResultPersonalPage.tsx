@@ -22,7 +22,7 @@ function QuizShowResultPersonalPage() {
   // 브라우저 뒤로가기 이벤트 처리
   useEffect(() => {
     const handlePopState = () => {
-      alert("만료된 세션입니다.");
+      alert("종료된 퀴즈쇼입니다. 컬렉션 리스트로 이동합니다.");
       navigate(`/collection/${collectionId}`);
     };
 
