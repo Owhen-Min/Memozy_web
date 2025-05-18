@@ -26,6 +26,7 @@ const QuizShowSharedPage = () => {
     isResultReady,
     setCurrentQuizIndex,
     resetStore,
+    setQuizSessionId,
   } = useQuizShowSharedStore();
 
   const { showId } = useParams();
@@ -36,9 +37,16 @@ const QuizShowSharedPage = () => {
   const { submitAnswer, handleStartQuizShow, handleChangeNickname, handleShowEnded, isConnected } =
     useQuizShowWebsocket(showId as string);
 
+  // 세션 ID 설정 및 상태 복원
+  useEffect(() => {
+    if (showId) {
+      setQuizSessionId(showId);
+      sessionStorage.setItem("current-session-id", showId);
+    }
+  }, [showId, setQuizSessionId]);
+
   // 데이터가 로드되면 로딩 상태 해제
   useEffect(() => {
-    // 웹소켓이 연결되고 participants 데이터가 있을 때만 로딩 상태 해제
     if (isConnected && participants?.length > 0) {
       setIsLoading(false);
     } else {
@@ -48,13 +56,9 @@ const QuizShowSharedPage = () => {
 
   // 페이지를 완전히 나갈 때만 스토어 초기화
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      resetStore();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      resetStore();
+      sessionStorage.removeItem("current-session-id");
     };
   }, [resetStore]);
 

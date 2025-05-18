@@ -19,8 +19,6 @@ interface QuizShowSharedShowProps {
   quizList: Quiz[];
   quizSessionId: string;
   collectionName: string;
-  currentQuizIndex: number;
-  setCurrentQuizIndex: (index: number) => void;
   handleShowEnded: () => void;
   submitAnswer: (answer: Answer) => void;
 }
@@ -29,13 +27,12 @@ function QuizShowSharedShow({
   quizCount,
   quizList,
   collectionName,
-  currentQuizIndex,
-  setCurrentQuizIndex,
   handleShowEnded,
   submitAnswer,
 }: QuizShowSharedShowProps) {
   const {
     currentQuiz,
+    currentQuizIndex,
     showAnswer,
     isLoading,
     answerTime,
@@ -54,8 +51,6 @@ function QuizShowSharedShow({
     quizCount,
     quizList,
     collectionName,
-    currentQuizIndex,
-    setCurrentQuizIndex,
     handleShowEnded,
     submitAnswer,
   });
@@ -170,8 +165,8 @@ function QuizShowSharedShow({
               </div>
             )}
 
-            {/* 정답 보기 버튼 */}
-            {!isCommentaryShow && (
+            {/* 정답 제출 버튼 - 정답 제출 전에만 표시 */}
+            {!showAnswer && !isCommentaryShow && (
               <button
                 className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
                 onClick={handleShowAnswer}
