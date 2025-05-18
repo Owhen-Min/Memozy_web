@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -343,11 +343,13 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
@@ -405,11 +407,13 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
