@@ -1,4 +1,3 @@
-import { useState, useMemo } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import "./calendarHeatmap.css";
@@ -10,50 +9,14 @@ interface LearningContributionSectionProps {
 }
 
 export default function LearningContributionSection({
-  firstStudyDate,
   learningContribution,
 }: LearningContributionSectionProps) {
   const today = new Date();
   const currentYear = today.getFullYear();
 
-  // 연도 목록 생성 (첫 학습 년도부터 현재까지)
-  const years = useMemo(() => {
-    if (!firstStudyDate) return [currentYear];
-    const startYear = firstStudyDate.getFullYear();
-    return Array.from({ length: currentYear - startYear + 1 }, (_, i) => currentYear - i);
-  }, [firstStudyDate, currentYear]);
-
-  // "지난 12개월" 옵션을 포함한 드롭박스 옵션
-  const viewOptions = [
-    { value: "last12months", label: "지난 12개월" },
-    ...years.map((year) => ({ value: year.toString(), label: `${year}년` })),
-  ];
-
-  // 선택된 보기 옵션 (기본값: "지난 12개월")
-  const [selectedView, setSelectedView] = useState<string>("last12months");
-
-  // 시작 날짜와 종료 날짜 계산
-  const getDateRange = () => {
-    if (selectedView === "last12months") {
-      // 지난 12개월 보기 (현재 월의 마지막 날부터 12개월 전의 1일까지)
-      const endDate = new Date(currentYear, today.getMonth() + 1, 0); // 현재 월의 마지막 날
-      const startDate = new Date(currentYear, today.getMonth() - 11, 1); // 12개월 전의 1일
-      return { startDate, endDate };
-    } else {
-      // 특정 연도 보기 (1월 1일부터 12월 31일까지)
-      const year = parseInt(selectedView);
-      // 해당 연도의 1월 1일이 속한 주의 일요일을 시작일로 설정
-      const firstDayOfYear = new Date(year, 0, 1);
-      const dayOfWeek = firstDayOfYear.getDay();
-      const startDate = new Date(year, 0, 1 - dayOfWeek);
-      const endDate = new Date(year, 11, 31);
-      return { startDate, endDate };
-    }
-  };
-
-  const { startDate, endDate } = getDateRange();
-
-  console.log("startDate:", startDate);
+  // 지난 12개월 보기 (현재 월의 마지막 날부터 12개월 전의 1일까지)
+  const endDate = new Date(currentYear, today.getMonth() + 1, 0); // 현재 월의 마지막 날
+  const startDate = new Date(currentYear, today.getMonth() - 11, 1); // 12개월 전의 1일
 
   // 선택된 날짜 범위에 맞는 데이터만 필터링
   const filteredContributions = learningContribution.filter((contrib) => {
@@ -65,20 +28,9 @@ export default function LearningContributionSection({
     <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md mb-6 md:mb-10">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-14 md:text-[18px] font-pre-semibold">학습 참여도</h3>
-        <select
-          className="border border-normal rounded px-1 py-1 text-12 md:text-14 font-pre-regular focus:outline-none focus:border-normal focus:ring-1 focus:ring-normal"
-          value={selectedView}
-          onChange={(e) => setSelectedView(e.target.value)}
-        >
-          {viewOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
       </div>
 
-      <p className="text-10 text-gray-600 mb-2 font-pre-regular">
+      <p className="text-12 text-gray-600 mb-2 font-pre-regular">
         하루 단위 문제 풀이 기록으로, 색상 강도는 풀이 개수(0, 1-4, 5-9, 10-14, 15+)를 의미합니다.
       </p>
 
