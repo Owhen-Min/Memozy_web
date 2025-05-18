@@ -55,6 +55,8 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
       <div
         className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
         onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
       >
         <style>
           {`
@@ -86,12 +88,14 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
             <div
               key={history.historyId}
               className="mb-3 md:mb-4 p-3 md:p-4 bg-white rounded-lg shadow-md"
-              onClick={() => toggleDropDown(history.historyId)}
             >
               <div className="flex justify-between items-center">
                 <h3 className="font-pre-bold text-16 md:text-[18px]">{history.round}회차</h3>
                 <div className="flex items-center">
-                  <button className="p-1 md:p-2 hover:bg-light rounded-lg transition-colors">
+                  <button
+                    className="p-1 md:p-2 hover:bg-light rounded-lg transition-colors"
+                    onClick={() => toggleDropDown(history.historyId)}
+                  >
                     <img
                       src={dropDownIcon}
                       alt="드롭다운 아이콘"
@@ -136,11 +140,11 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
                         )}
                         <div className="flex flex-col md:flex-row md:justify-between gap-2 mt-2">
                           <div className="p-2 bg-green-100 rounded-md">
-                            <p className="text-10 md:text-12">정답: {quiz.answer}</p>
+                            <p className="text-10 md:text-14">정답: {quiz.answer}</p>
                           </div>
                         </div>
                         <div className="mt-2 p-2 bg-[#FEE9EB] rounded-md">
-                          <p className="text-10 md:text-12">해설: {quiz.commentary}</p>
+                          <p className="text-10 md:text-14">해설: {quiz.commentary}</p>
                         </div>
                       </div>
                     ))
