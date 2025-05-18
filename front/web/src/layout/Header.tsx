@@ -18,7 +18,7 @@ function Header() {
   }, [checkAuth, location.pathname]);
 
   return (
-    <header className="bg-light h-14 flex items-center justify-between px-4 md:px-8 relative">
+    <header className="bg-light h-14 flex items-center justify-between px-4 md:px-8 fixed top-0 left-0 right-0 z-50">
       {/* 모바일 메뉴 토글 버튼 - 모바일에서만 표시 */}
       {isLoggedIn && (
         <button
