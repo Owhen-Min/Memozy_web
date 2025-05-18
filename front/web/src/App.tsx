@@ -20,7 +20,9 @@ function App() {
           element={
             <>
               <Header />
-              <Outlet />
+              <div className="pt-14">
+                <Outlet />
+              </div>
             </>
           }
         >
