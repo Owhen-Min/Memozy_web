@@ -1,8 +1,7 @@
 package site.memozy.memozy_api.global.websocket.handler;
 
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
@@ -22,7 +22,7 @@ import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 public class StompHandler implements ChannelInterceptor {
 
 	private final JwtUtil jwtUtil;
-
+	private final MultiQuizShowRedisRepository redisRepository;
 	private static final String BEARER = "Bearer ";
 
 	@Override
@@ -36,25 +36,33 @@ public class StompHandler implements ChannelInterceptor {
 		}
 
 		if (!StompCommand.CONNECT.equals(accessor.getCommand())) {
+			log.info("STOMP 연결 요청이 아님: {}", accessor.getSessionId());
 			return message;
 		}
 
-		String userId = generateRandomCode();
-		String nickname = "Guest" + ThreadLocalRandom.current().nextInt(100, 1000);
+		String token = accessor.getFirstNativeHeader("Authorization");
+		String showId = accessor.getFirstNativeHeader("showId");
+
+		String userId = generateRandomCode(6);
+		String nickname = "guest" + generateRandomCode(3);
 		boolean isMember = false;
 
-		String token = Optional.ofNullable(accessor.getFirstNativeHeader("Authorization"))
-			.filter(t -> t.startsWith(BEARER))
-			.map(t -> t.substring(BEARER.length()))
-			.filter(t -> !jwtUtil.isExpired(t))
-			.orElse(null);
+		log.info("[StompHandler] showId: {}, token = {}", showId, token);
 
-		log.debug("[StompHandler] token: {}", token);
-
-		if (token != null) {
-			userId = String.valueOf(jwtUtil.getUserId(token));
-			nickname = jwtUtil.getName(token);
-			isMember = true;
+		if (token != null && token.startsWith(BEARER)) {
+			token = token.substring(BEARER.length());
+			if (Boolean.FALSE.equals(jwtUtil.isExpired(token))) {
+				userId = String.valueOf(jwtUtil.getUserId(token));
+				nickname = jwtUtil.getName(token);
+				isMember = true;
+			}
+		} else if (token != null) {
+			Map<String, String> userInfo = getParticipantInfo(showId, token);
+			if (userInfo != null && !userInfo.isEmpty()) {
+				userId = userInfo.getOrDefault("userId", token);
+				nickname = userInfo.getOrDefault("nickname", nickname);
+				isMember = false;
+			}
 		}
 
 		accessor.getSessionAttributes().put("userId", userId);
@@ -69,9 +77,16 @@ public class StompHandler implements ChannelInterceptor {
 			.build();
 	}
 
-	private String generateRandomCode() {
+	private String generateRandomCode(int length) {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
-		return uuid.substring(0, 8);
+		return uuid.substring(0, length);
+	}
+
+	private Map<String, String> getParticipantInfo(String showId, String userId) {
+		Map<String, String> participantInfo = redisRepository.getParticipantInfo(showId, userId);
+		if (participantInfo == null) {
+			return Map.of();
+		}
+		return participantInfo;
 	}
 }
-
