@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import collectionIcon from "../../assets/images/collectionIcon.png";
 import quizIcon from "../../assets/images/quizIcon.png";
 import reportIcon from "../../assets/images/reportIcon.png";
@@ -7,16 +6,11 @@ import noteIcon from "../../assets/images/noteIcon.png";
 import extensionIcon from "../../assets/images/extensionIcon.png";
 
 const ServiceCards = () => {
-  const navigate = useNavigate();
-
   return (
-    <div className="w-full max-w-[700px] mx-auto px-4 ml-40 relative">
+    <div className="w-full ml-12">
       {/* 상단 행 카드 */}
       <div className="flex flex-wrap justify-center gap-6 mb-6">
-        <div
-          className="bg-[#E8F0FE] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate("/collection")}
-        >
+        <div className="bg-[#E8F0FE] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-2 flex items-center justify-center">
             <img src={collectionIcon} alt="컬렉션 아이콘" className="w-14" />
           </div>
@@ -28,10 +22,7 @@ const ServiceCards = () => {
           </p>
         </div>
 
-        <div
-          className="bg-[#FFF8E1] pt-2.5 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate("/collection")}
-        >
+        <div className="bg-[#FFF8E1] pt-2.5 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-0.5 flex items-center justify-center">
             <img src={quizIcon} alt="퀴즈 아이콘" className="w-14" />
           </div>
@@ -43,10 +34,7 @@ const ServiceCards = () => {
           </p>
         </div>
 
-        <div
-          className="bg-[#EDE7F6] pt-5 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate("/my")}
-        >
+        <div className="bg-[#EDE7F6] pt-5 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-1 flex items-center justify-center">
             <img src={reportIcon} alt="분석레포트 아이콘" className="w-12" />
           </div>
@@ -60,10 +48,7 @@ const ServiceCards = () => {
 
       {/* 하단 행 카드 */}
       <div className="flex flex-wrap justify-center gap-6">
-        <div
-          className="bg-[#FFEBEE] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate("/my")}
-        >
+        <div className="bg-[#FFEBEE] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-2 flex items-center justify-center">
             <img src={wrongIcon} alt="오답노트 아이콘" className="w-10" />
           </div>
@@ -75,10 +60,7 @@ const ServiceCards = () => {
           </p>
         </div>
 
-        <div
-          className="bg-[#E8F5E9] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => navigate("/collection")}
-        >
+        <div className="bg-[#E8F5E9] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-2 flex items-center justify-center">
             <img src={noteIcon} alt="요약노트 아이콘" className="w-10" />
           </div>
@@ -90,15 +72,7 @@ const ServiceCards = () => {
           </p>
         </div>
 
-        <div
-          className="bg-[#E3F2FD] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-[170px] cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() =>
-            window.open(
-              "https://chromewebstore.google.com/detail/memozy/edkigpibifokljeefiomnfadenbfcchj",
-              "_blank"
-            )
-          }
-        >
+        <div className="bg-[#E3F2FD] pt-4 rounded-xl flex flex-col items-center shadow-lg h-[150px] w-40">
           <div className="mb-2 flex items-center justify-center">
             <img src={extensionIcon} alt="익스텐션 아이콘" className="w-12" />
           </div>
