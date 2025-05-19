@@ -36,4 +36,6 @@ public interface QuizSourceRepository extends JpaRepository<QuizSource, Integer>
 	List<Integer> findSourceIdsByUserId(@Param("userId") Integer userId);
 
 	List<QuizSource> findByCollectionId(Integer collectionId);
+
+	List<QuizSource> findBySourceIdIn(List<Integer> sourceIds);
 }

@@ -285,6 +285,43 @@ public class CollectionServiceImpl implements CollectionService {
 			.build();
 	}
 
+	@Transactional
+	@Override
+	public void copyQuizShowMemozies(Integer userId, Integer collectionId, List<Integer> sourceIds) {
+		// 1. 복사할 source들 조회
+		List<QuizSource> originalSources = quizSourceRepository.findBySourceIdIn(sourceIds);
+
+		for (QuizSource original : originalSources) {
+			// 2. source 복사
+			QuizSource copiedSource = QuizSource.builder()
+				.title(original.getTitle())
+				.summary(original.getSummary())
+				.url(original.getUrl())
+				.userId(userId)
+				.collectionId(collectionId)
+				.build();
+			quizSourceRepository.save(copiedSource);
+
+			// 3. 해당 source에 연결된 퀴즈 조회
+			List<Quiz> quizzes = quizRepository.findBySourceId(original.getSourceId());
+
+			// 4. 퀴즈 복사
+			List<Quiz> copiedQuizzes = quizzes.stream()
+				.map(q -> Quiz.builder()
+					.content(q.getContent())
+					.type(q.getType())
+					.answer(q.getAnswer())
+					.commentary(q.getCommentary())
+					.collectionId(collectionId)
+					.sourceId(copiedSource.getSourceId())
+					.option(q.getOption())
+					.build())
+				.collect(Collectors.toList());
+
+			quizRepository.saveAll(copiedQuizzes);
+		}
+	}
+
 	private void deleteValidQuizzes(List<Long> quizIds, Integer userId) {
 		List<Long> validQuizIds = collectionRepository.findValidQuizIdsByUser(quizIds, userId);
 		if (validQuizIds.isEmpty()) {

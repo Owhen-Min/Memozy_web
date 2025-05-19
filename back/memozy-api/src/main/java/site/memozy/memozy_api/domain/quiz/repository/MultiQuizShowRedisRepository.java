@@ -50,7 +50,8 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public void saveQuizzes(Integer hostId, String showId, String collectionName, String hostName, int count,
+	public void saveQuizzes(Integer hostId, String showId, Integer collectionId, String collectionName, String hostName,
+		int count,
 		List<MultiQuizResponse> quizList) {
 		log.info("[Redis] saveQuizzes() called with showId: {}, collectionId: {}, hostUserId: {}, count: {}",
 			showId, collectionName, hostName, count);
@@ -59,6 +60,7 @@ public class MultiQuizShowRedisRepository {
 			Map<String, String> metadata = new HashMap<>();
 			metadata.put("hostId", String.valueOf(hostId));
 			metadata.put("hostName", String.valueOf(hostName));
+			metadata.put("collectionId", String.valueOf(collectionId));
 			metadata.put("collectionName", String.valueOf(collectionName));
 			metadata.put("quizCount", String.valueOf(count));
 			metadata.put("status", "WAITING");
@@ -203,16 +205,22 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public Map<String, String> getUserChoice(String showId, String userId) {
+	public Map<String, Map<String, Object>> getUserChoice(String showId, String userId) {
 		log.info("[Redis] getUserChoice() called with showId: {}, userId: {}", showId, userId);
 		String answerKey = "show:" + showId + ":userChoice:" + userId;
 		try {
 			Map<Object, Object> allEntries = redisTemplate.opsForHash().entries(answerKey);
-			Map<String, String> result = new HashMap<>();
+			Map<String, Map<String, Object>> result = new HashMap<>();
 			for (Map.Entry<Object, Object> entry : allEntries.entrySet()) {
 				String key = entry.getKey().toString();
+				String value = entry.getValue().toString();
 				if (key.endsWith("_choice")) {
-					result.put(key, entry.getValue().toString());
+					String index = key.replace("_choice", "");
+					result.computeIfAbsent(index, k -> new HashMap<>())
+						.put("isCorrect", Boolean.parseBoolean(value));
+				} else {
+					result.computeIfAbsent(key, k -> new HashMap<>())
+						.put("userAnswer", value);
 				}
 			}
 			return result;

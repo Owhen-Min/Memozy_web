@@ -34,4 +34,6 @@ public interface CollectionService {
 		int page);
 
 	CollectionMemozyListResponse getAllMemozies(Integer userId, int offset, int page);
+
+	void copyQuizShowMemozies(Integer userId, Integer collectionId, List<Integer> sourceIds);
 }

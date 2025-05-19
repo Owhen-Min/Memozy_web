@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.collection.service.CollectionService;
+import site.memozy.memozy_api.domain.history.entity.History;
+import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
@@ -22,6 +25,8 @@ import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowStartEvent;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.repository.QuizRepository;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
+import site.memozy.memozy_api.domain.quizsource.repository.QuizSourceRepository;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
@@ -35,6 +40,9 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private final QuizRepository quizRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 	private final MultiQuizShowRunner multiQuizShowRunner;
+	private final CollectionService collectionService;
+	private final QuizSourceRepository quizSourceRepository;
+	private final HistoryRepository historyRepository;
 
 	@Override
 	@Transactional
@@ -57,7 +65,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		log.info("생성된 퀴즈 코드: {}", quizShowCode);
 		collection.setCode(quizShowCode);
 
-		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getName(), user.getName(),
+		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getCollectionId(),
+			collection.getName(), user.getName(),
 			count, quizzes);
 		String showUrl = String.format("https://memozy.site/quiz/show/%s", quizShowCode);
 		return new MultiQuizShowCreateResponse(quizShowCode, showUrl, user.getName(), collection.getName(), count);
@@ -88,6 +97,72 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		applicationEventPublisher.publishEvent(
 			new QuizShowJoinEvent(showId, userId, nickname, metaData.get("hostName"), metaData.get("collectionName"),
 				metaData.get("quizCount")));
+	}
+
+	@Override
+	@Transactional
+	public void saveQuizShow(String showId, Integer userId, String email) {
+		if (!collectionRepository.existsByCode(showId)) {
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
+		}
+		Map<String, String> metaData = multiQuizShowRedisRepository.getQuizMetaData(showId);
+		if (metaData.isEmpty()) {
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
+		}
+
+		log.info("[service] saveQuizShow() called with showId: {}, userId: {}", showId, userId);
+		String hostName = metaData.get("hostName");
+		String collectionName = metaData.get("collectionName");
+		String newCollectionName = hostName + "의 " + collectionName;
+
+		Collection collection = collectionRepository.findByNameAndUserId(newCollectionName, userId)
+			.orElseGet(() -> collectionRepository.save(Collection.create(newCollectionName, userId)));
+
+		//TODO: 2. Quiz Source 들고와서 존재하면 Get 존재하지 않으면 Save
+		List<QuizSource> quizSources = quizSourceRepository.findByCollectionId(
+			Integer.parseInt(metaData.get("collectionId")));
+		log.info("quizSources count: {}", quizSources.get(0).getSourceId());
+		log.info("quizSources count: {}", quizSources.size());
+		List<Integer> quizSourceIds = quizSources.stream()
+			.filter(qs -> !qs.getSourceId().equals(collection.getCollectionId()))
+			.map(QuizSource::getSourceId)
+			.toList();
+		log.info("quizSourceIds count (이미 있는 sourceId 제외): {}", quizSourceIds.size());
+		collectionService.copyQuizShowMemozies(userId, collection.getCollectionId(), quizSourceIds);
+		log.info("collectionId: {}, quizSourceIds: {}", collection.getCollectionId(), quizSourceIds);
+
+		// 유저 선택 가져와서 저장하기
+		Map<String, Map<String, Object>> userChoices = multiQuizShowRedisRepository.getUserChoice(showId,
+			userId.toString());
+		for (Map.Entry<String, Map<String, Object>> entry : userChoices.entrySet()) {
+			Map<String, Object> choiceData = entry.getValue();
+
+			String userChoice = (String)choiceData.getOrDefault("userChoice", "");
+			Boolean isCorrect = (Boolean)choiceData.get("isCorrect");
+			log.info("userChoice: {}, isCorrect: {}", userChoice, isCorrect);
+
+			int index = Integer.parseInt(entry.getKey());
+			log.info("index: {}", index + 1);
+
+			if (index >= quizSources.size())
+				continue;
+
+			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
+			Long quizId = Long.parseLong((String)quizData.get("quizId"));
+			//TODO: 3. 라운드를 찾고 존재하지않으면 1부터 존재하면 마지막 라운드에서 +1
+			int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collection.getCollectionId(), email)
+				.orElse(0) + 1;
+			History history = History.builder()
+				.isSolved(isCorrect)
+				.userSelect(userChoice)
+				.quizId(quizId)
+				.collectionId(collection.getCollectionId())
+				.round(nextRound)
+				.email(email)
+				.build();
+
+			historyRepository.save(history);
+		}
 	}
 
 	@Transactional
@@ -130,4 +205,5 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
 	}
+
 }

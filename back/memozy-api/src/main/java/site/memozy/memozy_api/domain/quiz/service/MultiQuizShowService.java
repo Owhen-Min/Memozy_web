@@ -18,4 +18,7 @@ public interface MultiQuizShowService {
 
 	@Transactional
 	void changeNickname(String showId, String userId, boolean isMember, String nickname);
+
+	@Transactional
+	void saveQuizShow(String showId, Integer userId, String email);
 }

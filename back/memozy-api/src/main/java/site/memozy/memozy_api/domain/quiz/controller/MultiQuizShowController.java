@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -88,5 +89,12 @@ public class MultiQuizShowController {
 		log.info("[Controller] changeNickname() called with showId: {}, nickname : {}", showId, request.nickname());
 
 		multiQuizShowService.changeNickname(showId, userId, isMember, request.nickname());
+	}
+
+	@PostMapping("/{showId}")
+	@ResponseBody
+	public void saveQuizShow(@PathVariable String showId, @AuthenticationPrincipal CustomOAuth2User user) {
+		log.info("[Controller] saveQuizShow() called with showId: {}", showId);
+		multiQuizShowService.saveQuizShow(showId, user.getUserId(), user.getEmail());
 	}
 }
