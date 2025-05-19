@@ -164,9 +164,9 @@ function QuizShowSharedShow({
 
             {/* 해설 영역 */}
             {showAnswer && currentQuiz && (
-              <div className="flex flex-col justify-center items-start bg-pink-100 mt-3 p-2 rounded-xl">
-                <p className="text-16 sm:text-lg font-bold mb-2">해설</p>
-                <p className="text-14 sm:text-16 text-gray-800">
+              <div className="flex flex-col justify-center items-start bg-pink-100 mt-3 px-4 py-2 rounded-xl">
+                <p className="text-20 sm:text-24 font-bold mb-2">해설</p>
+                <p className="text-16 sm:text-20 text-gray-800">
                   {currentQuiz.commentary || currentQuiz.answer}
                 </p>
               </div>

@@ -38,7 +38,7 @@ const MultipleChoice = ({
 
   return (
     <div>
-      <div className="w-full h-[160px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
+      <div className="w-full h-[160px] border-2 border-normal rounded-xl p-4 my-4 text-20 sm:text-24 font-pre-medium flex items-center justify-center">
         {content}
       </div>
       <div className="w-full flex flex-col gap-2">
@@ -71,8 +71,18 @@ const MultipleChoice = ({
           return (
             <button
               key={index}
-              className={`w-full text-left px-6 py-2 rounded-lg border transition font-medium text-base
-                          ${bgColor} ${textColor} ${borderColor}
+              className={`w-full text-left px-6 py-2 rounded-lg border transition font-medium text-16 sm:text-20
+                          ${
+                            showAnswer
+                              ? item === answer
+                                ? "bg-green-100 text-green-800 border-green-500"
+                                : selected === index
+                                  ? "bg-red/10 text-red border-red"
+                                  : "bg-white text-gray-800 border-gray-200"
+                              : selected === index
+                                ? "bg-light text-main200"
+                                : "bg-white text-gray-800 border-gray-200"
+                          }
                           ${!showAnswer ? "hover:border-lighthover hover:bg-lighthover" : ""}`}
               onClick={() => handleSelect(index)}
               disabled={showAnswer}
