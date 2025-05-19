@@ -225,11 +225,11 @@ function QuizShowPersonalPage() {
           퀴즈 종료하기
         </button>
       </div>
-      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
+      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
         <div className="flex items-center justify-center mb-2 md:mb-4">
           <Progress currentQuizIndex={currentQuizIndex} totalQuizCount={quizList.length} />
         </div>
-        <div className="h-[calc(70vh-120px)] md:h-[calc(70vh-140px)] overflow-y-auto">
+        <div className="h-[calc(80vh-100px)] md:h-[calc(80vh-120px)] overflow-y-auto">
           {currentQuiz && renderQuizComponent(currentQuiz)}
         </div>
         {!showAnswer && (
