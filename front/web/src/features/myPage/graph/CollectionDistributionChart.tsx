@@ -22,11 +22,14 @@ export default function CollectionDistributionChart({
   const pieChartData = {
     labels: [
       ...topCollections.map((item) => `${item.name} (${item.problemCount})`),
-      `기타 (${otherCollectionsCount}) `,
+      ...(otherCollectionsCount > 0 ? [`기타 (${otherCollectionsCount})`] : []),
     ],
     datasets: [
       {
-        data: [...topCollections.map((item) => item.problemCount), otherCollectionsCount],
+        data: [
+          ...topCollections.map((item) => item.problemCount),
+          ...(otherCollectionsCount > 0 ? [otherCollectionsCount] : []),
+        ],
         backgroundColor: [
           "#3E6FFA",
           "#FFCE56",
@@ -68,7 +71,7 @@ export default function CollectionDistributionChart({
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md">
       <h3 className="text-14 md:text-[18px] font-pre-semibold mb-1 md:mb-2">컬렉션 분포도</h3>
-      <p className="text-10 text-gray-600 mb-8 font-pre-regular">
+      <p className="text-12 text-gray-600 mb-10 font-pre-regular">
         전체 문제 중 컬렉션별 문제 비율로, 주로 학습한 주제를 확인할 수 있습니다.
       </p>
       {topCollections && topCollections.length > 0 ? (
@@ -91,7 +94,7 @@ export default function CollectionDistributionChart({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+        <div className="flex flex-col items-center justify-center text-gray-500">
           <p className="text-14 md:text-16 font-pre-medium">컬렉션에 문제가 존재하지 않습니다.</p>
           <p className="mt-2 text-12 md:text-14">
             각 컬렉션에 문제를 생성해 컬렉션분포도 그래프를 확인해보세요!

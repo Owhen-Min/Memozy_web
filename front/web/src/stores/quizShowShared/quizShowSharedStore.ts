@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { QuizShowSharedStore } from "./types";
+import { Quiz } from "../../types/quizShow";
 
 const initialState = {
   isLoading: true,
@@ -19,6 +20,18 @@ const initialState = {
   myResult: {},
   result: {},
   isResultReady: false,
+  currentQuiz: null as Quiz | null,
+  showAnswer: false,
+  userAnswer: null as string | number | { index: number; value: string } | null,
+  selectedOX: null as "O" | "X" | null,
+  selectedMultipleChoice: null as number | null,
+  objectiveInput: "",
+  loadingCount: 3,
+  timeLeft: 30,
+  isTimerRunning: false,
+  isCommentaryShow: false,
+  answerTime: 0,
+  displayTime: 30,
 };
 
 export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
@@ -43,6 +56,28 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
       setResult: (result) => set({ result }),
       setIsResultReady: (isResultReady) => set({ isResultReady }),
 
+      setCurrentQuiz: (currentQuiz) => set({ currentQuiz }),
+      setShowAnswer: (showAnswer) => set({ showAnswer }),
+      setUserAnswer: (userAnswer) => set({ userAnswer }),
+      setSelectedOX: (selectedOX) => set({ selectedOX }),
+      setSelectedMultipleChoice: (selectedMultipleChoice) => set({ selectedMultipleChoice }),
+      setObjectiveInput: (objectiveInput) => set({ objectiveInput }),
+      setLoadingCount: (loadingCount) =>
+        set((state) => ({
+          loadingCount:
+            typeof loadingCount === "function"
+              ? loadingCount(state.loadingCount || 0)
+              : loadingCount,
+        })),
+      setTimeLeft: (timeLeft) =>
+        set((state) => ({
+          timeLeft: typeof timeLeft === "function" ? timeLeft(state.timeLeft) : timeLeft,
+        })),
+      setIsTimerRunning: (isTimerRunning) => set({ isTimerRunning }),
+      setIsCommentaryShow: (isCommentaryShow) => set({ isCommentaryShow }),
+      setAnswerTime: (answerTime) => set({ answerTime }),
+      setDisplayTime: (displayTime) => set({ displayTime }),
+
       addQuiz: (quiz, index) =>
         set((state) => {
           const newQuizzes = [...state.quizzes];
@@ -59,6 +94,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         isShowStarted: state.isShowStarted,
         isShowEnded: state.isShowEnded,
         isHost: state.isHost,
+        isLoading: state.isLoading,
         quizCount: state.quizCount,
         collectionName: state.collectionName,
         participants: state.participants,
@@ -71,6 +107,18 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         myResult: state.myResult,
         result: state.result,
         isResultReady: state.isResultReady,
+        currentQuiz: state.currentQuiz,
+        showAnswer: state.showAnswer,
+        userAnswer: state.userAnswer,
+        selectedOX: state.selectedOX,
+        selectedMultipleChoice: state.selectedMultipleChoice,
+        objectiveInput: state.objectiveInput,
+        loadingCount: state.loadingCount,
+        timeLeft: state.timeLeft,
+        isTimerRunning: state.isTimerRunning,
+        isCommentaryShow: state.isCommentaryShow,
+        answerTime: state.answerTime,
+        displayTime: state.displayTime,
       }),
     }
   )

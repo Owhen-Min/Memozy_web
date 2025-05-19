@@ -18,7 +18,7 @@ function Header() {
   }, [checkAuth, location.pathname]);
 
   return (
-    <header className="bg-light h-12 flex items-center justify-between px-4 md:px-8 relative">
+    <header className="bg-light h-14 flex items-center justify-between px-4 md:px-8 fixed top-0 left-0 right-0 z-50">
       {/* 모바일 메뉴 토글 버튼 - 모바일에서만 표시 */}
       {isLoggedIn && (
         <button
@@ -43,7 +43,7 @@ function Header() {
         <div className="hidden md:flex items-center space-x-6">
           <Link
             to="/collection"
-            className={`font-pre-medium text-16 transition-colors duration-200 ${
+            className={`font-pre-medium text-[18px] transition-colors duration-200 ${
               currentPath === "/collection"
                 ? "text-[#0F56B3]"
                 : "text-[#4285F4] hover:text-[#0F56B3]"
@@ -53,7 +53,7 @@ function Header() {
           </Link>
           <Link
             to="/my"
-            className={`font-pre-medium text-16 transition-colors duration-200 ${
+            className={`font-pre-medium text-[18px] transition-colors duration-200 ${
               currentPath === "/my" ? "text-[#0F56B3]" : "text-[#4285F4] hover:text-[#0F56B3]"
             }`}
           >
@@ -65,7 +65,7 @@ function Header() {
       {/* 로고 - 항상 표시 */}
       <Link to="/">
         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <img src={logo} alt="Memozy 로고" className="h-8" />
+          <img src={logo} alt="Memozy 로고" className="h-12" />
         </div>
       </Link>
 
@@ -74,7 +74,7 @@ function Header() {
         <div className="hidden md:block">
           <Link
             to="/"
-            className="text-[#4285F4] font-pre-medium text-16 hover:text-[#0F56B3] transition-colors duration-200"
+            className="text-[#4285F4] font-pre-medium text-[18px] hover:text-[#0F56B3] transition-colors duration-200"
             onClick={() => useAuthStore.getState().logout()}
           >
             로그아웃

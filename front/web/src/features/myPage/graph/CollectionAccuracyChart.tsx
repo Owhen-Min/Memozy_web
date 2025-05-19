@@ -105,11 +105,11 @@ export default function CollectionAccuracyChart({
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md">
       <h3 className="text-14 md:text-[18px] font-pre-semibold mb-1 md:mb-2">컬렉션별 정답률</h3>
-      <p className="text-10 text-gray-600 font-pre-regular">
+      <p className="text-12 text-gray-600 font-pre-regular">
         컬렉션별 가장 최근 퀴즈풀이의 정답률을 보여줍니다.
       </p>
       {collectionAccuracy && collectionAccuracy.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-scroll">
           <div
             style={{
               width: `${Math.max(collectionAccuracy.length * 80, 300)}px`,
