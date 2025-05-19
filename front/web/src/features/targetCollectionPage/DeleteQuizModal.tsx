@@ -9,15 +9,23 @@ interface DeleteQuizModalProps {
 }
 
 function DeleteQuizModal({ quizId, sourceId, onClose }: DeleteQuizModalProps) {
-  const { deleteQuiz, fetchMemozyList } = useCollectionStore();
+  const { deleteQuiz, fetchMemozyList, fetchQuizList } = useCollectionStore();
   const { collectionId } = useParams();
 
   const handleDelete = async () => {
     try {
-      await deleteQuiz(quizId || [], sourceId || []);
+      if (!quizId || !sourceId) return;
+
+      await deleteQuiz(quizId, sourceId);
+
+      // 삭제된 퀴즈의 sourceId에 대해 퀴즈 목록 새로고침
+      await Promise.all(sourceId.map((id) => fetchQuizList(id)));
+
+      // 컬렉션 목록 새로고침
       if (collectionId) {
         await fetchMemozyList(Number(collectionId));
       }
+
       onClose();
     } catch (error) {
       console.error("퀴즈 삭제 실패:", error);
