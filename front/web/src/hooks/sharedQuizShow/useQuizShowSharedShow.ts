@@ -74,7 +74,6 @@ export const useQuizShowSharedShow = ({
 
     // 리렌더링으로 인한 useEffect 클린업에서는 타이머를 클리어하지 않습니다.
     // 언마운트 부분은 컴포넌트 완전 제거 시에만 호출되도록 별도 처리합니다.
-    let isUnmounting = false;
 
     return () => {
       // 컴포넌트 언마운트 시 작업
