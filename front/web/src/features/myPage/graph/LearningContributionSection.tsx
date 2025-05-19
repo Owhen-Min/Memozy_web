@@ -14,9 +14,9 @@ export default function LearningContributionSection({
   const today = new Date();
   const currentYear = today.getFullYear();
 
-  // 지난 12개월 보기 (현재 월의 마지막 날부터 12개월 전의 1일까지)
-  const endDate = new Date(currentYear, today.getMonth() + 1, 0); // 현재 월의 마지막 날
-  const startDate = new Date(currentYear, today.getMonth() - 11, 1); // 12개월 전의 1일
+  // 지난 12개월 보기 (다음 달의 1일부터 12개월 뒤의 마지막 날까지)
+  const startDate = new Date(currentYear, today.getMonth() - 11, 1); // 12개월 전(작년 해당월+1)의 1일
+  const endDate = new Date(currentYear, today.getMonth() + 1, 0); // 이번 달의 마지막 날
 
   // 선택된 날짜 범위에 맞는 데이터만 필터링
   const filteredContributions = learningContribution.filter((contrib) => {
