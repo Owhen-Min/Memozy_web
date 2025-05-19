@@ -38,7 +38,6 @@ const QuizShowSharedPage = () => {
     await httpClient
       .post(`quiz/show/${showId}`)
       .then((res) => {
-        console.log("[DEBUG] 퀴즈 쇼 저장 결과", res.data);
         if (res.data.success) {
           setError("나의 컬렉션에 저장되었습니다.", { showButtons: false });
         } else {
