@@ -31,6 +31,15 @@ export interface QuizShowResult {
   }[];
 }
 
+// NodeJS.Timeout 타입을 위한 인터페이스 선언
+declare global {
+  interface Timers {
+    countdownTimer: any | null;
+    quizTimer: any | null;
+    commentaryTimer: any | null;
+  }
+}
+
 export interface QuizShowSharedStore {
   // 기본 상태
   isLoading: boolean;
@@ -62,9 +71,16 @@ export interface QuizShowSharedStore {
   loadingCount: number;
   timeLeft: number;
   isTimerRunning: boolean;
-  isCommentaryShow: boolean;
   answerTime: number;
   displayTime: number;
+  isInitialized: boolean;
+  isFirstStart: boolean;
+  timers: Timers;
+
+  // quizSessionId를 스토어 내부에서 설정하기 위한 액션
+  setQuizSessionIdInternal: (id: string) => void;
+  // 페이지 컴포넌트에서 호출될 수 있는 액션 (선택 사항, 이미 setQuizSessionIdInternal로 대체 가능성 검토)
+  setQuizSessionId: (quizSessionId: string) => void;
 
   // 액션
   setIsLoading: (isLoading: boolean) => void;
@@ -78,7 +94,6 @@ export interface QuizShowSharedStore {
   setHostId: (hostId: string) => void;
   setUserId: (userId: string) => void;
   setCurrentQuizIndex: (currentQuizIndex: number) => void;
-  setQuizSessionId: (quizSessionId: string) => void;
   setQuizzes: (quizzes: Quiz[]) => void;
   setMyResult: (myResult: QuizShowMyResult | {}) => void;
   setResult: (result: QuizShowResult | {}) => void;
@@ -94,13 +109,32 @@ export interface QuizShowSharedStore {
   setLoadingCount: (loadingCount: number | ((prev: number) => number)) => void;
   setTimeLeft: (timeLeft: number | ((prev: number) => number)) => void;
   setIsTimerRunning: (isTimerRunning: boolean) => void;
-  setIsCommentaryShow: (isCommentaryShow: boolean) => void;
-  setAnswerTime: (answerTime: number) => void;
-  setDisplayTime: (displayTime: number) => void;
 
   // 퀴즈 추가 액션
   addQuiz: (quiz: Quiz, index: number) => void;
 
+  // 타이머 관련 액션
+  clearAllTimers: () => void;
+  startInitialCountdown: () => void;
+  startQuizTimer: () => void;
+
+  // 정답 및 퀴즈 관련 액션
+  handleOXSelect: (value: "O" | "X") => void;
+  handleMultipleChoiceSelect: (answer: { index: number; value: string }) => void;
+  handleObjectiveInput: (value: string) => void;
+  moveToNextQuiz: () => void;
+  checkAnswer: (submitAnswerCallback?: (answer: Answer) => void) => boolean;
+  isAnswerCorrect: () => boolean | undefined;
+
   // 초기화 액션
   resetStore: () => void;
+
+  // 초기화 함수 추가
+  initQuizData: (quizList: Quiz[], quizCountValue: number, collectionNameValue: string) => void;
+
+  // 카운트다운 시작 함수 추가
+  startCountdown: () => void;
+
+  // 자동 정답 제출 함수
+  autoSubmitAnswer: () => boolean | undefined;
 }
