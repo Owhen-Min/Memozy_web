@@ -36,7 +36,7 @@ function QuizShowResultPersonalPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium">결과를 불러오는 중...</div>
         </div>
       );
@@ -44,7 +44,7 @@ function QuizShowResultPersonalPage() {
 
     if (error) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium text-red">{error}</div>
         </div>
       );
@@ -52,7 +52,7 @@ function QuizShowResultPersonalPage() {
 
     if (!quizResult) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium">결과 데이터가 없습니다.</div>
         </div>
       );
@@ -76,7 +76,7 @@ function QuizShowResultPersonalPage() {
             </span>
           </div>
         </div>
-        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[80vh] md:h-[70vh] justify-between relative">
+        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[calc(100vh-56px-40px-80px)] justify-between relative">
           {/* 캐릭터 이미지 - 모바일에서는 숨김 */}
           <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
             <img
@@ -148,7 +148,7 @@ function QuizShowResultPersonalPage() {
     );
   };
 
-  return <div className="content-quiz">{renderContent()}</div>;
+  return <div className="content-quiz mt-14">{renderContent()}</div>;
 }
 
 export default QuizShowResultPersonalPage;
