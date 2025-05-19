@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import closeIcon from "../../assets/icons/closeIcon.svg";
 import { useCollectionStore } from "../../stores/collection/collectionStore";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 interface CopyMemozyModalProps {
   memozyIds: number[];
@@ -10,18 +10,19 @@ interface CopyMemozyModalProps {
 
 function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
-  const { collections, fetchCollections, copyMemozy, loading, error } = useCollectionStore();
+  const { collections, copyMemozy } = useCollectionStore();
   const { collectionId } = useParams();
   const currentCollectionId = Number(collectionId);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCollections();
+    // fetchCollections() 호출 제거
     // 현재 컬렉션이 아닌 첫 번째 컬렉션을 선택
     const firstAvailableCollection = collections.find((col) => col.id !== currentCollectionId);
     if (firstAvailableCollection) {
       setSelectedCollectionId(firstAvailableCollection.id);
     }
-  }, [collections.length, fetchCollections, currentCollectionId]);
+  }, [collections, currentCollectionId]);
 
   const handleCopy = async () => {
     if (!selectedCollectionId) return;
@@ -29,6 +30,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     try {
       await copyMemozy(selectedCollectionId, memozyIds, currentCollectionId);
       onClose();
+      navigate(`/collection/${selectedCollectionId}`);
     } catch (err) {
       console.error("메모지 복제 중 오류 발생:", err);
     }
@@ -42,12 +44,10 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
       <h1 className="text-20 font-pre-bold text-center mb-4">
         <span className="font-pre-bold">Memozy 복제하기</span>
       </h1>
-      {error && <p className="text-red-500 text-14 mb-4">{error}</p>}
       <select
         className="w-full border border-gray-300 rounded-lg px-4 py-2 text-16 font-pre-medium mb-8 focus:outline-none focus:ring-2 focus:ring-main200"
         value={selectedCollectionId ?? ""}
         onChange={(e) => setSelectedCollectionId(Number(e.target.value))}
-        disabled={loading}
       >
         {collections.map((col) => (
           <option
@@ -62,10 +62,10 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
       </select>
       <button
         onClick={handleCopy}
-        disabled={loading || !selectedCollectionId}
+        disabled={!selectedCollectionId}
         className="w-full bg-normal text-white rounded-xl py-2 font-pre-medium text-16 hover:bg-normal/90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
       >
-        {loading ? "복제 중..." : "해당 컬렉션에 복제"}
+        {selectedCollectionId ? "해당 컬렉션에 복제" : "복제할 컬렉션을 선택해주세요."}
       </button>
     </div>
   );

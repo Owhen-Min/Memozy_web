@@ -42,36 +42,10 @@ const MultipleChoice = ({
         {content}
       </div>
       <div className="w-full flex flex-col gap-2">
-        {choice?.map((item, index) => {
-          // 배경색 로직
-          let bgColor = "bg-white";
-          let textColor = "text-gray-800";
-          let borderColor = "border-gray-200";
-
-          if (showAnswer) {
-            const isCorrectChoice = item === answer;
-            const isSelectedChoice = selected === index;
-
-            if (isCorrectChoice) {
-              // 정답인 경우 항상 초록색으로 표시
-              bgColor = "bg-green-100";
-              borderColor = "border-green-500";
-              textColor = "text-green-800";
-            } else if (isSelectedChoice) {
-              // 사용자가 선택했지만 오답인 경우 빨간색으로 표시 (isCorrect 확인 조건 제거)
-              bgColor = "bg-red-100";
-              borderColor = "border-red-500";
-              textColor = "text-red-800";
-            }
-          } else if (selected === index) {
-            bgColor = "bg-light";
-            textColor = "text-main200";
-          }
-
-          return (
-            <button
-              key={index}
-              className={`w-full text-left px-6 py-2 rounded-lg border transition font-medium text-16 sm:text-20
+        {choice?.map((item, index) => (
+          <button
+            key={index}
+            className={`w-full text-left px-6 py-2 rounded-lg border transition font-medium text-16 sm:text-20
                           ${
                             showAnswer
                               ? item === answer
@@ -84,13 +58,12 @@ const MultipleChoice = ({
                                 : "bg-white text-gray-800 border-gray-200"
                           }
                           ${!showAnswer ? "hover:border-lighthover hover:bg-lighthover" : ""}`}
-              onClick={() => handleSelect(index)}
-              disabled={showAnswer}
-            >
-              {index + 1}. {item}
-            </button>
-          );
-        })}
+            onClick={() => handleSelect(index)}
+            disabled={showAnswer}
+          >
+            {index + 1}. {item}
+          </button>
+        ))}
       </div>
     </div>
   );

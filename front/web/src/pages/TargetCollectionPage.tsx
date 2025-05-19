@@ -104,6 +104,13 @@ function TargetCollectionPage() {
     }
   };
 
+  const handleCloseModalAndEndEditMode = () => {
+    setIsDeleteModalOpen(false);
+    setIsCopyModalOpen(false);
+    setIsEditMode(false);
+    setSelectedMemozyIds([]);
+  };
+
   // 바깥 영역 클릭 시 모달 닫기 처리
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // 현재 이벤트가 발생한 요소가 바깥 영역(overlay)인 경우에만 닫기
@@ -118,7 +125,10 @@ function TargetCollectionPage() {
     <>
       <div className="content">
         <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200 flex flex-wrap items-center">
-          <span className="break-all whitespace-normal w-full md:w-auto md:max-w-xl inline-block">
+          <span
+            className="truncate w-full md:w-auto md:max-w-xl inline-block hover:whitespace-normal hover:break-all"
+            title={collectionName ?? ""}
+          >
             {collectionName}
           </span>
         </h1>
@@ -224,7 +234,7 @@ function TargetCollectionPage() {
           <DeleteMemozyModal
             quizId={null}
             sourceId={selectedMemozyIds}
-            onClose={() => setIsDeleteModalOpen(false)}
+            onClose={handleCloseModalAndEndEditMode}
           />
         </div>
       )}
@@ -234,10 +244,7 @@ function TargetCollectionPage() {
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onMouseDown={handleOutsideClick}
         >
-          <CopyMemozyModal
-            memozyIds={selectedMemozyIds}
-            onClose={() => setIsCopyModalOpen(false)}
-          />
+          <CopyMemozyModal memozyIds={selectedMemozyIds} onClose={handleCloseModalAndEndEditMode} />
         </div>
       )}
     </>

@@ -42,7 +42,6 @@ export const useQuizShowWebsocket = (showId: string) => {
 
   const handleJoin = (message: any) => {
     const payload = JSON.parse(message.body);
-    console.log(payload);
 
     if (payload.type === "HOST") {
       if (nickname === "") {
@@ -119,7 +118,6 @@ export const useQuizShowWebsocket = (showId: string) => {
         typeof data.mostWrongQuiz.choice === "string"
       ) {
         try {
-          console.log(data.mostWrongQuiz.choice);
           choiceArray = data.mostWrongQuiz.choice
             .replace("[", "")
             .replace("]", "")
