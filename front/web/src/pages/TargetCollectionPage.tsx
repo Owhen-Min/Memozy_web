@@ -118,7 +118,10 @@ function TargetCollectionPage() {
     <>
       <div className="content">
         <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200 flex flex-wrap items-center">
-          <span className="break-all whitespace-normal w-full md:w-auto md:max-w-xl inline-block">
+          <span
+            className="truncate w-full md:w-auto md:max-w-xl inline-block hover:whitespace-normal hover:break-all"
+            title={collectionName ?? ""}
+          >
             {collectionName}
           </span>
         </h1>

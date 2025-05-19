@@ -38,6 +38,12 @@ function AddCollection({ isOpen, onClose }: AddCollectionProps) {
     const newName = e.target.value;
     setCollectionName(newName);
 
+    // 20자 이상이면 먼저 에러 메시지 표시
+    if (newName.length >= 20) {
+      setErrorMessage("컬렉션 이름은 최대 20자까지 입력 가능합니다.");
+      return;
+    }
+
     const validation = validateCollectionName(newName);
     setErrorMessage(validation.message);
   };
@@ -52,6 +58,7 @@ function AddCollection({ isOpen, onClose }: AddCollectionProps) {
             value={collectionName}
             onChange={handleNameChange}
             placeholder="컬렉션 이름을 입력하세요"
+            maxLength={20}
             className={`w-full p-3 border ${errorMessage ? "border-red" : "border-gray300"} rounded-lg`}
           />
           {errorMessage && <p className="mt-1 text-12 text-red">{errorMessage}</p>}
