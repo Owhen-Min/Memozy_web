@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 interface QuizShowMyResult {
   myCorrectQuizCount: number;
-  score: number;
+  myScore: number;
   totalQuizCount: number;
 }
 
@@ -64,7 +64,7 @@ export const useQuizShowSharedResult = ({
   useEffect(() => {
     if (Object.keys(myResult).length > 0) {
       const typedMyResult = myResult as QuizShowMyResult;
-      setMyScore(typedMyResult.score || 0);
+      setMyScore(typedMyResult.myScore || 0);
       setTotalQuizCount(typedMyResult.totalQuizCount || 0);
       // Calculate wrong count from correct count
       const correctCount = typedMyResult.myCorrectQuizCount || 0;
