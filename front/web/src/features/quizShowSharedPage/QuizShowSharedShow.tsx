@@ -6,6 +6,7 @@ import OX from "../../components/quizShowSharedPage/OX";
 import Objective from "../../components/quizShowSharedPage/Objective";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
+import { useNavigate } from "react-router";
 
 interface Answer {
   type: "SUBMIT";
@@ -52,6 +53,7 @@ function QuizShowSharedShow({
     handleShowEnded,
     submitAnswer,
   });
+  const navigate = useNavigate();
 
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
@@ -102,19 +104,24 @@ function QuizShowSharedShow({
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-          <img src={small_logo} alt="logo" className="w-10 h-10" />
-          Quiz : <span className="text-normalactive">{collectionName}</span>
-        </h1>
+        <div className="flex text-[28px] font-pre-semibold text-main200 flex items-center gap-1">
+          <img src={small_logo} alt="logo" className="h-full" />
+          <span
+            className="h-full break-all line-clamp-1 relative text-normalactive"
+            title={`${collectionName}`}
+          >
+            {collectionName}
+          </span>
+        </div>
         <button
-          className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
-          onClick={() => (window.location.href = "/collection")}
+          className="flex-shrink-0 border border-red text-red rounded-lg p-2 flex items-center gap-2 text-12 w-100"
+          onClick={() => navigate(`/collection`)}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full h-[85vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -157,21 +164,25 @@ function QuizShowSharedShow({
 
             {/* 해설 영역 */}
             {showAnswer && currentQuiz && (
-              <div className="absolute bottom-3 left-0 right-0 bg-pink-100 mx-2 p-4 rounded-xl">
-                <div className="text-lg font-bold mb-2">해설</div>
-                <p className="text-gray-800">{currentQuiz.commentary || currentQuiz.answer}</p>
+              <div className="flex flex-col justify-center items-start bg-pink-100 mt-3 p-2 rounded-xl">
+                <p className="text-16 sm:text-lg font-bold mb-2">해설</p>
+                <p className="text-14 sm:text-16 text-gray-800">
+                  {currentQuiz.commentary || currentQuiz.answer}
+                </p>
               </div>
             )}
 
             {/* 정답 제출 버튼 - 정답 제출 전에만 표시 */}
             {!showAnswer && (
-              <button
-                className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
-                onClick={handleShowAnswer}
-              >
-                <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
-                선택 완료
-              </button>
+              <div className="flex justify-end items-center mt-2 sm:mt-8">
+                <button
+                  className="text-main200 text-20 font-pre-medium flex gap-1 transition-transform duration-200 hover:scale-110"
+                  onClick={handleShowAnswer}
+                >
+                  <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+                  선택 완료
+                </button>
+              </div>
             )}
           </>
         )}

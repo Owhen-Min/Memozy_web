@@ -85,7 +85,7 @@ const QuizShowSharedPage = () => {
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-main200" />
         </div>
       )}
-      <div className="content-quiz">
+      <div className="content-quiz-shared">
         {!isShowStarted && (
           <QuizShowSharedEntry
             isHost={isHost}

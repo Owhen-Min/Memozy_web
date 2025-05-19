@@ -2,11 +2,13 @@ import small_logo from "../../assets/images/small_logo.png";
 import rightmonster from "../../assets/images/quizshowImg.png";
 import save from "../../assets/icons/save.svg";
 import book from "../../assets/icons/summaryIcon.svg";
+import homeIcon from "../../assets/icons/homeIcon.svg";
 import first from "../../assets/images/first.png";
 import second from "../../assets/images/second.png";
 import third from "../../assets/images/third.png";
 import { useQuizShowSharedResult } from "../../hooks/sharedQuizShow";
 import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
+import { useNavigate } from "react-router";
 
 interface QuizShowMyResult {
   myCorrectQuizCount: number;
@@ -50,6 +52,7 @@ function QuizShowResultSharedPage({
   isLoggedIn,
   handleSaveQuizClick,
 }: QuizShowSharedResultProps) {
+  const navigate = useNavigate();
   const {
     myScore,
     totalQuizCount,
@@ -71,17 +74,17 @@ function QuizShowResultSharedPage({
 
   return (
     <>
-      <div className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
-        <div className="flex items-center gap-1 md:gap-2 w-full overflow-hidden">
-          <img src={small_logo} alt="logo" className="w-6 md:w-10 flex-shrink-0" />
-          <span className="whitespace-nowrap flex-shrink-0">Quiz : </span>
-          <span className="text-normalactive truncate md:overflow-visible md:whitespace-normal">
-            {collectionName || "퀴즈 결과"}
-          </span>
-        </div>
+      <div className="flex text-[28px] font-pre-semibold text-main200 flex items-center gap-1">
+        <img src={small_logo} alt="logo" className="h-full" />
+        <span
+          className="h-full break-all line-clamp-1 relative text-normalactive"
+          title={`${collectionName}`}
+        >
+          {collectionName}
+        </span>
       </div>
       {isResultLoading ? (
-        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[80vh] md:h-[70vh] justify-center items-center">
+        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[85vh] sm:h-[80vh] justify-center items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-main200 mb-4"></div>
           <p className="text-16 md:text-20 font-pre-medium text-main200">
             결과를 불러오는 중입니다...
@@ -91,14 +94,10 @@ function QuizShowResultSharedPage({
           </p>
         </div>
       ) : (
-        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[80vh] md:h-[70vh] justify-between relative">
+        <div className="w-full bg-white rounded-xl shadow-xl p-4 md:p-8 flex flex-col h-[70vh] sm:h-[80vh] justify-start relative">
           {/* 캐릭터 이미지 - 모바일에서는 숨김 */}
-          <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
-            <img
-              src={rightmonster}
-              alt="Memozy Character"
-              className="h-24 md:h-40 hidden sm:block"
-            />
+          <div className="absolute bottom-4 right-4 hidden sm:block sm:bottom-16 sm:right-8">
+            <img src={rightmonster} alt="Memozy Character" className="h-40 md:h-40" />
           </div>
 
           {/* 상단 컨텐츠 영역 */}
@@ -123,26 +122,37 @@ function QuizShowResultSharedPage({
                 onClick={handleMostWrongQuizClick}
                 className="group flex items-center mt-6 md:mt-8 font-pre-medium hover:text-blue-600 text-14 md:text-20"
               >
-                친구들이 가장 많이 틀린 퀴즈
                 <img
                   src={book}
                   alt="책아이콘"
-                  className="w-3 md:w-4 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                 />
+                &nbsp;친구들이 가장 많이 틀린 퀴즈
               </button>
               {isLoggedIn && (
                 <button
                   onClick={handleSaveQuizClick}
                   className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
                 >
-                  나의 컬렉션에 저장하기
                   <img
                     src={save}
                     alt="저장아이콘"
                     className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                   />
+                  &nbsp;나의 컬렉션에 저장하기
                 </button>
               )}
+              <button
+                onClick={() => navigate(`/collection`)}
+                className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
+              >
+                <img
+                  src={homeIcon}
+                  alt="책아이콘"
+                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                />
+                &nbsp;컬렉션으로 돌아가기
+              </button>
             </div>
           </div>
 
@@ -151,8 +161,8 @@ function QuizShowResultSharedPage({
             {processedRanking.map((ranker) => (
               <div key={ranker.rank} className="flex items-center mb-8">
                 <img src={rankImages[ranker.imageIndex]} alt={`${ranker.rank}`} className="w-4" />
-                <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.name}</span>
-                <span className="text-14 md:text-16 font-pre-semibold ml-3">{ranker.score}</span>
+                <span className="text-16 md:text-20 font-pre-semibold ml-3">{ranker.name}</span>
+                <span className="text-16 md:text-20 font-pre-semibold ml-3">{ranker.score}</span>
               </div>
             ))}
           </div>

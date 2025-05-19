@@ -42,9 +42,9 @@ function App() {
             path="/quiz-result/personal/:collectionId/:quizSessionId"
             element={<QuizShowResultPersonalPage />}
           />
-          <Route path="/quiz/show/:showId" element={<QuizShowSharedPage />} />
         </Route>
 
+        <Route path="/quiz/show/:showId" element={<QuizShowSharedPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
