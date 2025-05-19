@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -447,8 +447,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 		// 각 QuizSource의 title, summary, url을 기반으로 조건 생성
 		for (QuizSource source : quizSources) {
 			builder.or(
-				quizSource.title.eq(source.getTitle())
-					.and(quizSource.summary.eq(source.getSummary()))
+				quizSource.summary.eq(source.getSummary())
 					.and(quizSource.url.eq(source.getUrl()))
 					.and(quizSource.userId.eq(userId))
 					.and(collectionId != null

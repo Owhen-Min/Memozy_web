@@ -65,4 +65,8 @@ public class QuizSource extends BaseTimeEntity {
 	public void updateCollectionId(int collectionId) {
 		this.collectionId = collectionId;
 	}
+
+	public void updateTitle(String title) {
+		this.title = title;
+	}
 }

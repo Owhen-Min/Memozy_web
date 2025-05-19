@@ -193,7 +193,6 @@ public class CollectionServiceImpl implements CollectionService {
 	public void copyMemozies(Integer userId, Integer copyCollectionId, List<Integer> sourceIds) {
 		// 1. 복사할 source들 조회
 		List<QuizSource> originalSources = quizSourceRepository.findBySourceIdInAndUserId(sourceIds, userId);
-
 		List<QuizSource> quizSourceList = collectionRepository.findExistingSourceInCollection(originalSources,
 			copyCollectionId, userId);
 		if (!quizSourceList.isEmpty()) {
