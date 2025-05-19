@@ -39,6 +39,7 @@ interface QuizShowSharedResultProps {
   isLoading?: boolean;
   isHost: boolean;
   isLoggedIn: boolean;
+  handleSaveQuizClick: () => void;
 }
 
 function QuizShowResultSharedPage({
@@ -48,6 +49,7 @@ function QuizShowResultSharedPage({
   isLoading = true,
   isHost,
   isLoggedIn,
+  handleSaveQuizClick,
 }: QuizShowSharedResultProps) {
   const {
     myScore,
@@ -64,10 +66,6 @@ function QuizShowResultSharedPage({
     result,
     isLoading,
   });
-
-  const handleSaveQuizClick = () => {
-    console.log("나의 컬렉션에 저장하기 클릭"); //연결안함
-  };
 
   // 랭킹 데이터 이미지 매핑
   const rankImages = [first, second, third];

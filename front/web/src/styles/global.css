@@ -67,13 +67,37 @@
 *::before,
 *::after {
   box-sizing: border-box; /* 모든 엘리먼트의 크기를 패딩과 보더를 포함한 크기로 계산 */
-  -ms-overflow-style: none; /* IE, Edge에서 스크롤바 숨기기 */
-  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
 }
 
-/* 웹킷 기반 브라우저에서 스크롤바 숨기기 */
+/* 기본적으로 모든 스크롤바 숨기기 */
 *::-webkit-scrollbar {
   display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 가로 스크롤바가 필요한 요소를 위한 클래스 */
+.show-horizontal-scrollbar {
+  -ms-overflow-style: auto !important;
+  scrollbar-width: auto !important;
+}
+
+.show-horizontal-scrollbar::-webkit-scrollbar {
+  display: block !important;
+  height: 8px;
+}
+
+.show-horizontal-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.show-horizontal-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
 }
 
 /* 전체 페이지 기본 스타일 */
