@@ -4,8 +4,10 @@ import QuizShowSharedEntry from "../features/quizShowSharedPage/QuizShowSharedEn
 import QuizShowSharedShow from "../features/quizShowSharedPage/QuizShowSharedShow";
 import QuizShowSharedResult from "../features/quizShowSharedPage/QuizShowSharedResult";
 import { useAuthStore } from "../stores/authStore";
+import { useErrorStore } from "../stores/errorStore";
 import { useQuizShowSharedStore } from "../stores/quizShowShared/quizShowSharedStore";
 import { useQuizShowWebsocket } from "../hooks/sharedQuizShow/useQuizShowWebsocket";
+import httpClient from "../apis/httpClient";
 
 const QuizShowSharedPage = () => {
   // Zustand 스토어에서 상태와 액션 가져오기
@@ -18,13 +20,11 @@ const QuizShowSharedPage = () => {
     participants,
     nickname,
     hostId,
-    currentQuizIndex,
     quizSessionId,
     quizzes,
     myResult,
     result,
     isResultReady,
-    setCurrentQuizIndex,
     resetStore,
     setQuizSessionId,
   } = useQuizShowSharedStore();
@@ -32,6 +32,23 @@ const QuizShowSharedPage = () => {
   const { showId } = useParams();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const [isLoading, setIsLoading] = useState(true);
+  const setError = useErrorStore((state) => state.setError);
+
+  const handleSaveQuizClick = async () => {
+    await httpClient
+      .post(`quiz/show/${showId}`)
+      .then((res) => {
+        console.log("[DEBUG] 퀴즈 쇼 저장 결과", res.data);
+        if (res.data.success) {
+          setError("나의 컬렉션에 저장되었습니다.", { showButtons: false });
+        } else {
+          setError(res.data.errorMsg, { showButtons: false });
+        }
+      })
+      .catch((err) => {
+        setError(err, { showButtons: false });
+      });
+  };
 
   // 웹소켓 훅 사용
   const { submitAnswer, handleStartQuizShow, handleChangeNickname, handleShowEnded, isConnected } =
@@ -90,8 +107,6 @@ const QuizShowSharedPage = () => {
             quizList={quizzes}
             quizSessionId={quizSessionId}
             collectionName={collectionName}
-            currentQuizIndex={currentQuizIndex}
-            setCurrentQuizIndex={setCurrentQuizIndex}
             handleShowEnded={handleShowEnded}
             submitAnswer={submitAnswer}
           />
@@ -104,6 +119,7 @@ const QuizShowSharedPage = () => {
             result={result}
             collectionName={collectionName}
             isLoading={!isResultReady}
+            handleSaveQuizClick={handleSaveQuizClick}
           />
         )}
       </div>

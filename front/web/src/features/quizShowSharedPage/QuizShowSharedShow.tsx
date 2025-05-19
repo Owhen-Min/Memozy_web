@@ -32,13 +32,11 @@ function QuizShowSharedShow({
 }: QuizShowSharedShowProps) {
   const {
     currentQuiz,
-    currentQuizIndex,
     showAnswer,
     isLoading,
     answerTime,
     loadingCount,
     displayTime,
-    isCommentaryShow,
     selectedOX,
     selectedMultipleChoice,
     objectiveInput,
@@ -137,15 +135,15 @@ function QuizShowSharedShow({
             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
               <div
                 className={`h-2.5 rounded-full transition-all duration-300 ${
-                  isCommentaryShow ? "bg-green-600" : "bg-blue-600"
+                  showAnswer ? "bg-green-600" : "bg-blue-600"
                 }`}
                 style={{
-                  width: `${isCommentaryShow ? (displayTime / answerTime) * 100 : (displayTime / 20) * 100}%`,
+                  width: `${Math.max(0, (displayTime / (showAnswer ? answerTime : 20)) * 100)}%`,
                 }}
               ></div>
             </div>
 
-            <div className="flex relative items-center justify-end mb-2">
+            <div className="flex relative items-center justify-end">
               <div className="text-xl font-bold flex items-center gap-2">
                 <svg className="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7H11V13L16.2 16.2L17 14.9L12.5 12.2V7Z" />
@@ -158,7 +156,7 @@ function QuizShowSharedShow({
             {currentQuiz && renderQuizComponent(currentQuiz)}
 
             {/* 해설 영역 */}
-            {isCommentaryShow && currentQuiz && (
+            {showAnswer && currentQuiz && (
               <div className="absolute bottom-3 left-0 right-0 bg-pink-100 mx-2 p-4 rounded-xl">
                 <div className="text-lg font-bold mb-2">해설</div>
                 <p className="text-gray-800">{currentQuiz.commentary || currentQuiz.answer}</p>
@@ -166,7 +164,7 @@ function QuizShowSharedShow({
             )}
 
             {/* 정답 제출 버튼 - 정답 제출 전에만 표시 */}
-            {!showAnswer && !isCommentaryShow && (
+            {!showAnswer && (
               <button
                 className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
                 onClick={handleShowAnswer}
