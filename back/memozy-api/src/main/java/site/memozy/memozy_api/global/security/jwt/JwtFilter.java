@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		"/ws-connect", "/ws-connect/**",
 		"/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
 		"/", "/index.html",
-		"/api/prometheus"
+		"/api/prometheus", "/api/health"
 	);
 
 	@Override
