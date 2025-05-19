@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect } from "react";
 import useWebSocket from "../../apis/stompClient";
 import { useQuizShowSharedStore } from "../../stores/quizShowShared/quizShowSharedStore";
 import { QuizShared } from "../../types/quizShow";
