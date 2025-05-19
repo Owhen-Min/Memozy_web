@@ -34,10 +34,27 @@ function QuizShowPersonalPage() {
       localStorage.setItem(`quiz_data_${collectionId}`, JSON.stringify(newData));
       return newData;
     }
-    // 데이터가 없으면 컬렉션 페이지로 리다이렉트
-    navigate(`/collection/${collectionId}`);
+    // 데이터가 없을 때 빈 데이터 반환
     return { collectionName: "", quizList: [], quizSessionId: "" };
   });
+
+  // 데이터가 없는 경우 처리
+  if (!quizData.quizList.length) {
+    return (
+      <div className="content-quiz">
+        <div className="w-full h-[75vh] bg-white rounded-xl shadow-xl px-8 py-4 flex flex-col items-center justify-center gap-6">
+          <h2 className="text-[24px] font-pre-semibold text-gray-600">퀴즈 데이터가 없습니다</h2>
+          <p className="text-[16px] text-gray-500">컬렉션에서 퀴즈를 다시 시작해주세요</p>
+          <button
+            onClick={() => navigate(`/collection/${collectionId}`)}
+            className="bg-main200 text-white px-6 py-3 rounded-lg font-pre-medium hover:bg-main300 transition-colors"
+          >
+            컬렉션 목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const { collectionName, quizList, quizSessionId } = quizData;
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
