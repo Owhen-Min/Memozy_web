@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import small_logo from "../assets/images/small_logo.png";
 import Memozy_logo from "../assets/images/Memozylogo.svg";
 import monster1 from "../assets/images/monster1.png";
-import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
+// import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
 import { useEffect } from "react";
 
@@ -69,13 +69,13 @@ const QuizShowEntryPersonalPage = () => {
               {quizData.collectionName}
             </span>
           </h1>
-          <button
+          {/* <button
             className="border border-red text-red rounded-lg p-1 flex items-center gap-1 md:gap-2 w-full md:w-auto justify-center text-sm md:text-base mt-2 md:mt-0"
             onClick={() => navigate(`/collection/${collectionId}`)}
           >
             <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-5 h-5 md:w-6 md:h-6" />
             퀴즈 종료하기
-          </button>
+          </button> */}
         </div>
         <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl">
           <div className="flex flex-col items-center pt-12">

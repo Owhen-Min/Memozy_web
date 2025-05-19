@@ -6,7 +6,7 @@ import MultipleChoice from "../components/quizShowPage/MultipleChoice";
 import OX from "../components/quizShowPage/OX";
 import Objective from "../components/quizShowPage/Objective";
 import Progress from "../components/quizShowPage/Progress";
-import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
+// import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../assets/icons/nextIcon.svg";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
 
@@ -98,12 +98,12 @@ function QuizShowPersonalPage() {
   }, [collectionId, navigate]);
 
   // 퀴즈 쇼 종료 시 로컬 스토리지 데이터 삭제
-  const handleExitQuiz = () => {
-    if (window.confirm("퀴즈 진행 중입니다. 정말로 종료하시겠습니까?")) {
-      localStorage.removeItem(`quiz_data_${collectionId}`);
-      navigate(`/collection/${collectionId}`);
-    }
-  };
+  // const handleExitQuiz = () => {
+  //   if (window.confirm("퀴즈 진행 중입니다. 정말로 종료하시겠습니까?")) {
+  //     localStorage.removeItem(`quiz_data_${collectionId}`);
+  //     navigate(`/collection/${collectionId}`);
+  //   }
+  // };
 
   // 퀴즈 완료 시 로컬 스토리지 데이터 삭제
   const handleNextQuiz = () => {
@@ -231,13 +231,13 @@ function QuizShowPersonalPage() {
           <span className="flex-shrink-0">Quiz :</span>
           <span className="text-normalactive truncate min-w-0">{collectionName}</span>
         </h1>
-        <button
+        {/* <button
           className="border border-red text-red rounded-lg p-1 flex items-center gap-2 transition-transform duration-200 hover:scale-110 w-full md:w-auto justify-center"
           onClick={handleExitQuiz}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
           퀴즈 종료하기
-        </button>
+        </button> */}
       </div>
       <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
         <div className="flex items-center justify-center mb-2 md:mb-4">
