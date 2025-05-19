@@ -10,18 +10,18 @@ interface CopyMemozyModalProps {
 
 function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
-  const { collections, fetchCollections, copyMemozy, loading, error } = useCollectionStore();
+  const { collections, copyMemozy, loading, error } = useCollectionStore();
   const { collectionId } = useParams();
   const currentCollectionId = Number(collectionId);
 
   useEffect(() => {
-    fetchCollections();
+    // fetchCollections() 호출 제거
     // 현재 컬렉션이 아닌 첫 번째 컬렉션을 선택
     const firstAvailableCollection = collections.find((col) => col.id !== currentCollectionId);
     if (firstAvailableCollection) {
       setSelectedCollectionId(firstAvailableCollection.id);
     }
-  }, [collections.length, fetchCollections, currentCollectionId]);
+  }, [collections, currentCollectionId]);
 
   const handleCopy = async () => {
     if (!selectedCollectionId) return;
