@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import useWebSocket from "../../apis/stompClient";
 import { useQuizShowSharedStore } from "../../stores/quizShowShared/quizShowSharedStore";
 import { QuizShared } from "../../types/quizShow";
@@ -8,6 +8,11 @@ interface Answer {
   index: number;
   choice: string;
   isCorrect: boolean;
+}
+
+interface SubscriptionConfig {
+  topic: string;
+  handler: (msg: any) => void;
 }
 
 export const useQuizShowWebsocket = (showId: string) => {
@@ -35,10 +40,6 @@ export const useQuizShowWebsocket = (showId: string) => {
     setIsResultReady,
   } = useQuizShowSharedStore();
 
-  // 웹소켓 연결
-  const { stompClient, isConnected } = useWebSocket(showId, userId);
-
-  // 핸들러 함수들 정의
   const handleJoin = (message: any) => {
     const payload = JSON.parse(message.body);
     console.log(payload);
@@ -69,6 +70,9 @@ export const useQuizShowWebsocket = (showId: string) => {
       setIsShowStarted(true);
     }
   };
+
+  // 웹소켓 연결
+  const { stompClient, isConnected } = useWebSocket(showId, userId);
 
   const handleParticipants = (message: any) => {
     const data = JSON.parse(message.body);
@@ -162,29 +166,30 @@ export const useQuizShowWebsocket = (showId: string) => {
     };
   };
 
-  // 웹소켓 연결 상태 감지
+  // 2) useQuizShowWebsocket 안에서
+  const subscriptions: SubscriptionConfig[] = [
+    { topic: `/sub/quiz/show/${showId}/join`, handler: handleJoin },
+    { topic: `/sub/quiz/show/${showId}/participants`, handler: handleParticipants },
+    { topic: `/sub/quiz/show/${showId}/quiz`, handler: handleQuiz },
+    { topic: `/sub/quiz/show/${showId}/result/${userId}`, handler: handleMyResult },
+    { topic: `/sub/quiz/show/${showId}/result`, handler: handleResult },
+  ];
+
   useEffect(() => {
-    if (stompClient && isConnected) {
-      setIsLoading(false);
+    if (!stompClient || !isConnected) return;
 
-      // 웹소켓 연결 시 모든 구독 설정
-      stompClient.subscribe(`/sub/quiz/show/${showId}/join`, handleJoin);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/participants`, handleParticipants);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/quiz`, handleQuiz);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/result/${userId}`, handleMyResult);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/result`, handleResult);
+    // 한 번에 구독 등록
+    const subs = subscriptions.map(({ topic, handler }) => stompClient.subscribe(topic, handler));
 
-      // 참가 신청 보내기
-      const timer = setTimeout(() => {
-        stompClient.publish({
-          destination: `/pub/quiz/show/${showId}/join`,
-          body: JSON.stringify({}),
-        });
-      }, 500);
+    // 최초 JOIN 발행
+    stompClient.publish({
+      destination: `/pub/quiz/show/${showId}/join`,
+      body: JSON.stringify({}),
+    });
 
-      return () => clearTimeout(timer);
-    }
-  }, [stompClient, isConnected, setIsLoading, showId, userId]);
+    // 언마운트 시 모두 해제
+    return () => subs.forEach((sub) => sub.unsubscribe());
+  }, [stompClient, isConnected]);
 
   // 액션 함수들
   const submitAnswer = (answer: Answer): boolean => {
