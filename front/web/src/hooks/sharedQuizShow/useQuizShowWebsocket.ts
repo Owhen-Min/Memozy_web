@@ -10,10 +10,16 @@ interface Answer {
   isCorrect: boolean;
 }
 
+interface SubscriptionConfig {
+  topic: string;
+  handler: (msg: any) => void;
+}
+
 export const useQuizShowWebsocket = (showId: string) => {
   // 스토어에서 필요한 상태와 액션 가져오기
   const {
     isLoading,
+    hostId,
     userId,
     nickname,
     collectionName,
@@ -34,10 +40,6 @@ export const useQuizShowWebsocket = (showId: string) => {
     setIsResultReady,
   } = useQuizShowSharedStore();
 
-  // 웹소켓 연결
-  const { stompClient, isConnected } = useWebSocket(showId, userId);
-
-  // 핸들러 함수들 정의
   const handleJoin = (message: any) => {
     const payload = JSON.parse(message.body);
     console.log(payload);
@@ -55,16 +57,22 @@ export const useQuizShowWebsocket = (showId: string) => {
     } else if (payload.type === "JOIN") {
       if (nickname === "") {
         setHostId(payload.hostId);
+        setUserId(payload.userId);
         setCollectionName(payload.collectionName);
         setNickname(payload.nickname);
         setQuizCount(payload.quizCount);
-        setUserId(payload.userId);
         setIsLoading(false);
+        if (hostId === userId) {
+          setIsHost(true);
+        }
       }
     } else if (payload.type === "START") {
       setIsShowStarted(true);
     }
   };
+
+  // 웹소켓 연결
+  const { stompClient, isConnected } = useWebSocket(showId, userId);
 
   const handleParticipants = (message: any) => {
     const data = JSON.parse(message.body);
@@ -111,10 +119,11 @@ export const useQuizShowWebsocket = (showId: string) => {
         typeof data.mostWrongQuiz.choice === "string"
       ) {
         try {
+          console.log(data.mostWrongQuiz.choice);
           choiceArray = data.mostWrongQuiz.choice
             .replace("[", "")
             .replace("]", "")
-            .split(", ")
+            .split("№")
             .map((item: string) => item.trim());
         } catch (e) {
           console.error("선택지 파싱 오류:", e);
@@ -145,7 +154,7 @@ export const useQuizShowWebsocket = (showId: string) => {
     const contentMatch = quiz.content;
     const answerMatch = quiz.answer;
     const commentaryMatch = quiz.commentary;
-    const choiceMatch = quiz.choice ? quiz.choice.slice(1, -1).split(",") : [];
+    const choiceMatch = quiz.choice ? quiz.choice.split("№") : [];
 
     return {
       quizId: quiz.quizId,
@@ -157,29 +166,30 @@ export const useQuizShowWebsocket = (showId: string) => {
     };
   };
 
-  // 웹소켓 연결 상태 감지
+  // 2) useQuizShowWebsocket 안에서
+  const subscriptions: SubscriptionConfig[] = [
+    { topic: `/sub/quiz/show/${showId}/join`, handler: handleJoin },
+    { topic: `/sub/quiz/show/${showId}/participants`, handler: handleParticipants },
+    { topic: `/sub/quiz/show/${showId}/quiz`, handler: handleQuiz },
+    { topic: `/sub/quiz/show/${showId}/result/${userId}`, handler: handleMyResult },
+    { topic: `/sub/quiz/show/${showId}/result`, handler: handleResult },
+  ];
+
   useEffect(() => {
-    if (stompClient && isConnected) {
-      setIsLoading(false);
+    if (!stompClient || !isConnected) return;
 
-      // 웹소켓 연결 시 모든 구독 설정
-      stompClient.subscribe(`/sub/quiz/show/${showId}/join`, handleJoin);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/participants`, handleParticipants);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/quiz`, handleQuiz);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/result/${userId}`, handleMyResult);
-      stompClient.subscribe(`/sub/quiz/show/${showId}/result`, handleResult);
+    // 한 번에 구독 등록
+    const subs = subscriptions.map(({ topic, handler }) => stompClient.subscribe(topic, handler));
 
-      // 참가 신청 보내기
-      const timer = setTimeout(() => {
-        stompClient.publish({
-          destination: `/pub/quiz/show/${showId}/join`,
-          body: JSON.stringify({}),
-        });
-      }, 500);
+    // 최초 JOIN 발행
+    stompClient.publish({
+      destination: `/pub/quiz/show/${showId}/join`,
+      body: JSON.stringify({}),
+    });
 
-      return () => clearTimeout(timer);
-    }
-  }, [stompClient, isConnected, setIsLoading, showId, userId]);
+    // 언마운트 시 모두 해제
+    return () => subs.forEach((sub) => sub.unsubscribe());
+  }, [stompClient, isConnected]);
 
   // 액션 함수들
   const submitAnswer = (answer: Answer): boolean => {
