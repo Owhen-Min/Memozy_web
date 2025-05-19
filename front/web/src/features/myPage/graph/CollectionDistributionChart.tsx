@@ -58,12 +58,19 @@ export default function CollectionDistributionChart({
       tooltip: {
         titleFont: {
           family: "'Pretendard-Regular', sans-serif",
-          size: 14,
+          size: 12,
         },
-        bodyFont: {
-          family: "'Pretendard-Regular', sans-serif",
-          size: 13,
+        callbacks: {
+          title: function (context: any) {
+            const title = context[0]?.label || "";
+            // 10자씩 끊어서 배열로 반환 → 여러 줄로 표시됨
+            return title.match(/.{1,10}/g) || [];
+          },
+          label: function () {
+            return "";
+          },
         },
+        displayColors: false,
       },
     },
   };
@@ -80,17 +87,34 @@ export default function CollectionDistributionChart({
             <Pie data={pieChartData} options={pieChartOptions} />
           </div>
           <div className="flex flex-wrap justify-center mt-2 md:mt-4">
-            {pieChartData.labels.map((label, index) => (
-              <div key={index} className="flex items-center mx-1 md:mx-2 mb-1 md:mb-2">
-                <div
-                  className="w-2 h-2 md:w-3 md:h-3"
-                  style={{
-                    backgroundColor: pieChartData.datasets[0].backgroundColor[index],
-                  }}
-                ></div>
-                <span className="ml-1 text-10 md:text-14 font-pre-regular">{label}</span>
-              </div>
-            ))}
+            {pieChartData.labels.map((label, index) => {
+              // 정규식으로 "컬렉션명 (숫자)"에서 분리
+              const match = label.match(/^(.*)\s\((\d+)\)$/);
+              const name = match ? match[1] : label; // 컬렉션명
+              const count = match ? match[2] : ""; // 문제 개수
+
+              return (
+                <div key={index} className="flex items-center mx-1 md:mx-2 mb-1 md:mb-2">
+                  <div
+                    className="w-2 h-2 md:w-3 md:h-3"
+                    style={{
+                      backgroundColor: pieChartData.datasets[0].backgroundColor[index],
+                    }}
+                  ></div>
+                  <span
+                    className="ml-1 text-10 md:text-14 font-pre-regular max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap align-bottom"
+                    title={name}
+                  >
+                    {name}
+                  </span>
+                  {count && (
+                    <span className="ml-1 text-10 md:text-14 font-pre-regular text-gray-500">
+                      ({count})
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
