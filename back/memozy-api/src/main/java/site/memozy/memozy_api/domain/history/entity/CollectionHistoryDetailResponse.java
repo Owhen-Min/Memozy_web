@@ -6,6 +6,7 @@ public record CollectionHistoryDetailResponse(
 	Integer historyId,
 	Integer round,
 	Integer failCount,
+	Integer allCount,
 	String date,
 	List<QuizDetailResponse> quizDataList
 ) {

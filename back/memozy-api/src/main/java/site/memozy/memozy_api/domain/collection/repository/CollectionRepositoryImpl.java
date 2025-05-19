@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -301,6 +301,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	public List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId) {
 		QHistory history = QHistory.history;
 		QQuiz quiz = QQuiz.quiz;
+		QQuizSource quizSource = QQuizSource.quizSource;
 
 		List<Integer> rounds = queryFactory
 			.select(history.round)
@@ -317,9 +318,10 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		for (Integer round : rounds) {
 			List<Tuple> tuples = queryFactory
-				.select(history, quiz)
+				.select(history, quiz, quizSource)
 				.from(history)
 				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
 				.where(
 					history.collectionId.eq(collectionId),
 					history.round.eq(round),
@@ -330,6 +332,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
 				History h = tuple.get(history);
 				Quiz q = tuple.get(quiz);
+				QuizSource s = tuple.get(quizSource);
+
 				return new QuizDetailResponse(
 					q.getQuizId(),
 					q.getContent(),
@@ -339,17 +343,21 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 						? List.of(q.getOption().split("№"))
 						: null,
 					q.getAnswer(),
-					q.getCommentary()
+					q.getCommentary(),
+					s.getUrl(),
+					s.getSummary()
 				);
 			}).toList();
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
@@ -361,6 +369,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	public List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail) {
 		QHistory history = QHistory.history;
 		QQuiz quiz = QQuiz.quiz;
+		QQuizSource quizSource = QQuizSource.quizSource;
 
 		List<Integer> rounds = queryFactory
 			.select(history.round)
@@ -378,9 +387,10 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		for (Integer round : rounds) {
 			List<Tuple> tuples = queryFactory
-				.select(history, quiz)
+				.select(history, quiz, quizSource)
 				.from(history)
 				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
 				.where(
 					history.collectionId.eq(0),
 					history.round.eq(round),
@@ -392,6 +402,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
 				History h = tuple.get(history);
 				Quiz q = tuple.get(quiz);
+				QuizSource s = tuple.get(quizSource);
+
 				return new QuizDetailResponse(
 					q.getQuizId(),
 					q.getContent(),
@@ -401,17 +413,21 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 						? List.of(q.getOption().split("№"))
 						: null,
 					q.getAnswer(),
-					q.getCommentary()
+					q.getCommentary(),
+					s.getUrl(),
+					s.getSummary()
 				);
 			}).toList();
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));

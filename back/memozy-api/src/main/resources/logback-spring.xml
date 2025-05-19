@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
-    <!-- 로그 파일 경로 및 애플리케이션 이름 프로퍼티 -->
     <property name="LOG_PATH" value="${LOG_FILE_PATH:-/var/log/memozy}"/>
     <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
 
-    <!-- Console 로깅 설정 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -12,31 +10,20 @@
         </encoder>
     </appender>
 
-    <!-- Rolling File Appender 설정 -->
-    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 현재 로그 파일 -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${APP_NAME}.log</file>
 
-        <!-- 일자별 롤링 정책 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 롤링 파일 네이밍 패턴 -->
             <fileNamePattern>${LOG_PATH}/${APP_NAME}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 보관 기간(일) 설정 -->
             <maxHistory>30</maxHistory>
-            <!-- 최대 총 용량 제한(압축 포함) -->
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
 
-        <!-- 로그 포맷 및 인코딩 -->
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
-
-    <!-- 로거 레벨 및 앱엔더 참조 -->
+    
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ROLLING_FILE"/>
+        <appender-ref ref="JSON_FILE"/>
     </root>
 </configuration>
