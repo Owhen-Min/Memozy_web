@@ -41,8 +41,8 @@ function QuizShowPersonalPage() {
   // 데이터가 없는 경우 처리
   if (!quizData.quizList.length) {
     return (
-      <div className="content-quiz">
-        <div className="w-full h-[75vh] bg-white rounded-xl shadow-xl px-8 py-4 flex flex-col items-center justify-center gap-6">
+      <div className="content-quiz mt-14">
+        <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl px-8 py-4 flex flex-col items-center justify-center gap-6">
           <h2 className="text-[24px] font-pre-semibold text-gray-600">퀴즈 데이터가 없습니다</h2>
           <p className="text-[16px] text-gray-500">컬렉션에서 퀴즈를 다시 시작해주세요</p>
           <button
@@ -74,14 +74,28 @@ function QuizShowPersonalPage() {
   // 새로고침 감지 및 플래그 저장
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      // 브라우저 기본 확인 대화상자 표시
-      e.preventDefault();
-      e.returnValue = "진행 중인 퀴즈 쇼가 종료됩니다. 정말로 나가시겠습니까?";
-      return e.returnValue;
+      // 새로고침 시 로컬 스토리지에 플래그 저장
+      localStorage.setItem(`quiz_refresh_${collectionId}`, "true");
     };
+
+    // 페이지 로드 시 새로고침 플래그 확인
+    const checkRefresh = () => {
+      const isRefresh = localStorage.getItem(`quiz_refresh_${collectionId}`);
+      if (isRefresh === "true") {
+        alert("퀴즈가 종료되었습니다.");
+        localStorage.removeItem(`quiz_data_${collectionId}`);
+        localStorage.removeItem(`quiz_refresh_${collectionId}`);
+        navigate(`/collection/${collectionId}`);
+      }
+    };
+
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, []);
+    checkRefresh(); // 컴포넌트 마운트 시 체크
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [collectionId, navigate]);
 
   // 퀴즈 쇼 종료 시 로컬 스토리지 데이터 삭제
   const handleExitQuiz = () => {
@@ -210,8 +224,8 @@ function QuizShowPersonalPage() {
   };
 
   return (
-    <div className="content-quiz">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
+    <div className="content-quiz mt-14">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-2 md:mb-4">
         <h1 className="text-[20px] md:text-[28px] font-pre-semibold text-main200 flex items-center gap-2 whitespace-nowrap min-w-0">
           <img src={small_logo} alt="logo" className="w-10 h-10 flex-shrink-0" />
           <span className="flex-shrink-0">Quiz :</span>
@@ -225,11 +239,11 @@ function QuizShowPersonalPage() {
           퀴즈 종료하기
         </button>
       </div>
-      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
+      <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
         <div className="flex items-center justify-center mb-2 md:mb-4">
           <Progress currentQuizIndex={currentQuizIndex} totalQuizCount={quizList.length} />
         </div>
-        <div className="h-[calc(80vh-100px)] md:h-[calc(80vh-120px)] overflow-y-auto">
+        <div className="h-[calc(100vh-56px-40px-80px-100px)] md:h-[calc(100vh-56px-40px-80px-120px)] overflow-y-auto">
           {currentQuiz && renderQuizComponent(currentQuiz)}
         </div>
         {!showAnswer && (

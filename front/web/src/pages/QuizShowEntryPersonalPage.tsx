@@ -37,7 +37,7 @@ const QuizShowEntryPersonalPage = () => {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium">퀴즈쇼를 생성하고 있어요...</div>
         </div>
       );
@@ -45,7 +45,7 @@ const QuizShowEntryPersonalPage = () => {
 
     if (error) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium text-red">{error}</div>
         </div>
       );
@@ -53,7 +53,7 @@ const QuizShowEntryPersonalPage = () => {
 
     if (!quizData) {
       return (
-        <div className="flex items-center justify-center h-[70vh]">
+        <div className="flex items-center justify-center h-[calc(100vh-56px-40px-80px)]">
           <div className="text-20 font-pre-medium">퀴즈 데이터가 없습니다.</div>
         </div>
       );
@@ -77,7 +77,7 @@ const QuizShowEntryPersonalPage = () => {
             퀴즈 종료하기
           </button>
         </div>
-        <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
+        <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl">
           <div className="flex flex-col items-center pt-12">
             <div className="mb-8 w-52 self-start ml-1 md:ml-16">
               <img src={Memozy_logo} alt="Memozy 로고" />
@@ -127,7 +127,7 @@ const QuizShowEntryPersonalPage = () => {
     );
   };
 
-  return <div className="content-quiz">{renderContent()}</div>;
+  return <div className="content-quiz mt-14">{renderContent()}</div>;
 };
 
 export default QuizShowEntryPersonalPage;
