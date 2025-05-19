@@ -386,7 +386,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		for (Integer round : rounds) {
 			List<Tuple> tuples = queryFactory
-				.select(history, quiz)
+				.select(history, quiz, quizSource)
 				.from(history)
 				.join(quiz).on(history.quizId.eq(quiz.quizId))
 				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
