@@ -65,7 +65,7 @@ function Header() {
       {/* 로고 - 항상 표시 */}
       <Link to="/">
         <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <img src={logo} alt="Memozy 로고" className="h-12" />
+          <img src={logo} alt="Memozy 로고" className="h-10" />
         </div>
       </Link>
 
