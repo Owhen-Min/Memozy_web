@@ -65,7 +65,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		log.info("생성된 퀴즈 코드: {}", quizShowCode);
 		collection.setCode(quizShowCode);
 
-		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getName(), user.getName(),
+		multiQuizShowRedisRepository.saveQuizzes(user.getUserId(), quizShowCode, collection.getCollectionId(),
+			collection.getName(), user.getName(),
 			count, quizzes);
 		String showUrl = String.format("https://memozy.site/quiz/show/%s", quizShowCode);
 		return new MultiQuizShowCreateResponse(quizShowCode, showUrl, user.getName(), collection.getName(), count);
@@ -100,7 +101,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	@Override
 	@Transactional
-	public void saveQuizShow(String showId, Integer userId) {
+	public void saveQuizShow(String showId, Integer userId, String email) {
 		if (!collectionRepository.existsByCode(showId)) {
 			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
@@ -108,41 +109,56 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (metaData.isEmpty()) {
 			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
-		if (metaData.get("hostId").equals(userId.toString())) {
-			throw new GeneralException(COLLECTION_ALREADY_EXISTS);
-		}
 
+		log.info("[service] saveQuizShow() called with showId: {}, userId: {}", showId, userId);
 		String hostName = metaData.get("hostName");
 		String collectionName = metaData.get("collectionName");
 		String newCollectionName = hostName + "의 " + collectionName;
-		Collection collection = Collection.create(newCollectionName, userId);
-		collectionRepository.save(collection);
 
+		Collection collection = collectionRepository.findByNameAndUserId(newCollectionName, userId)
+			.orElseGet(() -> collectionRepository.save(Collection.create(newCollectionName, userId)));
+
+		//TODO: 2. Quiz Source 들고와서 존재하면 Get 존재하지 않으면 Save
 		List<QuizSource> quizSources = quizSourceRepository.findByCollectionId(
-			Integer.valueOf(metaData.get("collectionId")));
+			Integer.parseInt(metaData.get("collectionId")));
+		log.info("quizSources count: {}", quizSources.get(0).getSourceId());
+		log.info("quizSources count: {}", quizSources.size());
 		List<Integer> quizSourceIds = quizSources.stream()
+			.filter(qs -> !qs.getSourceId().equals(collection.getCollectionId()))
 			.map(QuizSource::getSourceId)
 			.toList();
-		collectionService.copyMemozies(userId, collection.getCollectionId(), quizSourceIds);
+		log.info("quizSourceIds count (이미 있는 sourceId 제외): {}", quizSourceIds.size());
+		collectionService.copyQuizShowMemozies(userId, collection.getCollectionId(), quizSourceIds);
+		log.info("collectionId: {}, quizSourceIds: {}", collection.getCollectionId(), quizSourceIds);
 
+		// 유저 선택 가져와서 저장하기
 		Map<String, Map<String, Object>> userChoices = multiQuizShowRedisRepository.getUserChoice(showId,
 			userId.toString());
 		for (Map.Entry<String, Map<String, Object>> entry : userChoices.entrySet()) {
 			Map<String, Object> choiceData = entry.getValue();
 
-			String userChoice = (String)choiceData.get("userChoice");
+			String userChoice = (String)choiceData.getOrDefault("userChoice", "");
 			Boolean isCorrect = (Boolean)choiceData.get("isCorrect");
+			log.info("userChoice: {}, isCorrect: {}", userChoice, isCorrect);
 
 			int index = Integer.parseInt(entry.getKey());
+			log.info("index: {}", index + 1);
+
 			if (index >= quizSources.size())
 				continue;
 
+			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
+			Long quizId = Long.parseLong((String)quizData.get("quizId"));
+			//TODO: 3. 라운드를 찾고 존재하지않으면 1부터 존재하면 마지막 라운드에서 +1
+			int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collection.getCollectionId(), email)
+				.orElse(0) + 1;
 			History history = History.builder()
 				.isSolved(isCorrect)
 				.userSelect(userChoice)
-				.quizId((long)index)
+				.quizId(quizId)
 				.collectionId(collection.getCollectionId())
-				.round(1)
+				.round(nextRound)
+				.email(email)
 				.build();
 
 			historyRepository.save(history);
@@ -189,4 +205,5 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
 	}
+
 }

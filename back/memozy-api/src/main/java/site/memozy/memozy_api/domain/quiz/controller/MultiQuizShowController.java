@@ -95,6 +95,6 @@ public class MultiQuizShowController {
 	@ResponseBody
 	public void saveQuizShow(@PathVariable String showId, @AuthenticationPrincipal CustomOAuth2User user) {
 		log.info("[Controller] saveQuizShow() called with showId: {}", showId);
-		multiQuizShowService.saveQuizShow(showId, user.getUserId());
+		multiQuizShowService.saveQuizShow(showId, user.getUserId(), user.getEmail());
 	}
 }

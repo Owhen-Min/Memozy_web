@@ -50,7 +50,8 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public void saveQuizzes(Integer hostId, String showId, String collectionName, String hostName, int count,
+	public void saveQuizzes(Integer hostId, String showId, Integer collectionId, String collectionName, String hostName,
+		int count,
 		List<MultiQuizResponse> quizList) {
 		log.info("[Redis] saveQuizzes() called with showId: {}, collectionId: {}, hostUserId: {}, count: {}",
 			showId, collectionName, hostName, count);
@@ -59,6 +60,7 @@ public class MultiQuizShowRedisRepository {
 			Map<String, String> metadata = new HashMap<>();
 			metadata.put("hostId", String.valueOf(hostId));
 			metadata.put("hostName", String.valueOf(hostName));
+			metadata.put("collectionId", String.valueOf(collectionId));
 			metadata.put("collectionName", String.valueOf(collectionName));
 			metadata.put("quizCount", String.valueOf(count));
 			metadata.put("status", "WAITING");

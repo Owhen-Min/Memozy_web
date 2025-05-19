@@ -19,4 +19,6 @@ public interface CollectionRepository extends JpaRepository<Collection, Integer>
 	List<Integer> findCollectionIdsByUserId(Integer userId);
 
 	boolean existsByCode(String code);
+
+	Optional<Collection> findByNameAndUserId(String name, Integer userId);
 }
