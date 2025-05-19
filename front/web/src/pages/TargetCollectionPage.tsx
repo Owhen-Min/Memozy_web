@@ -117,9 +117,10 @@ function TargetCollectionPage() {
   return (
     <>
       <div className="content">
-        <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200">
-          {collectionName}
-          <span className="text-20 font-pre-medium text-main200 pl-2">컬렉션</span>
+        <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200 flex flex-wrap items-center">
+          <span className="break-all whitespace-normal w-full md:w-auto md:max-w-xl inline-block">
+            {collectionName}
+          </span>
         </h1>
         <hr className="border-t border-gray100 my-4" />
         <div className="flex gap-2 mb-4 justify-between">

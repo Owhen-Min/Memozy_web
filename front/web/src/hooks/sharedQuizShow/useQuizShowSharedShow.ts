@@ -72,14 +72,9 @@ export const useQuizShowSharedShow = ({
       }
     }
 
-    let isUnmounting = false;
-
     return () => {
       // 컴포넌트 언마운트 시 작업
       console.log("[DEBUG-HOOK] 컴포넌트 클린업 호출");
-
-      // 기록만 하고 타이머는 여기서 정리하지 않음
-      isUnmounting = true;
     };
   }, [quizList, quizCount, collectionName, initQuizData, startCountdown, isInitialized]);
 

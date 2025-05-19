@@ -146,6 +146,21 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       await collectionApi.deleteQuiz(quizId, sourceId);
+
+      // 삭제된 퀴즈를 로컬 상태에서도 제거
+      set((state) => {
+        const updatedQuizzes = new Map(state.quizzes);
+        sourceId.forEach((id) => {
+          const currentQuizzes = updatedQuizzes.get(id) || [];
+          const remainingQuizzes = currentQuizzes.filter((quiz) => !quizId.includes(quiz.quizId));
+          if (remainingQuizzes.length > 0) {
+            updatedQuizzes.set(id, remainingQuizzes);
+          } else {
+            updatedQuizzes.delete(id);
+          }
+        });
+        return { quizzes: updatedQuizzes, loading: false };
+      });
     } catch (error) {
       set({ error: "퀴즈 삭제에 실패했습니다.", loading: false });
       console.error("퀴즈 삭제 오류:", error);
