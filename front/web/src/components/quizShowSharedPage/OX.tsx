@@ -36,7 +36,7 @@ const OX = ({
 
   // 버튼 스타일 생성 함수
   const getButtonStyle = (value: "O" | "X") => {
-    const baseStyle = "transition-transform duration-200 rounded-xl p-4";
+    const baseStyle = "transition-transform duration-200 rounded-3xl p-4";
 
     if (!showAnswer) {
       return `${baseStyle} ${selected === value ? "bg-light" : ""} hover:scale-110`;
@@ -44,11 +44,11 @@ const OX = ({
 
     // 정답 표시
     if (value === answer) {
-      return `${baseStyle} bg-green-100 border-2 border-green-500`;
+      return `${baseStyle} bg-green-100`;
     }
     // 사용자가 선택한 오답 표시 (isCorrect 확인 조건 제거)
     else if (selected === value) {
-      return `${baseStyle} bg-red-100 border-2 border-red-500`;
+      return `${baseStyle} bg-red/10`;
     }
 
     return baseStyle;
@@ -56,7 +56,7 @@ const OX = ({
 
   return (
     <div>
-      <div className="w-full h-[160px] border-2 border-normal rounded-xl p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
+      <div className="w-full h-[160px] border-normal p-4 my-4 text-20 font-pre-medium flex items-center justify-center">
         {content}
       </div>
       <div className="w-full flex justify-center gap-10 sm:gap-32">

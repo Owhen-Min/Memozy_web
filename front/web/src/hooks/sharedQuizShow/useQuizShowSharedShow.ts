@@ -53,19 +53,12 @@ export const useQuizShowSharedShow = ({
 
   // 초기 퀴즈 데이터 설정 useEffect
   useEffect(() => {
-    console.log("[DEBUG-HOOK] 초기 데이터 설정 useEffect 실행", {
-      quizListLength: quizList.length,
-      quizCount,
-      isInitialized,
-    });
-
     if (quizList.length > 0) {
       // 퀴즈 데이터 설정 (초기화만 수행)
       initQuizData(quizList, quizCount, collectionName);
 
       // 초기화되지 않은 경우에만 카운트다운 시작
       if (!isInitialized) {
-        console.log("[DEBUG-HOOK] 초기 카운트다운 시작");
         setTimeout(() => {
           startCountdown();
         }, 0);
@@ -80,7 +73,6 @@ export const useQuizShowSharedShow = ({
   // 쇼가 종료되었는지 확인하고 처리
   useEffect(() => {
     if (isShowEnded) {
-      console.log("[DEBUG-HOOK] 쇼 종료 감지, handleShowEnded 호출");
       handleShowEnded();
     }
   }, [isShowEnded, handleShowEnded]);
@@ -89,7 +81,6 @@ export const useQuizShowSharedShow = ({
   useEffect(() => {
     // 페이지 언로드 시에만 타이머 정리를 위한 핸들러
     const handleBeforeUnload = () => {
-      console.log("[DEBUG-HOOK] 페이지 언로드 감지, 타이머 정리");
       clearAllTimers();
     };
 
@@ -104,7 +95,6 @@ export const useQuizShowSharedShow = ({
 
   // 정답 확인 함수 (사용자 액션에 의해 호출됨)
   const handleShowAnswer = () => {
-    console.log("[DEBUG-HOOK] handleShowAnswer 호출", { userAnswer });
     if (userAnswer === null) {
       alert("답을 선택해주세요!");
       return;

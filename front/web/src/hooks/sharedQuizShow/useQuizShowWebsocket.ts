@@ -42,7 +42,6 @@ export const useQuizShowWebsocket = (showId: string) => {
 
   const handleJoin = (message: any) => {
     const payload = JSON.parse(message.body);
-    console.log(payload);
 
     if (payload.type === "HOST") {
       if (nickname === "") {
@@ -119,7 +118,6 @@ export const useQuizShowWebsocket = (showId: string) => {
         typeof data.mostWrongQuiz.choice === "string"
       ) {
         try {
-          console.log(data.mostWrongQuiz.choice);
           choiceArray = data.mostWrongQuiz.choice
             .replace("[", "")
             .replace("]", "")
@@ -171,14 +169,14 @@ export const useQuizShowWebsocket = (showId: string) => {
     { topic: `/sub/quiz/show/${showId}/join`, handler: handleJoin },
     { topic: `/sub/quiz/show/${showId}/participants`, handler: handleParticipants },
     { topic: `/sub/quiz/show/${showId}/quiz`, handler: handleQuiz },
-    { topic: `/sub/quiz/show/${showId}/result/${userId}`, handler: handleMyResult },
     { topic: `/sub/quiz/show/${showId}/result`, handler: handleResult },
   ];
 
+  // 기본 구독 설정
   useEffect(() => {
     if (!stompClient || !isConnected) return;
 
-    // 한 번에 구독 등록
+    // 기본 구독 등록
     const subs = subscriptions.map(({ topic, handler }) => stompClient.subscribe(topic, handler));
 
     // 최초 JOIN 발행
@@ -190,6 +188,18 @@ export const useQuizShowWebsocket = (showId: string) => {
     // 언마운트 시 모두 해제
     return () => subs.forEach((sub) => sub.unsubscribe());
   }, [stompClient, isConnected]);
+
+  // userId가 설정된 후 개인 결과 구독 설정
+  useEffect(() => {
+    if (!stompClient || !isConnected || !userId) return;
+
+    const personalResultSub = stompClient.subscribe(
+      `/sub/quiz/show/${showId}/result/${userId}`,
+      handleMyResult
+    );
+
+    return () => personalResultSub.unsubscribe();
+  }, [stompClient, isConnected, userId]);
 
   // 액션 함수들
   const submitAnswer = (answer: Answer): boolean => {
