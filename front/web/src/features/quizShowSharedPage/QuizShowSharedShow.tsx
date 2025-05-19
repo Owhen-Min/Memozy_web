@@ -6,6 +6,7 @@ import OX from "../../components/quizShowSharedPage/OX";
 import Objective from "../../components/quizShowSharedPage/Objective";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";
 import nextIcon from "../../assets/icons/nextIcon.svg";
+import { useNavigate } from "react-router";
 
 interface Answer {
   type: "SUBMIT";
@@ -52,6 +53,7 @@ function QuizShowSharedShow({
     handleShowEnded,
     submitAnswer,
   });
+  const navigate = useNavigate();
 
   const renderQuizComponent = (currentQuiz: Quiz) => {
     if (!currentQuiz) return null;
@@ -102,19 +104,24 @@ function QuizShowSharedShow({
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-          <img src={small_logo} alt="logo" className="w-10 h-10" />
-          Quiz : <span className="text-normalactive">{collectionName}</span>
-        </h1>
+        <div className="flex text-[28px] font-pre-semibold text-main200 flex items-center gap-1">
+          <img src={small_logo} alt="logo" className="h-full" />
+          <span
+            className="h-full break-all line-clamp-1 relative text-normalactive"
+            title={`${collectionName}`}
+          >
+            {collectionName}
+          </span>
+        </div>
         <button
-          className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
-          onClick={() => (window.location.href = "/collection")}
+          className="flex-shrink-0 border border-red text-red rounded-lg p-2 flex items-center gap-2 text-12 w-100"
+          onClick={() => navigate(`/collection`)}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full h-[85vh] sm:h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">

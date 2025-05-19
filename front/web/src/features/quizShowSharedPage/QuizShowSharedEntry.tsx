@@ -107,7 +107,7 @@ function QuizShowSharedEntry({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[80vh] bg-white rounded-xl shadow-xl">
+      <div className="w-full h-[85vh] sm:h-[80vh] bg-white rounded-xl shadow-xl">
         <div className="flex grid grid-cols-2 items-center">
           <div className="mb-8 w-52 self-start ml-1 md:ml-16 pt-12">
             <img src={Memozy_logo} alt="Memozy 로고" />
@@ -148,7 +148,7 @@ function QuizShowSharedEntry({
             <img src={monster1} alt="몬스터1" className="w-16 md:w-32" />
           </div>
 
-          <div className="relative z-10 ml-4 md:ml-32">
+          <div className="relative z-10 ml-4 md:ml-32 mt-4 sm:mt-0">
             {isLoading ? (
               <div className="bg-[#4285F4] text-white p-8 rounded-tl-xl rounded-bl-xl font-pre-medium h-[130px] w-full flex flex-col justify-center">
                 <h2 className="text-20 mb-2 font-pre-medium">퀴즈쇼 정보를 불러오는 중...</h2>
@@ -172,7 +172,7 @@ function QuizShowSharedEntry({
             )}
           </div>
 
-          <div className="absolute right-4 md:right-10 top-[70px] z-30">
+          <div className="absolute right-4 md:right-10 top-[110px] sm:top-[70px] z-30">
             <div className="flex flex-col items-center w-[30vw] min-w-[200px] max-w-[300px] bg-white shadow-lg rounded-xl p-6 font-pre-medium">
               {isHost ? (
                 <div className="flex flex-col items-center mb-4">
