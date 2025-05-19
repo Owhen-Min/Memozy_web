@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import closeIcon from "../../assets/icons/closeIcon.svg";
 import { useCollectionStore } from "../../stores/collection/collectionStore";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 interface CopyMemozyModalProps {
   memozyIds: number[];
@@ -13,6 +13,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const { collections, copyMemozy } = useCollectionStore();
   const { collectionId } = useParams();
   const currentCollectionId = Number(collectionId);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // fetchCollections() 호출 제거
@@ -29,6 +30,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
     try {
       await copyMemozy(selectedCollectionId, memozyIds, currentCollectionId);
       onClose();
+      navigate(`/collection/${selectedCollectionId}`);
     } catch (err) {
       console.error("메모지 복제 중 오류 발생:", err);
     }
