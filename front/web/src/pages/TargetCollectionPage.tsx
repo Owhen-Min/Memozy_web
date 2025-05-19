@@ -123,7 +123,7 @@ function TargetCollectionPage() {
         </h1>
         <hr className="border-t border-gray100 my-4" />
         <div className="flex gap-2 mb-4 justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
               <span className="text-16 font-pre-semibold">Memozy</span>
@@ -153,7 +153,7 @@ function TargetCollectionPage() {
                   className={`text-16 font-pre-medium ${isEditMode ? "text-white bg-normal" : "text-normal bg-white"} rounded-xl px-4 py-1 border border-normal`}
                   disabled={loading}
                 >
-                  {isEditMode ? "Memozy 편집 완료" : "Memozy 편집"}
+                  {isEditMode ? "편집 완료" : "편집"}
                 </button>
               )}
             </div>
