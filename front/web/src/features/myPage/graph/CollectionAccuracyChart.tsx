@@ -109,7 +109,7 @@ export default function CollectionAccuracyChart({
         컬렉션별 가장 최근 퀴즈풀이의 정답률을 보여줍니다.
       </p>
       {collectionAccuracy && collectionAccuracy.length > 0 ? (
-        <div className="overflow-x-scroll">
+        <div className="overflow-x-auto show-horizontal-scrollbar">
           <div
             style={{
               width: `${Math.max(collectionAccuracy.length * 80, 300)}px`,

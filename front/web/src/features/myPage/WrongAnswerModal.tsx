@@ -3,6 +3,9 @@ import { QuizHistoryData, QuizHistory, QuizDetail } from "../../types/wrongAnswe
 import openfolder from "../../assets/images/openfolder.png";
 import dropDownIcon from "../../assets/icons/dropDownIcon.svg";
 import closeIcon from "../../assets/icons/closeIcon.svg";
+import summaryIcon from "../../assets/icons/summaryIcon.svg";
+import urlIcon from "../../assets/icons/urlIcon.svg";
+import NoteModal from "../targetCollectionPage/NoteModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,11 +16,20 @@ interface ModalProps {
 
 function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
   const [isDropDownOpen, setIsDropDownOpen] = useState<number | null>(null);
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [selectedSummary, setSelectedSummary] = useState<{ title: string; summary: string } | null>(
+    null
+  );
 
   if (!isOpen) return null;
 
   const toggleDropDown = (id: number) => {
     setIsDropDownOpen(isDropDownOpen === id ? null : id);
+  };
+
+  const handleSummaryClick = (content: string, summary: string) => {
+    setSelectedSummary({ title: content, summary });
+    setIsSummaryModalOpen(true);
   };
 
   // 바깥 영역 클릭 시 모달 닫기 처리
@@ -49,11 +61,11 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular"
+      className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center font-pre-regular z-40"
       onClick={handleOutsideClick}
     >
       <div
-        className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
+        className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide mt-14"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
@@ -108,7 +120,8 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
               </div>
               <div className="flex flex-col md:flex-row md:justify-between mt-1 md:mt-0">
                 <p className="text-12 md:text-14 text-gray-600">
-                  전체 퀴즈 개수: 틀린 퀴즈 개수:{history.failCount}
+                  전체 퀴즈 개수: {history.allCount} <span className="mx-1"></span> 틀린 퀴즈 개수:
+                  {history.failCount}
                 </p>
                 <p className="text-12 md:text-14 text-gray-500 mt-1 md:mt-0">{history.date}</p>
               </div>
@@ -120,6 +133,26 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
                         key={`${history.historyId}-${quiz.quizId}-${index}`}
                         className="mt-2 p-2 md:p-3 bg-gray-100 rounded-md"
                       >
+                        <div className="flex gap-2 mb-2">
+                          <a
+                            href={quiz.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-12 md:text-14 hover:text-normal font-pre-medium"
+                          >
+                            <img src={urlIcon} alt="URL" className="w-5" />
+                            <span>URL</span>
+                          </a>
+                          <button
+                            onClick={() => {
+                              handleSummaryClick(quiz.content, quiz.summary);
+                            }}
+                            className="flex items-center gap-1 text-12 md:text-14 hover:text-normal font-pre-medium"
+                          >
+                            <img src={summaryIcon} alt="요약" className="w-5" />
+                            <span>요약</span>
+                          </button>
+                        </div>
                         <h4 className="font-pre-semibold text-14 md:text-16">{quiz.content}</h4>
                         {quiz.type === "MULTIPLE_CHOICE" && quiz.choice && (
                           <div className="pl-3 md:pl-5 mt-1">
@@ -157,6 +190,15 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
           ))
         )}
       </div>
+      {isSummaryModalOpen && selectedSummary && (
+        <div className="fixed inset-0 bg-gray-200 bg-opacity-50 flex justify-center items-center z-[100] pt-14">
+          <NoteModal
+            sourceTitle={selectedSummary.title}
+            summary={selectedSummary.summary}
+            onClose={() => setIsSummaryModalOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 }

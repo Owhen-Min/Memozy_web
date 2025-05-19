@@ -20,12 +20,15 @@ export interface QuizDetail {
   choice: string[] | null;
   answer: string;
   commentary: string;
+  url: string;
+  summary: string;
 }
 
 export interface QuizHistory {
   historyId: number;
   round: number;
   failCount: number;
+  allCount: number;
   date: string;
   quizDataList: QuizDetail[];
 }
