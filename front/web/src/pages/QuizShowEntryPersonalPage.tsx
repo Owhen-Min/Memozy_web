@@ -61,17 +61,20 @@ const QuizShowEntryPersonalPage = () => {
 
     return (
       <>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <h1 className="text-[28px] font-pre-semibold text-main200 flex items-center gap-2">
-            <img src={small_logo} alt="logo" className="w-10 h-10" />
-            Quiz : <span className="text-normalactive">{quizData.collectionName}</span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-2 md:mb-4">
+          <h1 className="text-[20px] md:text-[28px] font-pre-semibold text-main200 flex items-center gap-1 md:gap-2 whitespace-nowrap min-w-0">
+            <img src={small_logo} alt="logo" className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+            <span className="flex-shrink-0">Quiz :</span>
+            <span className="text-normalactive truncate text-20 md:text-[28px] min-w-0">
+              {quizData.collectionName}
+            </span>
           </h1>
           <button
-            className="border border-red text-red rounded-lg p-2 flex items-center gap-2 w-1/2 md:w-auto justify-center"
+            className="border border-red text-red rounded-lg p-1 flex items-center gap-1 md:gap-2 w-full md:w-auto justify-center text-sm md:text-base mt-2 md:mt-0"
             onClick={() => navigate(`/collection/${collectionId}`)}
           >
-            <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
-            컬렉션 리스트로 돌아가기
+            <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-5 h-5 md:w-6 md:h-6" />
+            퀴즈 종료하기
           </button>
         </div>
         <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl">
@@ -94,7 +97,7 @@ const QuizShowEntryPersonalPage = () => {
                 </div>
               </div>
 
-              <div className="absolute right-4 md:right-10 top-[100px] z-30">
+              <div className="absolute right-4 md:right-10 top-[110px] z-30">
                 <div className="bg-white shadow-lg rounded-xl p-6 font-pre-medium">
                   <p>
                     컬렉션 :{" "}

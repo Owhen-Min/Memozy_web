@@ -64,7 +64,7 @@ function QuizShowResultPersonalPage() {
 
     return (
       <>
-        <div className="text-16 md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
+        <div className="text-[20px] md:text-[28px] font-pre-semibold mb-4 text-main200 flex items-center w-full">
           <div className="flex items-center gap-1 md:gap-2 w-full overflow-hidden">
             <img src={small_logo} alt="logo" className="w-6 md:w-10 flex-shrink-0" />
             <span className="whitespace-nowrap flex-shrink-0">Quiz : </span>

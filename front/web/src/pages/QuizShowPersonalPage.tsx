@@ -211,30 +211,33 @@ function QuizShowPersonalPage() {
 
   return (
     <div className="content-quiz">
-      <div className="flex items-center justify-between">
-        <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
-          <img src={small_logo} alt="logo" className="w-10 h-10" />
-          Quiz : <span className="text-normalactive">{collectionName}</span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
+        <h1 className="text-[20px] md:text-[28px] font-pre-semibold text-main200 flex items-center gap-2 whitespace-nowrap min-w-0">
+          <img src={small_logo} alt="logo" className="w-10 h-10 flex-shrink-0" />
+          <span className="flex-shrink-0">Quiz :</span>
+          <span className="text-normalactive truncate min-w-0">{collectionName}</span>
         </h1>
         <button
-          className="border border-red text-red rounded-lg p-2 flex items-center gap-2 transition-transform duration-200 hover:scale-110"
+          className="border border-red text-red rounded-lg p-1 flex items-center gap-2 transition-transform duration-200 hover:scale-110 w-full md:w-auto justify-center"
           onClick={handleExitQuiz}
         >
           <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
           퀴즈 종료하기
         </button>
       </div>
-      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
-        <div className="flex items-center justify-center">
+      <div className="w-full h-[70vh] bg-white rounded-xl shadow-xl px-4 md:px-8 py-2 md:py-4 relative">
+        <div className="flex items-center justify-center mb-2 md:mb-4">
           <Progress currentQuizIndex={currentQuizIndex} totalQuizCount={quizList.length} />
         </div>
-        {currentQuiz && renderQuizComponent(currentQuiz)}
+        <div className="h-[calc(70vh-120px)] md:h-[calc(70vh-140px)] overflow-y-auto">
+          {currentQuiz && renderQuizComponent(currentQuiz)}
+        </div>
         {!showAnswer && (
           <button
-            className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
+            className="text-main200 text-base md:text-20 font-pre-medium absolute bottom-2 md:bottom-4 right-4 md:right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
             onClick={handleShowAnswer}
           >
-            <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+            <img src={nextIcon} alt="nextQuizIcon" className="w-5 h-5 md:w-6 md:h-6" />
             정답 보기
           </button>
         )}
