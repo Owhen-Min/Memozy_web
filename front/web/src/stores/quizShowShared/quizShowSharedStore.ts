@@ -193,7 +193,9 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         clearAllTimers();
         if (quizzes.length > 0) {
           const isResuming =
-            get().isShowStarted && !get().isShowEnded && cqIndex > 0 && !get().isFirstStart;
+            get().isShowStarted &&
+            !get().isShowEnded &&
+            (get().currentQuizIndex > 0 || !get().isFirstStart);
 
           if (isResuming) {
             set({
