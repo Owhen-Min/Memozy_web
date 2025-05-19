@@ -47,7 +47,6 @@ function QuizShowResultSharedPage({
   result,
   collectionName,
   isLoading = true,
-  isHost,
   isLoggedIn,
   handleSaveQuizClick,
 }: QuizShowSharedResultProps) {
@@ -131,7 +130,7 @@ function QuizShowResultSharedPage({
                   className="w-3 md:w-4 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                 />
               </button>
-              {!isHost && isLoggedIn && (
+              {isLoggedIn && (
                 <button
                   onClick={handleSaveQuizClick}
                   className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"

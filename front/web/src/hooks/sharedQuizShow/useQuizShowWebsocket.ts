@@ -14,6 +14,7 @@ export const useQuizShowWebsocket = (showId: string) => {
   // 스토어에서 필요한 상태와 액션 가져오기
   const {
     isLoading,
+    hostId,
     userId,
     nickname,
     collectionName,
@@ -55,11 +56,14 @@ export const useQuizShowWebsocket = (showId: string) => {
     } else if (payload.type === "JOIN") {
       if (nickname === "") {
         setHostId(payload.hostId);
+        setUserId(payload.userId);
         setCollectionName(payload.collectionName);
         setNickname(payload.nickname);
         setQuizCount(payload.quizCount);
-        setUserId(payload.userId);
         setIsLoading(false);
+        if (hostId === userId) {
+          setIsHost(true);
+        }
       }
     } else if (payload.type === "START") {
       setIsShowStarted(true);
@@ -111,10 +115,11 @@ export const useQuizShowWebsocket = (showId: string) => {
         typeof data.mostWrongQuiz.choice === "string"
       ) {
         try {
+          console.log(data.mostWrongQuiz.choice);
           choiceArray = data.mostWrongQuiz.choice
             .replace("[", "")
             .replace("]", "")
-            .split(", ")
+            .split("№")
             .map((item: string) => item.trim());
         } catch (e) {
           console.error("선택지 파싱 오류:", e);
@@ -145,7 +150,7 @@ export const useQuizShowWebsocket = (showId: string) => {
     const contentMatch = quiz.content;
     const answerMatch = quiz.answer;
     const commentaryMatch = quiz.commentary;
-    const choiceMatch = quiz.choice ? quiz.choice.slice(1, -1).split(",") : [];
+    const choiceMatch = quiz.choice ? quiz.choice.split("№") : [];
 
     return {
       quizId: quiz.quizId,
