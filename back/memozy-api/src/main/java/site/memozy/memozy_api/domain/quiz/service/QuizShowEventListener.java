@@ -83,16 +83,14 @@ public class QuizShowEventListener {
 
 		for (Object id : userIds) {
 			String userId = id.toString();
-			Map<String, String> userAnswers = multiQuizShowRedisRepository.getUserChoice(showId, userId);
+			Map<String, Map<String, Object>> userAnswers = multiQuizShowRedisRepository.getUserChoice(showId, userId);
 
 			int correctCount = 0;
-			for (Map.Entry<String, String> entry : userAnswers.entrySet()) {
-				String key = entry.getKey();
-				if (!key.endsWith("_choice"))
-					continue;
+			for (Map.Entry<String, Map<String, Object>> entry : userAnswers.entrySet()) {
+				int index = Integer.parseInt(entry.getKey());
 
-				int index = Integer.parseInt(key.replace("_choice", ""));
-				boolean isCorrect = Boolean.parseBoolean(entry.getValue());
+				Map<String, Object> choiceInfo = entry.getValue();
+				boolean isCorrect = (boolean)choiceInfo.getOrDefault("isCorrect", false);
 
 				if (isCorrect) {
 					correctCount++;

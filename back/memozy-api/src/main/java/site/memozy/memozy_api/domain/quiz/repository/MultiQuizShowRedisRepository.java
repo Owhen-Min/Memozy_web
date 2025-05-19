@@ -203,16 +203,22 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public Map<String, String> getUserChoice(String showId, String userId) {
+	public Map<String, Map<String, Object>> getUserChoice(String showId, String userId) {
 		log.info("[Redis] getUserChoice() called with showId: {}, userId: {}", showId, userId);
 		String answerKey = "show:" + showId + ":userChoice:" + userId;
 		try {
 			Map<Object, Object> allEntries = redisTemplate.opsForHash().entries(answerKey);
-			Map<String, String> result = new HashMap<>();
+			Map<String, Map<String, Object>> result = new HashMap<>();
 			for (Map.Entry<Object, Object> entry : allEntries.entrySet()) {
 				String key = entry.getKey().toString();
+				String value = entry.getValue().toString();
 				if (key.endsWith("_choice")) {
-					result.put(key, entry.getValue().toString());
+					String index = key.replace("_choice", "");
+					result.computeIfAbsent(index, k -> new HashMap<>())
+						.put("isCorrect", Boolean.parseBoolean(value));
+				} else {
+					result.computeIfAbsent(key, k -> new HashMap<>())
+						.put("userAnswer", value);
 				}
 			}
 			return result;
