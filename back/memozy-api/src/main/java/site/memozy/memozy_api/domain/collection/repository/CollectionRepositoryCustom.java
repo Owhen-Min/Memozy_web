@@ -11,6 +11,7 @@ import site.memozy.memozy_api.domain.history.dto.CollectionAccuracyResponse;
 import site.memozy.memozy_api.domain.history.dto.QuizCountAnalysisResponse;
 import site.memozy.memozy_api.domain.history.dto.UnsolvedCollectionDtoResponse;
 import site.memozy.memozy_api.domain.history.entity.CollectionHistoryDetailResponse;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 
 public interface CollectionRepositoryCustom {
 	List<CollectionSummaryResponse> findCollectionSummariesByUserId(Integer userId);
@@ -36,4 +37,6 @@ public interface CollectionRepositoryCustom {
 	List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId);
 
 	List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail);
+
+	List<QuizSource> findExistingSourceInCollection(List<QuizSource> quizSources, Integer collectionId, Integer userId);
 }

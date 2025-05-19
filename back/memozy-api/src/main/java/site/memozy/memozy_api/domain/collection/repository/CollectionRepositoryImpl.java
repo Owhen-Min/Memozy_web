@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -34,6 +35,7 @@ import site.memozy.memozy_api.domain.quiz.entity.QQuiz;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.entity.QuizType;
 import site.memozy.memozy_api.domain.quizsource.entity.QQuizSource;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -415,5 +417,32 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			));
 		}
 		return result;
+	}
+
+	@Override
+	public List<QuizSource> findExistingSourceInCollection(
+		List<QuizSource> quizSources,
+		Integer collectionId,
+		Integer userId) {
+
+		QQuizSource quizSource = QQuizSource.quizSource;
+		BooleanBuilder builder = new BooleanBuilder();
+
+		// 각 QuizSource의 title, summary, url을 기반으로 조건 생성
+		for (QuizSource source : quizSources) {
+			builder.or(
+				quizSource.title.eq(source.getTitle())
+					.and(quizSource.summary.eq(source.getSummary()))
+					.and(quizSource.url.eq(source.getUrl()))
+					.and(quizSource.userId.eq(userId))
+					.and(collectionId != null
+						? quizSource.collectionId.eq(collectionId)
+						: quizSource.collectionId.isNull())
+			);
+		}
+
+		return queryFactory.selectFrom(quizSource)
+			.where(builder)
+			.fetch();
 	}
 }
