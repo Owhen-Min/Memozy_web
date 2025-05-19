@@ -53,7 +53,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
       onClick={handleOutsideClick}
     >
       <div
-        className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide"
+        className="bg-blue-50 p-4 md:p-8 rounded-lg w-[95%] md:w-[70%] h-[90%] overflow-y-auto relative shadow-lg scrollbar-hide mt-14"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
