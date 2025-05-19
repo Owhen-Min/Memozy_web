@@ -25,8 +25,20 @@ interface CollectionAccuracyChartProps {
 export default function CollectionAccuracyChart({
   collectionAccuracy,
 }: CollectionAccuracyChartProps) {
+  const MAX_LABEL_LENGTH = 5;
+
+  // x축 labels: 5자 초과면 ...으로 표시
+  const shortLabels = [...collectionAccuracy]
+    .reverse()
+    .map((item) =>
+      item.name.length > MAX_LABEL_LENGTH ? item.name.slice(0, MAX_LABEL_LENGTH) + "..." : item.name
+    );
+
+  // 툴팁 title: 원본 전체 이름
+  const originalLabels = [...collectionAccuracy].reverse().map((item) => item.name);
+
   const barChartData = {
-    labels: [...collectionAccuracy].reverse().map((item) => item.name),
+    labels: shortLabels,
     datasets: [
       {
         label: "정답률 (%)",
@@ -60,6 +72,13 @@ export default function CollectionAccuracyChart({
         bodyFont: {
           family: "'Pretendard-Regular', sans-serif",
           size: 13,
+        },
+        callbacks: {
+          title: function (context: any) {
+            // context[0].dataIndex로 원본 데이터 접근
+            const idx = context[0].dataIndex;
+            return originalLabels[idx];
+          },
         },
       },
     },
