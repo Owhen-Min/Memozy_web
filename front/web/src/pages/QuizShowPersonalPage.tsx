@@ -73,7 +73,7 @@ function QuizShowPersonalPage() {
 
   // 새로고침 감지 및 플래그 저장
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    const handleBeforeUnload = () => {
       // 새로고침 시 로컬 스토리지에 플래그 저장
       localStorage.setItem(`quiz_refresh_${collectionId}`, "true");
     };
