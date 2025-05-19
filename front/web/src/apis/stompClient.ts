@@ -12,7 +12,7 @@ const useWebSocket = (showId: string, userId: string) => {
       brokerURL: "wss://memozy.site/ws-connect",
       // brokerURL: "ws://70.12.246.135:8080/ws-connect",
 
-      reconnectDelay: 5000,
+      reconnectDelay: 1000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
       connectHeaders: accessToken
