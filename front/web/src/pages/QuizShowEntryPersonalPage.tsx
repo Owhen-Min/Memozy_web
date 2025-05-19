@@ -61,13 +61,13 @@ const QuizShowEntryPersonalPage = () => {
 
     return (
       <>
-        <div className="flex items-center justify-between">
-          <h1 className="text-[28px] font-pre-semibold mb-4 text-main200 flex items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h1 className="text-[28px] font-pre-semibold text-main200 flex items-center gap-2">
             <img src={small_logo} alt="logo" className="w-10 h-10" />
             Quiz : <span className="text-normalactive">{quizData.collectionName}</span>
           </h1>
           <button
-            className="border border-red text-red rounded-lg p-2 flex items-center gap-2"
+            className="border border-red text-red rounded-lg p-2 flex items-center gap-2 w-1/2 md:w-auto justify-center"
             onClick={() => navigate(`/collection/${collectionId}`)}
           >
             <img src={outQuizShowIcon} alt="outQuizShowIcon" className="w-6 h-6" />
@@ -94,7 +94,7 @@ const QuizShowEntryPersonalPage = () => {
                 </div>
               </div>
 
-              <div className="absolute right-4 md:right-10 top-[70px] z-30">
+              <div className="absolute right-4 md:right-10 top-[100px] z-30">
                 <div className="bg-white shadow-lg rounded-xl p-6 font-pre-medium">
                   <p>
                     컬렉션 :{" "}
