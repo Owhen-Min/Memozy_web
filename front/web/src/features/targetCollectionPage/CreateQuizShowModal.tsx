@@ -11,12 +11,14 @@ interface CreateQuizShowModalProps {
   onClose: () => void;
   collectionId: string | undefined;
   quizCount: number;
+  duplicateQuizCount: number;
 }
 
 function CreateQuizShowModal({
   onClose,
   collectionId,
   quizCount: totalQuizCount,
+  duplicateQuizCount,
 }: CreateQuizShowModalProps) {
   const navigate = useNavigate();
   const [isShared, setIsShared] = useState(false);
@@ -46,7 +48,10 @@ function CreateQuizShowModal({
   };
 
   // 선택 가능한 퀴즈 수 배열 생성 (1부터 totalQuizCount까지)
-  const availableQuizCounts = Array.from({ length: totalQuizCount }, (_, i) => i + 1);
+  const availableQuizCounts = Array.from(
+    { length: totalQuizCount - duplicateQuizCount },
+    (_, i) => i + 1
+  );
 
   return (
     <div className="bg-white rounded-2xl p-6 max-w-[400px] w-full mx-4 relative">

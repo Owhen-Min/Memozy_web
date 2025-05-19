@@ -210,6 +210,7 @@ function TargetCollectionPage() {
             onClose={() => setIsQuizShowModalOpen(false)}
             collectionId={collectionId}
             quizCount={quizCount}
+            duplicateQuizCount={duplicateQuizCount}
           />
         </div>
       )}
