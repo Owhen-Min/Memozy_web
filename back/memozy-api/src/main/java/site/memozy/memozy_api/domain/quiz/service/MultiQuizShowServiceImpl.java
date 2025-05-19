@@ -4,7 +4,9 @@ import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -101,7 +103,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	@Override
 	@Transactional
-	public void saveQuizShow(String showId, Integer userId, String email) {
+	public void saveQuizShowCollection(String showId, Integer userId, String email) {
 		if (!collectionRepository.existsByCode(showId)) {
 			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
@@ -113,25 +115,26 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		log.info("[service] saveQuizShow() called with showId: {}, userId: {}", showId, userId);
 		String hostName = metaData.get("hostName");
 		String collectionName = metaData.get("collectionName");
-		String newCollectionName = hostName + "의 " + collectionName;
-
+		String newCollectionName = collectionName + "(복사본-" + hostName + ")";
 		Collection collection = collectionRepository.findByNameAndUserId(newCollectionName, userId)
 			.orElseGet(() -> collectionRepository.save(Collection.create(newCollectionName, userId)));
 
-		//TODO: 2. Quiz Source 들고와서 존재하면 Get 존재하지 않으면 Save
-		List<QuizSource> quizSources = quizSourceRepository.findByCollectionId(
-			Integer.parseInt(metaData.get("collectionId")));
-		log.info("quizSources count: {}", quizSources.get(0).getSourceId());
-		log.info("quizSources count: {}", quizSources.size());
-		List<Integer> quizSourceIds = quizSources.stream()
-			.filter(qs -> !qs.getSourceId().equals(collection.getCollectionId()))
+		Integer collectionId = Integer.parseInt(metaData.get("collectionId"));
+
+		Set<String> existingUrls = quizSourceRepository.findByCollectionId(collection.getCollectionId())
+			.stream()
+			.map(QuizSource::getUrl)
+			.collect(Collectors.toSet());
+
+		List<Integer> quizSourceIds = quizSourceRepository.findByCollectionId(collectionId).stream()
+			.filter(source -> !existingUrls.contains(source.getUrl()))
 			.map(QuizSource::getSourceId)
 			.toList();
+
 		log.info("quizSourceIds count (이미 있는 sourceId 제외): {}", quizSourceIds.size());
 		collectionService.copyQuizShowMemozies(userId, collection.getCollectionId(), quizSourceIds);
 		log.info("collectionId: {}, quizSourceIds: {}", collection.getCollectionId(), quizSourceIds);
 
-		// 유저 선택 가져와서 저장하기
 		Map<String, Map<String, Object>> userChoices = multiQuizShowRedisRepository.getUserChoice(showId,
 			userId.toString());
 		for (Map.Entry<String, Map<String, Object>> entry : userChoices.entrySet()) {
@@ -144,12 +147,12 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			int index = Integer.parseInt(entry.getKey());
 			log.info("index: {}", index + 1);
 
-			if (index >= quizSources.size())
+			if (index >= quizSourceIds.size())
 				continue;
 
 			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
 			Long quizId = Long.parseLong((String)quizData.get("quizId"));
-			//TODO: 3. 라운드를 찾고 존재하지않으면 1부터 존재하면 마지막 라운드에서 +1
+
 			int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collection.getCollectionId(), email)
 				.orElse(0) + 1;
 			History history = History.builder()

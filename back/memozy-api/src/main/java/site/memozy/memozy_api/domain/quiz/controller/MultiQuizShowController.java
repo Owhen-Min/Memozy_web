@@ -93,8 +93,9 @@ public class MultiQuizShowController {
 
 	@PostMapping("/{showId}")
 	@ResponseBody
-	public void saveQuizShow(@PathVariable String showId, @AuthenticationPrincipal CustomOAuth2User user) {
+	public ApiResponse<Void> saveQuizShow(@PathVariable String showId, @AuthenticationPrincipal CustomOAuth2User user) {
 		log.info("[Controller] saveQuizShow() called with showId: {}", showId);
-		multiQuizShowService.saveQuizShow(showId, user.getUserId(), user.getEmail());
+		multiQuizShowService.saveQuizShowCollection(showId, user.getUserId(), user.getEmail());
+		return ApiResponse.success();
 	}
 }
