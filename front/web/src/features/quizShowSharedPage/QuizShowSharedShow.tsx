@@ -121,7 +121,7 @@ function QuizShowSharedShow({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[85vh] sm:h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full h-[85vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -164,21 +164,25 @@ function QuizShowSharedShow({
 
             {/* 해설 영역 */}
             {showAnswer && currentQuiz && (
-              <div className="absolute bottom-3 left-0 right-0 bg-pink-100 mx-2 p-4 rounded-xl">
-                <div className="text-lg font-bold mb-2">해설</div>
-                <p className="text-gray-800">{currentQuiz.commentary || currentQuiz.answer}</p>
+              <div className="flex flex-col justify-center items-start bg-pink-100 mt-3 p-2 rounded-xl">
+                <p className="text-16 sm:text-lg font-bold mb-2">해설</p>
+                <p className="text-14 sm:text-16 text-gray-800">
+                  {currentQuiz.commentary || currentQuiz.answer}
+                </p>
               </div>
             )}
 
             {/* 정답 제출 버튼 - 정답 제출 전에만 표시 */}
             {!showAnswer && (
-              <button
-                className="text-main200 text-20 font-pre-medium absolute bottom-4 right-8 flex items-center gap-1 transition-transform duration-200 hover:scale-110"
-                onClick={handleShowAnswer}
-              >
-                <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
-                선택 완료
-              </button>
+              <div className="flex justify-end items-center mt-2 sm:mt-8">
+                <button
+                  className="text-main200 text-20 font-pre-medium flex gap-1 transition-transform duration-200 hover:scale-110"
+                  onClick={handleShowAnswer}
+                >
+                  <img src={nextIcon} alt="nextQuizIcon" className="w-6 h-6" />
+                  선택 완료
+                </button>
+              </div>
             )}
           </>
         )}

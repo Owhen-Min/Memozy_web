@@ -2,11 +2,13 @@ import small_logo from "../../assets/images/small_logo.png";
 import rightmonster from "../../assets/images/quizshowImg.png";
 import save from "../../assets/icons/save.svg";
 import book from "../../assets/icons/summaryIcon.svg";
+import homeIcon from "../../assets/icons/homeIcon.svg";
 import first from "../../assets/images/first.png";
 import second from "../../assets/images/second.png";
 import third from "../../assets/images/third.png";
 import { useQuizShowSharedResult } from "../../hooks/sharedQuizShow";
 import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
+import { useNavigate } from "react-router";
 
 interface QuizShowMyResult {
   myCorrectQuizCount: number;
@@ -50,6 +52,7 @@ function QuizShowResultSharedPage({
   isLoggedIn,
   handleSaveQuizClick,
 }: QuizShowSharedResultProps) {
+  const navigate = useNavigate();
   const {
     myScore,
     totalQuizCount,
@@ -119,26 +122,37 @@ function QuizShowResultSharedPage({
                 onClick={handleMostWrongQuizClick}
                 className="group flex items-center mt-6 md:mt-8 font-pre-medium hover:text-blue-600 text-14 md:text-20"
               >
-                친구들이 가장 많이 틀린 퀴즈
                 <img
                   src={book}
                   alt="책아이콘"
-                  className="w-3 md:w-4 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                 />
+                &nbsp;친구들이 가장 많이 틀린 퀴즈
               </button>
               {isLoggedIn && (
                 <button
                   onClick={handleSaveQuizClick}
                   className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
                 >
-                  나의 컬렉션에 저장하기
                   <img
                     src={save}
                     alt="저장아이콘"
                     className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
                   />
+                  &nbsp;나의 컬렉션에 저장하기
                 </button>
               )}
+              <button
+                onClick={() => navigate(`/collection`)}
+                className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
+              >
+                <img
+                  src={homeIcon}
+                  alt="책아이콘"
+                  className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                />
+                &nbsp;컬렉션으로 돌아가기
+              </button>
             </div>
           </div>
 
