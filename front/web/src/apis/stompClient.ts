@@ -25,6 +25,12 @@ const useWebSocket = (showId: string, userId: string) => {
           : { showId: showId },
 
       onConnect: () => {
+        // heartbeat 주기 확인
+        console.log("heartbeatOut:", client.heartbeatOutgoing); // 10000
+        console.log("heartbeatIn:", client.heartbeatIncoming); // 10000
+
+        // 내부 웹소켓 객체 상태 확인
+        console.log("WebSocket 상태:", client.webSocket);
         console.log("웹소켓 연결");
         setIsConnected(true);
         setStompClient(client);
@@ -53,6 +59,16 @@ const useWebSocket = (showId: string, userId: string) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!stompClient || !isConnected) return;
+
+    const timer = setInterval(() => {
+      stompClient.publish({ destination: "/pub/ping", body: "" });
+    }, 10000);
+
+    return () => clearInterval(timer);
+  }, [stompClient, isConnected]);
 
   return { stompClient, isConnected };
 };
