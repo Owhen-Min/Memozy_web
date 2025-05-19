@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TitleCleaner {
-	private static final String COPY_PREFIX = "(복사본 - ";
+	private static final String COPY_PREFIX = "(복사본-";
 	private static final String COPY_SUFFIX = ")";
 
 	public String removeCopySuffix(String title) {
