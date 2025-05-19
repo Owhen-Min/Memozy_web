@@ -74,7 +74,6 @@ export const useQuizShowSharedShow = ({
 
     return () => {
       // 컴포넌트 언마운트 시 작업
-      console.log("[DEBUG-HOOK] 컴포넌트 클린업 호출");
     };
   }, [quizList, quizCount, collectionName, initQuizData, startCountdown, isInitialized]);
 
