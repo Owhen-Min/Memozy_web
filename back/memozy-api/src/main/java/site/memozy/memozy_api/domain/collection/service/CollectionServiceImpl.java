@@ -22,6 +22,7 @@ import site.memozy.memozy_api.domain.collection.dto.QuizDeleteRequest;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.Collection;
 import site.memozy.memozy_api.domain.collection.repository.CollectionRepository;
+import site.memozy.memozy_api.domain.collection.util.TitleCleaner;
 import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.dto.PersonalQuizResponse;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
@@ -37,6 +38,7 @@ public class CollectionServiceImpl implements CollectionService {
 	private final QuizSourceRepository quizSourceRepository;
 	private final QuizRepository quizRepository;
 	private final HistoryRepository historyRepository;
+	private final TitleCleaner titleCleaner;
 
 	@Override
 	@Transactional
@@ -191,14 +193,20 @@ public class CollectionServiceImpl implements CollectionService {
 	public void copyMemozies(Integer userId, Integer copyCollectionId, List<Integer> sourceIds) {
 		// 1. 복사할 source들 조회
 		List<QuizSource> originalSources = quizSourceRepository.findBySourceIdInAndUserId(sourceIds, userId);
+		List<QuizSource> quizSourceList = collectionRepository.findExistingSourceInCollection(originalSources,
+			copyCollectionId, userId);
+		if (!quizSourceList.isEmpty()) {
+			throw new GeneralException(COLLECTION_DUPLICATE_SOURCE);
+		}
 
 		Collection collection = collectionRepository.findByCollectionIdAndUserId(copyCollectionId, userId)
 			.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
-
+		String collectionName = collection.getName();
 		for (QuizSource original : originalSources) {
+			String newTitle = titleCleaner.removeCopySuffix(original.getTitle()) + "(복사본-" + collectionName + ")";
 			// 2. source 복사
 			QuizSource copiedSource = QuizSource.builder()
-				.title(original.getTitle() + "(" + collection.getName() + ")")
+				.title(newTitle)
 				.summary(original.getSummary())
 				.url(original.getUrl())
 				.userId(userId)

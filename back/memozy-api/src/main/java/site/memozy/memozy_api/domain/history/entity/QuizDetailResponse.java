@@ -9,6 +9,8 @@ public record QuizDetailResponse(
 	String userSelect,
 	List<String> choice,
 	String answer,
-	String commentary
+	String commentary,
+	String url,
+	String summary
 ) {
 }

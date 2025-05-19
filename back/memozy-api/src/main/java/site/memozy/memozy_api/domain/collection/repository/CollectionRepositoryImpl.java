@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -34,6 +35,7 @@ import site.memozy.memozy_api.domain.quiz.entity.QQuiz;
 import site.memozy.memozy_api.domain.quiz.entity.Quiz;
 import site.memozy.memozy_api.domain.quiz.entity.QuizType;
 import site.memozy.memozy_api.domain.quizsource.entity.QQuizSource;
+import site.memozy.memozy_api.domain.quizsource.entity.QuizSource;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -299,6 +301,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	public List<CollectionHistoryDetailResponse> findCollectionHistoryWithQuizzes(Integer collectionId) {
 		QHistory history = QHistory.history;
 		QQuiz quiz = QQuiz.quiz;
+		QQuizSource quizSource = QQuizSource.quizSource;
 
 		List<Integer> rounds = queryFactory
 			.select(history.round)
@@ -315,9 +318,10 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		for (Integer round : rounds) {
 			List<Tuple> tuples = queryFactory
-				.select(history, quiz)
+				.select(history, quiz, quizSource)
 				.from(history)
 				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
 				.where(
 					history.collectionId.eq(collectionId),
 					history.round.eq(round),
@@ -328,6 +332,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
 				History h = tuple.get(history);
 				Quiz q = tuple.get(quiz);
+				QuizSource s = tuple.get(quizSource);
+
 				return new QuizDetailResponse(
 					q.getQuizId(),
 					q.getContent(),
@@ -337,17 +343,21 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 						? List.of(q.getOption().split("№"))
 						: null,
 					q.getAnswer(),
-					q.getCommentary()
+					q.getCommentary(),
+					s.getUrl(),
+					s.getSummary()
 				);
 			}).toList();
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
@@ -359,6 +369,7 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 	public List<CollectionHistoryDetailResponse> findAllHistoryWithQuizzes(String userEmail) {
 		QHistory history = QHistory.history;
 		QQuiz quiz = QQuiz.quiz;
+		QQuizSource quizSource = QQuizSource.quizSource;
 
 		List<Integer> rounds = queryFactory
 			.select(history.round)
@@ -376,9 +387,10 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 		for (Integer round : rounds) {
 			List<Tuple> tuples = queryFactory
-				.select(history, quiz)
+				.select(history, quiz, quizSource)
 				.from(history)
 				.join(quiz).on(history.quizId.eq(quiz.quizId))
+				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
 				.where(
 					history.collectionId.eq(0),
 					history.round.eq(round),
@@ -390,6 +402,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
 				History h = tuple.get(history);
 				Quiz q = tuple.get(quiz);
+				QuizSource s = tuple.get(quizSource);
+
 				return new QuizDetailResponse(
 					q.getQuizId(),
 					q.getContent(),
@@ -399,21 +413,51 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 						? List.of(q.getOption().split("№"))
 						: null,
 					q.getAnswer(),
-					q.getCommentary()
+					q.getCommentary(),
+					s.getUrl(),
+					s.getSummary()
 				);
 			}).toList();
 
 			History anyHistory = tuples.get(0).get(history);
 			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
+			int allCount = tuples.size();
 
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
 				failCount,
+				allCount,
 				anyHistory.getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
 		}
 		return result;
+	}
+
+	@Override
+	public List<QuizSource> findExistingSourceInCollection(
+		List<QuizSource> quizSources,
+		Integer collectionId,
+		Integer userId) {
+
+		QQuizSource quizSource = QQuizSource.quizSource;
+		BooleanBuilder builder = new BooleanBuilder();
+
+		// 각 QuizSource의 title, summary, url을 기반으로 조건 생성
+		for (QuizSource source : quizSources) {
+			builder.or(
+				quizSource.summary.eq(source.getSummary())
+					.and(quizSource.url.eq(source.getUrl()))
+					.and(quizSource.userId.eq(userId))
+					.and(collectionId != null
+						? quizSource.collectionId.eq(collectionId)
+						: quizSource.collectionId.isNull())
+			);
+		}
+
+		return queryFactory.selectFrom(quizSource)
+			.where(builder)
+			.fetch();
 	}
 }

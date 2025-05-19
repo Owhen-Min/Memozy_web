@@ -48,7 +48,7 @@ public class SecurityConfig {
 		"/ws-connect", "/ws-connect/**",
 		"/swagger-ui/**", "/v3/api-docs/**",
 		"/", "/index.html",
-		"/api/prometheus"
+		"/api/prometheus", "/api/health"
 	);
 
 	@Bean
