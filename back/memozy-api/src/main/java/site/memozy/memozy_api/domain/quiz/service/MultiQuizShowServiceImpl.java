@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,6 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private final CollectionService collectionService;
 	private final QuizSourceRepository quizSourceRepository;
 	private final HistoryRepository historyRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	@Transactional

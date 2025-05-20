@@ -39,6 +39,7 @@ public class MultiQuizShowRunner {
 			throw new GeneralException(QUIZ_INVALID_STATE);
 		}
 		log.info("퀴즈쇼 시작: {}", showId);
+		redisRepository.changeQuizShowStatus(showId, "START");
 
 		int quizCount = redisRepository.getQuizCount(showId);
 		activeQuestionIndex.put(showId, 0);

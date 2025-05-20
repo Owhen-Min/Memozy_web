@@ -58,7 +58,7 @@ public enum ErrorStatus implements BaseErrorCode {
 	REDIS_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS502", "퀴즈 상태를 갱신하는 중 오류가 발생했습니다."),
 	REDIS_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS503", "퀴즈 세션이 존재하지 않습니다."),
 	REDIS_QUIZ_ALREADY_ATTEMPTED(HttpStatus.BAD_REQUEST, "REDIS504", "이미 푼 문제에 대해서 재요청 시 처리할 수 없습니다."),
-	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "잘못된 메타데이터 형식입니다."),
+	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "퀴즈 정보가 유효하지 않습니다."),
 	REDIS_QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS506", "해당 퀴즈가 존재하지 않습니다."),
 	REDIS_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS507", "해당 참가자가 존재하지 않습니다.");
 
