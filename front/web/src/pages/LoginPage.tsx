@@ -173,7 +173,7 @@ function LoginPage() {
 
         {/* 모바일에서만 보이는 오른쪽 아래 몬스터 */}
         <div className="fixed bottom-4 right-4 lg:hidden">
-          <img src={rightmonster} alt="오른쪽 몬스터" className="w-32 z-50" />
+          <img src={rightmonster} alt="오른쪽 몬스터" className="w-32 z-[99999]" />
         </div>
       </div>
     </div>
