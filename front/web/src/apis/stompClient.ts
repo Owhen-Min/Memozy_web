@@ -25,11 +25,8 @@ const useWebSocket = (showId: string) => {
         : {
             showId: showId,
           },
-      onStompError: (frame) => {
-        console.error("에러 발생:", frame);
-      },
-      onConnect: (frame) => {
-        console.log("onConnect", frame);
+      onStompError: () => {},
+      onConnect: () => {
         setIsConnected(true);
         setStompClient(client);
       },

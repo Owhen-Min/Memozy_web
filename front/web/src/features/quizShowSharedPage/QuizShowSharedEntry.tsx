@@ -24,6 +24,7 @@ interface QuizShowSharedEntryProps {
   isLoading: boolean;
   onStartQuizShow: () => void;
   onChangeNickname: (newNickname: string) => Promise<boolean | undefined>;
+  errorHandler: (error: string, options: { showButtons: boolean }) => void;
 }
 
 function QuizShowSharedEntry({
@@ -35,6 +36,7 @@ function QuizShowSharedEntry({
   collectionName,
   quizCount,
   isLoading,
+  errorHandler,
   onStartQuizShow,
   onChangeNickname,
 }: QuizShowSharedEntryProps) {
@@ -77,9 +79,15 @@ function QuizShowSharedEntry({
   const handleNicknameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newNickname.length > 10) {
-      alert("닉네임은 10자 이하로 입력해주세요.");
+      errorHandler("닉네임은 10자 이하로 입력해주세요.", { showButtons: false });
       return;
     }
+
+    if (participants.some((user) => user.nickname === newNickname)) {
+      errorHandler("이미 사용중인 닉네임입니다.", { showButtons: false });
+      return;
+    }
+
     try {
       const success = await onChangeNickname(newNickname.replace(" ", ""));
       if (success) {
