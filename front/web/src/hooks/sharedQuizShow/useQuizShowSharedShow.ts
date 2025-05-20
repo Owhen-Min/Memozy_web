@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Quiz } from "../../types/quizShow";
+import { QuizShared } from "../../types/quizShow";
 import { useQuizShowSharedStore } from "../../stores/quizShowShared/quizShowSharedStore";
 
 interface Answer {
@@ -11,7 +11,7 @@ interface Answer {
 
 interface UseQuizShowSharedShowProps {
   quizCount: number;
-  quizList: Quiz[];
+  quizList: QuizShared[];
   collectionName: string;
   handleShowEnded: () => void;
   submitAnswer: (answer: Answer) => void;

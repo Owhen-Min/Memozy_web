@@ -1,4 +1,4 @@
-import { Quiz } from "../../types/quizShow";
+import { QuizShared } from "../../types/quizShow";
 
 export interface User {
   userId: string;
@@ -56,13 +56,13 @@ export interface QuizShowSharedStore {
   quizSessionId: string;
 
   // 퀴즈 관련 상태
-  quizzes: Quiz[];
+  quizzes: QuizShared[];
   myResult: QuizShowMyResult | {};
   result: QuizShowResult | {};
   isResultReady: boolean;
 
   // 퀴즈쇼 관련 상태 추가
-  currentQuiz: Quiz | null;
+  currentQuiz: QuizShared | null;
   showAnswer: boolean;
   userAnswer: string | number | { index: number; value: string } | null;
   selectedOX: "O" | "X" | null;
@@ -94,13 +94,13 @@ export interface QuizShowSharedStore {
   setHostId: (hostId: string) => void;
   setUserId: (userId: string) => void;
   setCurrentQuizIndex: (currentQuizIndex: number) => void;
-  setQuizzes: (quizzes: Quiz[]) => void;
+  setQuizzes: (quizzes: QuizShared[]) => void;
   setMyResult: (myResult: QuizShowMyResult | {}) => void;
   setResult: (result: QuizShowResult | {}) => void;
   setIsResultReady: (isResultReady: boolean) => void;
 
   // 퀴즈쇼 관련 액션 추가
-  setCurrentQuiz: (currentQuiz: Quiz | null) => void;
+  setCurrentQuiz: (currentQuiz: QuizShared | null) => void;
   setShowAnswer: (showAnswer: boolean) => void;
   setUserAnswer: (userAnswer: string | number | { index: number; value: string } | null) => void;
   setSelectedOX: (selectedOX: "O" | "X" | null) => void;
@@ -111,7 +111,7 @@ export interface QuizShowSharedStore {
   setIsTimerRunning: (isTimerRunning: boolean) => void;
 
   // 퀴즈 추가 액션
-  addQuiz: (quiz: Quiz, index: number) => void;
+  addQuiz: (quiz: QuizShared, index: number) => void;
 
   // 타이머 관련 액션
   clearAllTimers: () => void;
@@ -130,7 +130,11 @@ export interface QuizShowSharedStore {
   resetStore: () => void;
 
   // 초기화 함수 추가
-  initQuizData: (quizList: Quiz[], quizCountValue: number, collectionNameValue: string) => void;
+  initQuizData: (
+    quizList: QuizShared[],
+    quizCountValue: number,
+    collectionNameValue: string
+  ) => void;
 
   // 카운트다운 시작 함수 추가
   startCountdown: () => void;

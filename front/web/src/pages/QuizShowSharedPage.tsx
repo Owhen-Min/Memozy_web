@@ -10,6 +10,15 @@ import { useQuizShowWebsocket } from "../hooks/sharedQuizShow/useQuizShowWebsock
 import httpClient from "../apis/httpClient";
 
 const QuizShowSharedPage = () => {
+  const { showId } = useParams();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const [isLoading, setIsLoading] = useState(true);
+  const setError = useErrorStore((state) => state.setError);
+
+  // 웹소켓 훅 사용
+  const { submitAnswer, handleStartQuizShow, handleChangeNickname, handleShowEnded, isConnected } =
+    useQuizShowWebsocket(showId as string);
+
   // Zustand 스토어에서 상태와 액션 가져오기
   const {
     isShowStarted,
@@ -28,31 +37,6 @@ const QuizShowSharedPage = () => {
     resetStore,
     setQuizSessionId,
   } = useQuizShowSharedStore();
-
-  const { showId } = useParams();
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const [isLoading, setIsLoading] = useState(true);
-  const setError = useErrorStore((state) => state.setError);
-
-  const handleSaveQuizClick = async () => {
-    await httpClient
-      .post(`quiz/show/${showId}`)
-      .then((res) => {
-        if (res.data.success) {
-          setError("나의 컬렉션에 저장되었습니다.", { showButtons: false });
-        } else {
-          setError(res.data.errorMsg, { showButtons: false });
-        }
-      })
-      .catch((err) => {
-        setError(err, { showButtons: false });
-      });
-  };
-
-  // 웹소켓 훅 사용
-  const { submitAnswer, handleStartQuizShow, handleChangeNickname, handleShowEnded, isConnected } =
-    useQuizShowWebsocket(showId as string);
-
   // 세션 ID 설정 및 상태 복원
   useEffect(() => {
     if (showId) {
@@ -77,6 +61,21 @@ const QuizShowSharedPage = () => {
       sessionStorage.removeItem("current-session-id");
     };
   }, [resetStore]);
+
+  const handleSaveQuizClick = async () => {
+    await httpClient
+      .post(`quiz/show/${showId}`)
+      .then((res) => {
+        if (res.data.success) {
+          setError("나의 컬렉션에 저장되었습니다.", { showButtons: false });
+        } else {
+          setError(res.data.errorMsg, { showButtons: false });
+        }
+      })
+      .catch((err) => {
+        setError(err, { showButtons: false });
+      });
+  };
 
   return (
     <>
