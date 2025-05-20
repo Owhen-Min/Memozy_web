@@ -117,15 +117,22 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
-	public String updateParticipantNickname(String showId, String userId, String newNickname) {
+	public void updateParticipantNickname(String showId, String userId, String newNickname) {
 		log.info("[Redis] updateParticipantNickname() called with showId: {}, userId: {}, newNickname: {}", showId,
 			userId, newNickname);
 		String participantInfoKey = "show:" + showId + ":user:" + userId;
-
 		try {
+			List<String> nicknames = findParticipants(showId).stream()
+				.map(p -> getParticipantInfo(showId, p.toString()).get("nickname"))
+				.toList();
+			if (nicknames.contains(newNickname)) {
+				throw new GeneralException(QUIZ_NICKNAME_DUPLICATE);
+			}
 			redisTemplate.opsForHash().put(participantInfoKey, "nickname", newNickname);
 			redisTemplate.expire(participantInfoKey, Duration.ofDays(1));
-			return redisTemplate.opsForHash().get(participantInfoKey, "nickname").toString();
+		} catch (GeneralException e) {
+			log.error("[Redis] 닉네임 중복 저장 시도 : {}", e.getMessage());
+			throw new GeneralException(QUIZ_NICKNAME_DUPLICATE);
 		} catch (Exception e) {
 			log.error("[Redis] Error updating participant nickname: {}", e.getMessage());
 			throw new GeneralException(REDIS_SAVE_ERROR);
@@ -267,4 +274,15 @@ public class MultiQuizShowRedisRepository {
 		}
 	}
 
+	public void changeQuizShowStatus(String showId, String status) {
+		log.info("[Redis] changeQuizShowStatus() called with showId: {}, status: {}", showId, status);
+		String metaDataKey = "show:" + showId + ":metadata";
+		try {
+			redisTemplate.opsForHash().put(metaDataKey, "status", status);
+			redisTemplate.expire(metaDataKey, DURATION);
+		} catch (Exception e) {
+			log.error("[Redis] Error changing quiz show status: {}", e.getMessage());
+			throw new GeneralException(REDIS_SAVE_ERROR);
+		}
+	}
 }

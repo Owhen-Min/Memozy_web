@@ -1,5 +1,7 @@
 package site.memozy.memozy_api.global.websocket.handler;
 
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
+import site.memozy.memozy_api.global.payload.exception.GeneralException;
 import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
@@ -59,6 +62,10 @@ public class StompHandler implements ChannelInterceptor {
 
 		String token = accessor.getFirstNativeHeader("Authorization");
 		String showId = accessor.getFirstNativeHeader("showId");
+
+		if (redisRepository.getQuizMetaData(showId) == null) {
+			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
+		}
 
 		String userId = generateRandomCode(6);
 		String nickname = "guest" + generateRandomCode(3);

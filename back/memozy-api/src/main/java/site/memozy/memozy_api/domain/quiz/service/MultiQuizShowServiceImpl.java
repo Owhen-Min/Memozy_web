@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,6 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private final CollectionService collectionService;
 	private final QuizSourceRepository quizSourceRepository;
 	private final HistoryRepository historyRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	@Transactional
@@ -176,8 +174,15 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		if (isMember) {
 			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
 		}
+		if (nickname.length() > 10) {
+			throw new GeneralException(QUIZ_NICKNAME_TOO_LONG);
+		}
+		if (nickname.isEmpty() || nickname.isBlank()) {
+			throw new GeneralException(QUIZ_NICKNAME_NOT_BLANK);
+		}
 		log.info("[service] changeNickname() called with showId: {}, userId: {}, nickname : {}", showId, userId,
 			nickname);
+
 		multiQuizShowRedisRepository.updateParticipantNickname(showId, userId, nickname);
 		applicationEventPublisher.publishEvent(new QuizShowParticipantEvent(showId, userId, nickname));
 	}

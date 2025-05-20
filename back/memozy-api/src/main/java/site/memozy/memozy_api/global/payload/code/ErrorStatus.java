@@ -32,7 +32,9 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_INVALID_STATE(HttpStatus.BAD_REQUEST, "QUIZ407", "퀴즈 상태가 유효하지 않습니다."),
 	QUIZ_NICKNAME_CANNOT_CHANGE(HttpStatus.BAD_REQUEST, "QUIZ_408", "닉네임은 변경할 수 없습니다."),
 	QUIZ_CANNOT_JOIN(HttpStatus.BAD_REQUEST, "QUIZ409", "해당 퀴즈는 이미 시작되었거나 종료되었습니다."),
-
+	QUIZ_NICKNAME_TOO_LONG(HttpStatus.BAD_REQUEST, "QUIZ410", "닉네임은 10자 이내로 입력해주세요."),
+	QUIZ_NICKNAME_NOT_BLANK(HttpStatus.BAD_REQUEST, "QUIZ411", "닉네임은 공백을 포함할 수 없습니다."),
+	QUIZ_NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "QUIZ412", "다른 이용자가 사용 중인 닉네임입니다."),
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
 	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),
@@ -56,7 +58,7 @@ public enum ErrorStatus implements BaseErrorCode {
 	REDIS_UPDATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS502", "퀴즈 상태를 갱신하는 중 오류가 발생했습니다."),
 	REDIS_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS503", "퀴즈 세션이 존재하지 않습니다."),
 	REDIS_QUIZ_ALREADY_ATTEMPTED(HttpStatus.BAD_REQUEST, "REDIS504", "이미 푼 문제에 대해서 재요청 시 처리할 수 없습니다."),
-	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "잘못된 메타데이터 형식입니다."),
+	REDIS_INVALID_METADATA(HttpStatus.BAD_REQUEST, "REDIS505", "퀴즈 정보가 유효하지 않습니다."),
 	REDIS_QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS506", "해당 퀴즈가 존재하지 않습니다."),
 	REDIS_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "REDIS507", "해당 참가자가 존재하지 않습니다.");
 
