@@ -19,9 +19,7 @@ export const useQuizShowWebsocket = (showId: string) => {
   // 스토어에서 필요한 상태와 액션 가져오기
   const {
     isLoading,
-    hostId,
     userId,
-    nickname,
     collectionName,
     setIsLoading,
     setIsShowStarted,
@@ -44,7 +42,7 @@ export const useQuizShowWebsocket = (showId: string) => {
     const payload = JSON.parse(message.body);
 
     if (payload.type === "HOST") {
-      if (nickname === "") {
+      if (useQuizShowSharedStore.getState().userId === "") {
         setHostId(payload.hostId);
         setCollectionName(payload.collectionName);
         setNickname(payload.nickname);
@@ -54,16 +52,20 @@ export const useQuizShowWebsocket = (showId: string) => {
         setIsLoading(false);
       }
     } else if (payload.type === "JOIN") {
-      if (nickname === "") {
+      if (useQuizShowSharedStore.getState().userId === "") {
         setHostId(payload.hostId);
         setUserId(payload.userId);
         setCollectionName(payload.collectionName);
         setNickname(payload.nickname);
         setQuizCount(payload.quizCount);
         setIsLoading(false);
-        if (hostId === userId) {
-          setIsHost(true);
-        }
+      }
+      if (
+        useQuizShowSharedStore.getState().hostId &&
+        useQuizShowSharedStore.getState().userId &&
+        useQuizShowSharedStore.getState().hostId === useQuizShowSharedStore.getState().userId
+      ) {
+        setIsHost(true);
       }
     } else if (payload.type === "START") {
       setIsShowStarted(true);
