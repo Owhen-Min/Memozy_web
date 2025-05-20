@@ -2,6 +2,7 @@ import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import "./calendarHeatmap.css";
 import { LearningContribution } from "../../../types/analysisReport";
+import { useEffect, useRef } from "react";
 
 interface LearningContributionSectionProps {
   firstStudyDate: Date | null;
@@ -11,6 +12,7 @@ interface LearningContributionSectionProps {
 export default function LearningContributionSection({
   learningContribution,
 }: LearningContributionSectionProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const today = new Date();
   const currentYear = today.getFullYear();
 
@@ -24,6 +26,12 @@ export default function LearningContributionSection({
     return contribDate >= startDate && contribDate <= endDate;
   });
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, []);
+
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg border border-normal shadow-md mb-6 md:mb-10">
       <div className="flex justify-between items-center mb-2">
@@ -34,7 +42,7 @@ export default function LearningContributionSection({
         하루 단위 문제 풀이 기록으로, 색상 강도는 풀이 개수(0, 1-4, 5-9, 10-14, 15+)를 의미합니다.
       </p>
 
-      <div className="overflow-x-auto scroll-smooth scroll-x-end">
+      <div className="overflow-x-auto scroll-x-end" ref={scrollRef}>
         <div className="min-w-[650px]">
           <CalendarHeatmap
             startDate={startDate}
