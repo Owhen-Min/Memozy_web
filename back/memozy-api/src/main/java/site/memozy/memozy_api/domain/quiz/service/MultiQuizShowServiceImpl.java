@@ -143,40 +143,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			collectionService.copyQuizShowMemozies(userId, newCollection.getCollectionId(), quizSourceIds);
 		}
 
-		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(newCollection.getCollectionId(), email)
-			.orElse(0) + 1;
-
-		Map<String, Map<String, Object>> userAnswer = multiQuizShowRedisRepository.getUserChoice(showId,
-			String.valueOf(userId));
-		int quizCount = Integer.parseInt(metaData.get("quizCount"));
-
-		for (int i = 0; i < quizCount; i++) {
-			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, i);
-			String content = (String)quizData.get("content");
-
-			Map<String, Object> choiceData = userAnswer.getOrDefault(String.valueOf(i), Map.of(
-				"userAnswer", "",
-				"isCorrect", false
-			));
-
-			String userAnswerText = (String)choiceData.getOrDefault("userAnswer", "");
-			Boolean isCorrect = (Boolean)choiceData.getOrDefault("isCorrect", false);
-
-			Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
-				.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
-
-			History history = History.builder()
-				.isSolved(isCorrect)
-				.userSelect(userAnswerText)
-				.quizId(quizId)
-				.collectionId(newCollection.getCollectionId())
-				.round(nextRound)
-				.email(email)
-				.build();
-
-			historyRepository.save(history);
-
-		}
+		saveHistory(showId, userId, email, newCollection.getCollectionId(), metaData);
 	}
 
 	@Override
@@ -218,5 +185,43 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private String generateRandomCode() {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
+	}
+
+	private void saveHistory(String showId, Integer userId, String email, Integer collectionId,
+		Map<String, String> metaData) {
+		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId, email)
+			.orElse(0) + 1;
+
+		Map<String, Map<String, Object>> userAnswer = multiQuizShowRedisRepository.getUserChoice(showId,
+			String.valueOf(userId));
+		int quizCount = Integer.parseInt(metaData.get("quizCount"));
+
+		for (int i = 0; i < quizCount; i++) {
+			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, i);
+			String content = (String)quizData.get("content");
+
+			Map<String, Object> choiceData = userAnswer.getOrDefault(String.valueOf(i), Map.of(
+				"userAnswer", "",
+				"isCorrect", false
+			));
+
+			String userAnswerText = (String)choiceData.getOrDefault("userAnswer", "");
+			Boolean isCorrect = (Boolean)choiceData.getOrDefault("isCorrect", false);
+
+			Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
+				.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
+
+			History history = History.builder()
+				.isSolved(isCorrect)
+				.userSelect(userAnswerText)
+				.quizId(quizId)
+				.collectionId(collectionId)
+				.round(nextRound)
+				.email(email)
+				.build();
+
+			historyRepository.save(history);
+
+		}
 	}
 }
