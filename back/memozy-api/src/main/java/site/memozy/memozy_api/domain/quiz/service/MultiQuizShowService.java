@@ -21,4 +21,6 @@ public interface MultiQuizShowService {
 
 	@Transactional
 	void saveQuizShow(String showId, Integer userId, String email);
+
+	void disconnectQuizShow(String showId, String userId);
 }
