@@ -29,7 +29,18 @@ public class OpenAiService {
 	private final ChatClient.Builder chatClientBuilder;
 	private final ObjectMapper objectMapper;
 
+	private static final int SUMMARY_MIN_LENGTH = 300;
+
 	public String summarizeMarkdown(QuizSourceCreateRequest request) {
+		String stripped = request.getContext()
+			.replaceAll("https?://\\S+", "")
+			.replaceAll("!\\[.*?]\\(.*?\\)", "")
+			.trim();
+
+		if (stripped.length() < SUMMARY_MIN_LENGTH) {
+			throw new GeneralException(QUIZ_VALID_SUMMARY);
+		}
+
 		String promptText = """
 			당신의 임무는 받는 데이터를 **한국어로 정리**해주는 것입니다.
 			모든 응답은 반드시 **한국어로 출력**해야 합니다.
