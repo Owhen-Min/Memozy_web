@@ -85,6 +85,7 @@ public class StompHandler implements ChannelInterceptor {
 		accessor.getSessionAttributes().put("userId", userId);
 		accessor.getSessionAttributes().put("nickname", nickname);
 		accessor.getSessionAttributes().put("isMember", isMember);
+		accessor.getSessionAttributes().put("showId", showId);
 
 		log.info("[StompHandler] WebSocket 연결: userId={}, nickname={}, isMember={}", userId, nickname, isMember);
 
