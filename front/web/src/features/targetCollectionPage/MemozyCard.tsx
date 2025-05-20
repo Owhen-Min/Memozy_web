@@ -104,6 +104,9 @@ function MemozyCard({
           className={`overflow-hidden transition-all duration-300 ease-in-out ${isDropDownOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
           onClick={(e) => e.stopPropagation()}
         >
+          <div className="px-4 md:hidden">
+            <p className="text-16 break-words font-pre-semibold">{sourceTitle}</p>
+          </div>
           <DropDownBox sourceId={sourceId} collectionId={collectionId} />
         </div>
       </div>
