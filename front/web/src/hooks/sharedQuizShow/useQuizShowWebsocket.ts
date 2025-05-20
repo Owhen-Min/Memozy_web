@@ -73,7 +73,7 @@ export const useQuizShowWebsocket = (showId: string) => {
   };
 
   // 웹소켓 연결
-  const { stompClient, isConnected } = useWebSocket(showId, userId);
+  const { stompClient, isConnected } = useWebSocket(showId);
 
   const handleParticipants = (message: any) => {
     const data = JSON.parse(message.body);
@@ -155,6 +155,7 @@ export const useQuizShowWebsocket = (showId: string) => {
     const answerMatch = quiz.answer;
     const commentaryMatch = quiz.commentary;
     const choiceMatch = quiz.choice ? quiz.choice.split("№") : [];
+    const startTimeMatch = quiz.startTime;
 
     return {
       quizId: quiz.quizId,
@@ -163,6 +164,9 @@ export const useQuizShowWebsocket = (showId: string) => {
       answer: answerMatch ? answerMatch : "",
       choice: choiceMatch ? choiceMatch : [],
       commentary: commentaryMatch ? commentaryMatch : "",
+      startTime: startTimeMatch ? startTimeMatch : Date.now() - 500,
+      expiringTime: startTimeMatch ? startTimeMatch + 23000 : Date.now() + 22500,
+      answerCloseTime: startTimeMatch ? startTimeMatch + 33000 : Date.now() + 32500,
     };
   };
 

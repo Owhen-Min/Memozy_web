@@ -15,6 +15,9 @@ export interface QuizShared {
   commentary: string;
   content: string;
   choice: string[] | null;
+  startTime: number;
+  expiringTime: number;
+  answerCloseTime: number;
   type: QuizType;
 }
 

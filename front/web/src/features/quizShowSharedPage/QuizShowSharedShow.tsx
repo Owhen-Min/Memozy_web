@@ -1,5 +1,5 @@
 import small_logo from "../../assets/images/small_logo.png";
-import { Quiz } from "../../types/quizShow";
+import { QuizShared } from "../../types/quizShow";
 import { useQuizShowSharedShow } from "../../hooks/sharedQuizShow";
 import MultipleChoice from "../../components/quizShowSharedPage/MultipleChoice";
 import OX from "../../components/quizShowSharedPage/OX";
@@ -17,7 +17,7 @@ interface Answer {
 
 interface QuizShowSharedShowProps {
   quizCount: number;
-  quizList: Quiz[];
+  quizList: QuizShared[];
   quizSessionId: string;
   collectionName: string;
   handleShowEnded: () => void;
@@ -55,7 +55,7 @@ function QuizShowSharedShow({
   });
   const navigate = useNavigate();
 
-  const renderQuizComponent = (currentQuiz: Quiz) => {
+  const renderQuizComponent = (currentQuiz: QuizShared) => {
     if (!currentQuiz) return null;
 
     // 사용자 답변이 정답인지 체크
@@ -121,7 +121,7 @@ function QuizShowSharedShow({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full h-[85vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full flex flex-col justify-center min-h-[85vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -131,7 +131,7 @@ function QuizShowSharedShow({
               <div className="text-2xl font-pre-medium text-main200">
                 {loadingCount > 0 ? `잠시 후 퀴즈가 시작됩니다...` : "퀴즈를 시작합니다!"}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 sm:mt-10">
                 <div className="w-16 h-16 border-4 border-main200 border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             </div>

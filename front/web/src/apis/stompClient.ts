@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 
-const useWebSocket = (showId: string, userId: string) => {
+const useWebSocket = (showId: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const clientRef = useRef<Client | null>(null);
@@ -20,10 +20,9 @@ const useWebSocket = (showId: string, userId: string) => {
             Authorization: `Bearer ${accessToken}`,
             showId: showId,
           }
-        : userId
-          ? { Authorization: `Bearer ${userId}`, showId: showId }
-          : { showId: showId },
-
+        : {
+            showId: showId,
+          },
       onConnect: () => {
         setIsConnected(true);
         setStompClient(client);

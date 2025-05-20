@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { QuizShowSharedStore } from "./types";
-import { Quiz } from "../../types/quizShow";
+import { QuizShared } from "../../types/quizShow";
 
 const initialState = {
   isLoading: true,
@@ -20,7 +20,7 @@ const initialState = {
   myResult: {},
   result: {},
   isResultReady: false,
-  currentQuiz: null as Quiz | null,
+  currentQuiz: null as QuizShared | null,
   showAnswer: false,
   userAnswer: null as string | number | { index: number; value: string } | null,
   selectedOX: null as "O" | "X" | null,
@@ -52,7 +52,6 @@ const getSessionIdWhenReady = (retryInterval = 100, maxRetries = 50): Promise<st
         retries++;
         setTimeout(checkSessionId, retryInterval);
       } else {
-        console.error("[STORAGE] 세션 ID를 가져오는데 실패했습니다 (최대 재시도 도달).");
         resolve(null);
       }
     };
@@ -65,7 +64,6 @@ const delayedSessionStorage = {
   getItem: async (name: string): Promise<string | null> => {
     const sessionId = await getSessionIdWhenReady();
     if (!sessionId) {
-      console.warn(`[DEBUG] getItem: 세션 ID 사용 불가, ${name} 로드 실패.`);
       return null;
     }
     const suffixedName = `${name}-${sessionId}`;
@@ -75,7 +73,6 @@ const delayedSessionStorage = {
   setItem: async (name: string, value: string): Promise<void> => {
     const sessionId = await getSessionIdWhenReady();
     if (!sessionId) {
-      console.warn(`[DEBUG] setItem: 세션 ID 사용 불가, ${name} 저장 실패.`);
       return;
     }
     const suffixedName = `${name}-${sessionId}`;
@@ -84,7 +81,6 @@ const delayedSessionStorage = {
   removeItem: async (name: string): Promise<void> => {
     const sessionId = await getSessionIdWhenReady();
     if (!sessionId) {
-      console.warn(`[DEBUG] removeItem: 세션 ID 사용 불가, ${name} 삭제 실패.`);
       return;
     }
     const suffixedName = `${name}-${sessionId}`;
@@ -164,7 +160,11 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         set({ timers: { countdownTimer: null, quizTimer: null, commentaryTimer: null } });
       },
 
-      initQuizData: (quizList: Quiz[], quizCountValue: number, collectionNameValue: string) => {
+      initQuizData: (
+        quizList: QuizShared[],
+        quizCountValue: number,
+        collectionNameValue: string
+      ) => {
         if (get().isInitialized) {
           set({
             quizzes: quizList,
@@ -270,44 +270,45 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
 
         // 전역 타이머 시작
         globalQuizTimer = setInterval(() => {
-          // 현재 상태를 안전하게 가져옴
           const currentState = get();
+          const now = Date.now();
+          const expiringTime = currentState.currentQuiz?.expiringTime ?? now;
+          const answerCloseTime = currentState.currentQuiz?.answerCloseTime ?? expiringTime;
+          const timeLeft = Math.max(0, Math.floor((expiringTime - now) / 1000));
+
+          // showAnswer 상태일 때 displayTime은 answerCloseTime 기준
+          let displayTime;
+          if (currentState.showAnswer) {
+            displayTime = Math.max(0, Math.floor((answerCloseTime - now) / 1000));
+          } else {
+            displayTime = Math.max(0, timeLeft);
+          }
 
           // 이미 정답 화면인 경우 타이머는 계속 진행
           if (currentState.showAnswer) {
-            // 정답 화면에서는 timeLeft와 displayTime 모두 감소
+            // 정답 화면에서는 timeLeft와 displayTime 모두 감소(단, displayTime은 answerCloseTime 기준)
             const newTimeLeft = currentState.timeLeft <= 1 ? 0 : currentState.timeLeft - 1;
-            const newDisplayTime = newTimeLeft;
-
             set(() => ({
               timeLeft: newTimeLeft,
-              displayTime: newDisplayTime,
+              displayTime,
               isTimerRunning: true,
             }));
 
             // displayTime이 0 이하면 다음 문제로 이동
-            if (newDisplayTime <= 0) {
+            if (displayTime <= 0) {
               setTimeout(() => get().moveToNextQuiz(), 50);
             }
-
             return;
           }
 
           // 상태 업데이트 - 타이머 감소
           set((state) => {
-            // 이미 정답 화면인 경우 불필요한 상태 업데이트 방지
             if (state.showAnswer) {
-              return state; // 상태 변경 없음
+              return state;
             }
-
-            // timeLeft 계산 (타이머 감소)
-            const timeLeft = state.timeLeft <= 1 ? 0 : state.timeLeft - 1;
-            // 화면에 표시할 시간 계산 (남은 시간에서 10초를 뺀 값, 최소 0)
-            const displayTime = Math.max(0, timeLeft - 10);
 
             // 타이머가 0이 되면 종료 처리
             if (timeLeft <= 0) {
-              // 타이머가 0에 도달했을 때만 타이머 정리
               if (globalQuizTimer) {
                 clearInterval(globalQuizTimer);
                 globalQuizTimer = null;
@@ -315,17 +316,14 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
               }
 
               if (!state.showAnswer) {
-                // 타이머 상태 먼저 업데이트
                 setTimeout(() => {
                   const current = get();
-                  // 아직도 상태가 변경되지 않았을 때만 다음 문제로 이동
                   if (!current.showAnswer && current.timeLeft <= 0) {
                     get().moveToNextQuiz();
                   }
                 }, 3000);
               }
 
-              // 타이머가 종료되어도 showAnswer 상태는 변경하지 않음
               return {
                 timeLeft: 0,
                 displayTime: 0,
@@ -336,21 +334,18 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
 
             // 타이머가 10초가 되었을 때 해설 화면으로 전환하고 자동 제출
             if (state.timeLeft === 10) {
-              // 비동기적으로 자동 제출 로직 실행
               setTimeout(() => {
                 const current = get();
                 // 아직 정답을 제출하지 않았고 타이머가 아직 10초 이하인 경우에만 자동 제출
-                if (!current.showAnswer && current.timeLeft <= 10) {
+                if (!current.showAnswer && now === expiringTime) {
                   current.autoSubmitAnswer();
                 }
               }, 0);
 
-              // 해설 화면 전환 - 여기서는 showAnswer는 변경하지 않음
-              // 자동 제출 로직에서 showAnswer를 변경할 것임
               return {
                 timeLeft: timeLeft,
                 displayTime: timeLeft, // 해설 화면에서는 displayTime = timeLeft
-                answerTime: state.timeLeft - 10,
+                answerTime: state.timeLeft + 10,
                 isTimerRunning: true,
               };
             }
@@ -396,6 +391,10 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         }
 
         // 다음 문제로 이동 시 상태 초기화
+        const now = Date.now();
+        const expiringTime = state.quizzes[nextIndex].expiringTime ?? now;
+        const timeLeft = Math.max(0, Math.floor((expiringTime - now) / 1000));
+        const displayTime = Math.max(0, timeLeft);
         set({
           showAnswer: false, // 정답 화면 초기화
           userAnswer: null,
@@ -406,8 +405,8 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
           currentQuiz: state.quizzes[nextIndex],
           isTimerRunning: true,
           loadingCount: 0,
-          timeLeft: 30,
-          displayTime: 20,
+          timeLeft,
+          displayTime,
         });
 
         // 약간의 지연 후 타이머 시작 (이전 타이머 정리 시간 확보)
@@ -445,8 +444,8 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         // 정답 확인 시 상태 설정
         set({
           showAnswer: true, // 정답 화면 표시
-          answerTime: state.timeLeft, // 정답 확인 시간 기록
-          displayTime: state.timeLeft, // 해설 화면에서는 displayTime = timeLeft
+          answerTime: state.timeLeft + 10, // 정답 확인 시간 기록
+          displayTime: state.timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
           isTimerRunning: true,
         });
 
@@ -550,15 +549,11 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         timeLeft: state.timeLeft,
       }),
       onRehydrateStorage: () => {
-        return (state, error) => {
-          if (error) {
-            console.error("[DEBUG] 상태 복원 중 오류 발생:", error);
-          } else {
-            if (state?.isInitialized && state?.isShowStarted && !state.isShowEnded) {
-              setTimeout(() => {
-                useQuizShowSharedStore.getState().startCountdown();
-              }, 100);
-            }
+        return (state) => {
+          if (state?.isInitialized && state?.isShowStarted && !state.isShowEnded) {
+            setTimeout(() => {
+              useQuizShowSharedStore.getState().startCountdown();
+            }, 100);
           }
         };
       },
