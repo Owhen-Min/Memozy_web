@@ -15,8 +15,10 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const currentCollectionId = Number(collectionId);
   const navigate = useNavigate();
 
+  // 복제 가능한 컬렉션이 있는지 확인
+  const hasAvailableCollections = collections.some((col) => col.id !== currentCollectionId);
+
   useEffect(() => {
-    // fetchCollections() 호출 제거
     // 현재 컬렉션이 아닌 첫 번째 컬렉션을 선택
     const firstAvailableCollection = collections.find((col) => col.id !== currentCollectionId);
     if (firstAvailableCollection) {
@@ -44,28 +46,36 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
       <h1 className="text-20 font-pre-bold text-center mb-4">
         <span className="font-pre-bold">Memozy 복제하기</span>
       </h1>
-      <select
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-16 font-pre-medium mb-8 focus:outline-none focus:ring-2 focus:ring-main200"
-        value={selectedCollectionId ?? ""}
-        onChange={(e) => setSelectedCollectionId(Number(e.target.value))}
-      >
-        {collections.map((col) => (
-          <option
-            key={col.id}
-            value={col.id}
-            disabled={col.id === currentCollectionId}
-            className={col.id === currentCollectionId ? "text-gray-400" : ""}
-          >
-            {col.name} {col.id === currentCollectionId ? "(현재 컬렉션)" : ""}
-          </option>
-        ))}
-      </select>
+      {hasAvailableCollections ? (
+        <select
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-16 font-pre-medium mb-8 focus:outline-none focus:ring-2 focus:ring-main200"
+          value={selectedCollectionId ?? ""}
+          onChange={(e) => setSelectedCollectionId(Number(e.target.value))}
+        >
+          {collections.map((col) => (
+            <option
+              key={col.id}
+              value={col.id}
+              disabled={col.id === currentCollectionId}
+              className={col.id === currentCollectionId ? "text-gray-400" : ""}
+            >
+              {col.name} {col.id === currentCollectionId ? "(현재 컬렉션)" : ""}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <p className="w-full text-center text-16 font-pre-medium mb-4 text-gray-500"></p>
+      )}
       <button
         onClick={handleCopy}
         disabled={!selectedCollectionId}
         className="w-full bg-normal text-white rounded-xl py-2 font-pre-medium text-16 hover:bg-normal/90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
       >
-        {selectedCollectionId ? "해당 컬렉션에 복제" : "복제할 컬렉션을 선택해주세요."}
+        {!hasAvailableCollections
+          ? "복제 가능한 컬렉션이 없습니다"
+          : selectedCollectionId
+            ? "해당 컬렉션에 복제"
+            : "복제할 컬렉션을 선택해주세요."}
       </button>
     </div>
   );
