@@ -14,6 +14,9 @@ public interface MultiQuizShowService {
 	void joinMultiQuizShow(String showId, String userId, String nickname, boolean isMember);
 
 	@Transactional
+	void startMultiQuizShow(String showId, String userId);
+
+	@Transactional
 	void submitAnswer(String showId, String userId, QuizAnswerRequest request);
 
 	@Transactional

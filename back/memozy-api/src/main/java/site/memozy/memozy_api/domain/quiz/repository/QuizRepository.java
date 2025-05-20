@@ -1,6 +1,7 @@
 package site.memozy.memozy_api.domain.quiz.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -34,4 +35,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositor
 
 	@Query("SELECT q.content FROM Quiz q WHERE q.sourceId = :sourceId")
 	List<String> findContentsBySourceId(Integer sourceId);
+
+	@Query("SELECT q.quizId FROM Quiz q WHERE q.content = :content AND q.collectionId = :collectionId")
+	Optional<Long> findByCollectionIdAndContent(Integer collectionId, String content);
 }

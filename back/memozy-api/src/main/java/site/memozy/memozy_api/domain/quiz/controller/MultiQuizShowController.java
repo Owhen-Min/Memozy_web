@@ -20,8 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.NicknameUpdateRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
-import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowRunner;
-import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowServiceImpl;
+import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowService;
 import site.memozy.memozy_api.global.payload.ApiResponse;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 
@@ -31,8 +30,7 @@ import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 @RequestMapping("/api/quiz/show")
 public class MultiQuizShowController {
 
-	private final MultiQuizShowServiceImpl multiQuizShowService;
-	private final MultiQuizShowRunner multiQuizShowRunner;
+	private final MultiQuizShowService multiQuizShowService;
 
 	@GetMapping("/{collectionId}")
 	@ResponseBody

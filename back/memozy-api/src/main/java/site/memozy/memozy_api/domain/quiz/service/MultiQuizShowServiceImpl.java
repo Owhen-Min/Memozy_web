@@ -4,11 +4,10 @@ import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +44,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	private final CollectionService collectionService;
 	private final QuizSourceRepository quizSourceRepository;
 	private final HistoryRepository historyRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
 	@Transactional
@@ -112,62 +112,77 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			throw new GeneralException(QUIZ_CODE_NOT_FOUND);
 		}
 
-		log.info("[service] saveQuizShow() called with showId: {}, userId: {}", showId, userId);
 		String hostName = metaData.get("hostName");
 		String collectionName = metaData.get("collectionName");
 		String newCollectionName = collectionName + "(복사본-" + hostName + ")";
-		Collection collection = collectionRepository.findByNameAndUserId(newCollectionName, userId)
-			.orElseGet(() -> collectionRepository.save(Collection.create(newCollectionName, userId)));
-
+		Integer hostId = Integer.parseInt(metaData.get("hostId"));
 		Integer collectionId = Integer.parseInt(metaData.get("collectionId"));
 
-		Set<String> existingUrls = quizSourceRepository.findByCollectionId(collection.getCollectionId())
-			.stream()
-			.map(QuizSource::getUrl)
-			.collect(Collectors.toSet());
+		Collection newCollection;
 
-		List<Integer> quizSourceIds = quizSourceRepository.findByCollectionId(collectionId).stream()
-			.filter(source -> !existingUrls.contains(source.getUrl()))
-			.map(QuizSource::getSourceId)
-			.toList();
+		if (userId.equals(hostId)) {
+			newCollection = collectionRepository.findById(collectionId)
+				.orElseThrow(() -> new GeneralException(COLLECTION_NOT_FOUND));
+		} else {
+			newCollection = collectionRepository.findByNameAndUserId(newCollectionName, userId)
+				.orElseGet(() -> collectionRepository.save(Collection.create(newCollectionName, userId)));
 
-		log.info("quizSourceIds count (이미 있는 sourceId 제외): {}", quizSourceIds.size());
-		collectionService.copyQuizShowMemozies(userId, collection.getCollectionId(), quizSourceIds);
-		log.info("collectionId: {}, quizSourceIds: {}", collection.getCollectionId(), quizSourceIds);
+			log.info("상대 collectionId: {}", collectionId);
+
+			List<QuizSource> existingMemozies = quizSourceRepository.findByCollectionId(
+				newCollection.getCollectionId());
+			List<String> existingMemozyUrls = existingMemozies.stream()
+				.map(QuizSource::getUrl)
+				.toList();
+
+			List<Integer> quizSourceIds = quizSourceRepository.findByCollectionId(collectionId).stream()
+				.filter(source -> !existingMemozyUrls.contains(source.getUrl()))
+				.map(QuizSource::getSourceId)
+				.toList();
+
+			collectionService.copyQuizShowMemozies(userId, newCollection.getCollectionId(), quizSourceIds);
+		}
 
 		Map<String, Map<String, Object>> userChoices = multiQuizShowRedisRepository.getUserChoice(showId,
 			userId.toString());
+
+		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(newCollection.getCollectionId(), email)
+			.orElse(0) + 1;
+
 		for (Map.Entry<String, Map<String, Object>> entry : userChoices.entrySet()) {
 			Map<String, Object> choiceData = entry.getValue();
 
-			String userChoice = (String)choiceData.getOrDefault("userChoice", "");
-			Boolean isCorrect = (Boolean)choiceData.get("isCorrect");
-			log.info("userChoice: {}, isCorrect: {}", userChoice, isCorrect);
-
 			int index = Integer.parseInt(entry.getKey());
-			log.info("index: {}", index + 1);
+			String userAnswer = (String)choiceData.getOrDefault("userAnswer", "");
+			Boolean isCorrect = (Boolean)choiceData.get("isCorrect");
+			log.info("index : {}, userChoice: {}, isCorrect: {}", index, userAnswer, isCorrect);
 
-			if (index >= quizSourceIds.size())
-				continue;
+			if (isCorrect.equals(Boolean.FALSE)) {
 
-			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
-			Long quizId = Long.parseLong((String)quizData.get("quizId"));
+				log.info("index: {}", index);
 
-			int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collection.getCollectionId(), email)
-				.orElse(0) + 1;
-			History history = History.builder()
-				.isSolved(isCorrect)
-				.userSelect(userChoice)
-				.quizId(quizId)
-				.collectionId(collection.getCollectionId())
-				.round(nextRound)
-				.email(email)
-				.build();
+				Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
+				String content = (String)quizData.get("content");
+				log.info("content: {}", content);
+				Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
+					.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
 
-			historyRepository.save(history);
+				log.info("my quizId: {}", quizId);
+				History history = History.builder()
+					.isSolved(isCorrect)
+					.userSelect(userAnswer)
+					.quizId(quizId)
+					.collectionId(newCollection.getCollectionId())
+					.round(nextRound)
+					.email(email)
+					.build();
+
+				historyRepository.save(history);
+			}
 		}
 	}
 
+	@Override
 	@Transactional
 	public void startMultiQuizShow(String showId, String userId) {
 		if (!collectionRepository.existsByCode(showId)) {
@@ -192,8 +207,8 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			request.isCorrect());
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public void changeNickname(String showId, String userId, boolean isMember, String nickname) {
 		if (isMember) {
 			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
@@ -208,5 +223,4 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		return uuid.substring(0, 6);
 	}
-
 }
