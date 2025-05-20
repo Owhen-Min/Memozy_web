@@ -97,7 +97,8 @@ public class SecurityConfig {
 			"http://localhost:5173",
 			"https://localhost:5173",
 			"https://memozy.site",
-			"https://test.memozy.site"
+			"https://test.memozy.site",
+			"http://70.12.246.111:5173"
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(Collections.singletonList("*"));
