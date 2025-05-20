@@ -83,7 +83,8 @@ public class MultiQuizShowRunner {
 			Map.of(
 				"type", "QUIZ",
 				"quiz", quizData,
-				"index", index
+				"index", index,
+				"startTime", System.currentTimeMillis()
 			)
 		);
 	}
