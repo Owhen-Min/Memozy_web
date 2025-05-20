@@ -73,8 +73,20 @@ function QuizShowPersonalPage() {
 
   // 새로고침 감지 및 플래그 저장
   useEffect(() => {
+    // pagehide 이벤트는 모바일 Safari에서 더 신뢰성 있게 작동합니다
+    const handlePageHide = () => {
+      localStorage.setItem(`quiz_refresh_${collectionId}`, "true");
+    };
+
+    // visibilitychange는 탭 전환이나 앱 전환 감지에 도움됩니다
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        localStorage.setItem(`quiz_refresh_${collectionId}`, "true");
+      }
+    };
+
+    // 기존 코드는 일부 데스크톱 브라우저를 위해 유지
     const handleBeforeUnload = () => {
-      // 새로고침 시 로컬 스토리지에 플래그 저장
       localStorage.setItem(`quiz_refresh_${collectionId}`, "true");
     };
 
@@ -90,10 +102,14 @@ function QuizShowPersonalPage() {
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    checkRefresh(); // 컴포넌트 마운트 시 체크
+    window.addEventListener("pagehide", handlePageHide);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    checkRefresh();
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handlePageHide);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [collectionId, navigate]);
 
