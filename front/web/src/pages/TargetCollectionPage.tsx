@@ -142,9 +142,11 @@ function TargetCollectionPage() {
               <span className="text-16 font-pre-semibold">Memozy</span>
               <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
             </div>
-            <span className="text-16 font-pre-semibold text-gray200">
-              {duplicateQuizCount}개의 중복 퀴즈
-            </span>
+            {duplicateQuizCount > 0 && (
+              <span className="text-16 font-pre-semibold text-gray200">
+                {duplicateQuizCount}개의 중복 퀴즈
+              </span>
+            )}
           </div>
           {memozies.length > 0 && (
             <div className="flex gap-2">
