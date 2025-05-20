@@ -102,10 +102,10 @@ export default function CollectionDistributionChart({
                     }}
                   ></div>
                   <span
-                    className="ml-1 text-10 md:text-14 font-pre-regular max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap align-bottom"
+                    className="ml-1 text-10 md:text-14 font-pre-regular align-bottom"
                     title={name}
                   >
-                    {name}
+                    {name.length > 10 ? `${name.slice(0, 10)}...` : name}
                   </span>
                   {count && (
                     <span className="ml-1 text-10 md:text-14 font-pre-regular text-gray-500">

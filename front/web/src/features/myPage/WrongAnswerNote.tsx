@@ -92,16 +92,16 @@ function WrongAnswerNote() {
             <p className="mt-2 text-12 md:text-14">퀴즈를 풀고 오답노트를 생성해보세요!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-start sm:gap-16 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 px-4 md:px-6">
             {collectionList.map((item) => (
               <div
                 key={item.id}
-                className="relative cursor-pointer transition-transform hover:scale-105 w-full sm:w-[164px] p-2 sm:p-0"
+                className="relative cursor-pointer transition-transform hover:scale-105"
                 onClick={() => handleFolderClick(item.id)}
               >
                 <img src={folder} alt="폴더" className="w-full" />
-                <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[90%] sm:w-[140px]">
-                  <h3 className="text-16 font-pre-medium truncate">{item.name}</h3>
+                <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center w-[90%]">
+                  <h3 className="text-14 md:text-16 font-pre-medium truncate">{item.name}</h3>
                 </div>
               </div>
             ))}

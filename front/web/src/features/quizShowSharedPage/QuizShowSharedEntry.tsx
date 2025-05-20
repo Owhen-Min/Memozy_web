@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useState, useRef, useEffect } from "react";
 import small_logo from "../../assets/images/small_logo.png";
-import Memozy_logo from "../../assets/images/Memozylogo.svg";
+import Memozy_logo from "../../assets/images/memozylogo.png";
 import monster1 from "../../assets/images/monster1.png";
 import crownIcon from "../../assets/icons/crown.svg";
 import outQuizShowIcon from "../../assets/icons/outQuizShowIcon.svg";

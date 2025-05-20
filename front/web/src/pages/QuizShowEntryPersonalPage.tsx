@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router";
 import small_logo from "../assets/images/small_logo.png";
-import Memozy_logo from "../assets/images/Memozylogo.svg";
+import Memozy_logo from "../assets/images/memozylogo.png";
 import monster1 from "../assets/images/monster1.png";
 // import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";

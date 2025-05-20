@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import { useEffect, useState } from "react";
-import Memozy_logo from "../assets/images/Memozylogo.svg";
+import Memozy_logo from "../assets/images/memozylogo.png";
 import monster1 from "../assets/images/monster1.png";
 import rightmonster from "../assets/images/rightmonster.png";
 import profile_monster from "../assets/images/profile_monster.png";
@@ -87,7 +87,7 @@ function LoginPage() {
           </div>
 
           {/* 서비스 카드와 로그인 카드를 감싸는 컨테이너 */}
-          <div className="w-full flex justify-center mt-8 px-8 lg:px-4">
+          <div className="w-full flex justify-center mt-4 px-8 lg:px-4">
             {/* 서비스 카드 섹션 - 모바일에서는 숨김 */}
             <div className="hidden lg:block">
               <div className="w-[530px] mr-[200px]">
@@ -96,7 +96,7 @@ function LoginPage() {
             </div>
 
             {/* 로그인 카드  */}
-            <div className="relative mt-8 lg:-mt-20 z-20">
+            <div className="relative mt-2 lg:-mt-20 z-20">
               <div className="bg-white shadow-lg rounded-xl py-4 w-[272px] h-[280px]">
                 {loading ? (
                   // 로딩 상태
