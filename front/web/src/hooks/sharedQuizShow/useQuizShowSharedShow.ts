@@ -48,7 +48,6 @@ export const useQuizShowSharedShow = ({
     handleObjectiveInput,
     checkAnswer,
     isAnswerCorrect,
-    clearAllTimers,
   } = useQuizShowSharedStore();
 
   // 초기 퀴즈 데이터 설정 useEffect
@@ -76,22 +75,6 @@ export const useQuizShowSharedShow = ({
       handleShowEnded();
     }
   }, [isShowEnded, handleShowEnded]);
-
-  // beforeunload 이벤트를 위한 별도 useEffect
-  useEffect(() => {
-    // 페이지 언로드 시에만 타이머 정리를 위한 핸들러
-    const handleBeforeUnload = () => {
-      clearAllTimers();
-    };
-
-    // 페이지 언로드 이벤트 리스너 등록
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      // 이벤트 리스너 정리
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [clearAllTimers]);
 
   // 정답 확인 함수 (사용자 액션에 의해 호출됨)
   const handleShowAnswer = () => {

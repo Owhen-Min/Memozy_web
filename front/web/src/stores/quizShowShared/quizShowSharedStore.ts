@@ -307,6 +307,22 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
               return state;
             }
 
+            // 타이머가 10초가 되었을 때 해설 화면으로 전환하고 자동 제출
+            if (displayTime <= 0) {
+              const current = get();
+              // 아직 정답을 제출하지 않았고 타이머가 아직 10초 이하인 경우에만 자동 제출
+              if (!current.showAnswer) {
+                current.autoSubmitAnswer();
+              }
+
+              return {
+                timeLeft: timeLeft + 10,
+                displayTime: timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
+                answerTime: state.timeLeft + 10,
+                isTimerRunning: true,
+              };
+            }
+
             // 타이머가 0이 되면 종료 처리
             if (timeLeft <= 0) {
               if (globalQuizTimer) {
@@ -318,7 +334,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
               if (!state.showAnswer) {
                 setTimeout(() => {
                   const current = get();
-                  if (!current.showAnswer && current.timeLeft <= 0) {
+                  if (!current.showAnswer && current.displayTime <= 0) {
                     get().moveToNextQuiz();
                   }
                 }, 3000);
@@ -329,24 +345,6 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
                 displayTime: 0,
                 timers: { ...state.timers, quizTimer: null },
                 isTimerRunning: false,
-              };
-            }
-
-            // 타이머가 10초가 되었을 때 해설 화면으로 전환하고 자동 제출
-            if (state.timeLeft === 10) {
-              setTimeout(() => {
-                const current = get();
-                // 아직 정답을 제출하지 않았고 타이머가 아직 10초 이하인 경우에만 자동 제출
-                if (!current.showAnswer && now === expiringTime) {
-                  current.autoSubmitAnswer();
-                }
-              }, 0);
-
-              return {
-                timeLeft: timeLeft,
-                displayTime: timeLeft, // 해설 화면에서는 displayTime = timeLeft
-                answerTime: state.timeLeft + 10,
-                isTimerRunning: true,
               };
             }
 
@@ -412,7 +410,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         // 약간의 지연 후 타이머 시작 (이전 타이머 정리 시간 확보)
         setTimeout(() => {
           get().startQuizTimer();
-        }, 10);
+        }, 100);
       },
 
       checkAnswer: (submitAnswerCallback?: (answer: any) => void) => {
@@ -481,8 +479,8 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
           return;
         }
 
-        let answerValue = "";
         let isCorrect = false;
+        let answerValue = "";
 
         if (state.userAnswer !== null) {
           if (typeof state.userAnswer === "object" && "value" in state.userAnswer) {
@@ -491,15 +489,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
             answerValue = state.userAnswer.toString();
           }
         } else {
-          if (currentQuizData.type === "OX") {
-            answerValue = state.selectedOX || "O";
-          } else if (currentQuizData.type === "MULTIPLE_CHOICE") {
-            answerValue = currentQuizData.choice?.[0] || "";
-          } else if (currentQuizData.type === "OBJECTIVE") {
-            answerValue = state.objectiveInput || "";
-          } else {
-            answerValue = "";
-          }
+          answerValue = "";
         }
 
         isCorrect = currentQuizData.answer === answerValue;
@@ -507,9 +497,9 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         // 정답 자동 제출 시 상태 설정
         set({
           showAnswer: true, // 정답 화면 표시
-          answerTime: state.timeLeft, // 정답 확인 시간 기록
+          answerTime: state.timeLeft + 10, // 정답 확인 시간 기록
           userAnswer: answerValue, // 사용자 답변 설정
-          displayTime: state.timeLeft, // 해설 화면에서는 displayTime = timeLeft
+          displayTime: state.timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
           isTimerRunning: true,
         });
 
