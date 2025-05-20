@@ -1,7 +1,5 @@
 package site.memozy.memozy_api.domain.collection.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +13,7 @@ public class MemozyContentResponse {
 	private int quizCount;
 	private String url;
 
-	@QueryProjection
+	//@QueryProjection
 	public MemozyContentResponse(int sourceId, String sourceTitle, String summary, int quizCount, String url) {
 		this.sourceId = sourceId;
 		this.sourceTitle = sourceTitle;
