@@ -102,7 +102,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
                       <img
                         src={dropDownIcon}
                         alt="드롭다운 아이콘"
-                        className={`w-4 md:w-6 transition-transform duration-200 ${
+                        className={`w-6 transition-transform duration-200 ${
                           isDropDownOpen === history.historyId ? "rotate-180" : ""
                         }`}
                       />
