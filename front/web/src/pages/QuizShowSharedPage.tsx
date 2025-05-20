@@ -68,7 +68,9 @@ const QuizShowSharedPage = () => {
       .post(`quiz/show/${showId}`)
       .then((res) => {
         if (res.data.success) {
-          window.alert("나의 컬렉션에 저장되었습니다.");
+          if (!isHost) {
+            window.alert("나의 컬렉션에 저장되었습니다.");
+          }
         } else {
           setError(res.data.errorMsg, { showButtons: false });
         }

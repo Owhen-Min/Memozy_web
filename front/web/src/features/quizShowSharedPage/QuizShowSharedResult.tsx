@@ -9,6 +9,7 @@ import third from "../../assets/images/third.png";
 import { useQuizShowSharedResult } from "../../hooks/sharedQuizShow";
 import MostWrongQuiz from "../../components/quizShowPage/MostWrongQuiz";
 import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 interface QuizShowMyResult {
   myCorrectQuizCount: number;
@@ -50,9 +51,11 @@ function QuizShowResultSharedPage({
   collectionName,
   isLoading = true,
   isLoggedIn,
+  isHost,
   handleSaveQuizClick,
 }: QuizShowSharedResultProps) {
   const navigate = useNavigate();
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
   const {
     myScore,
     totalQuizCount,
@@ -71,6 +74,12 @@ function QuizShowResultSharedPage({
 
   // 랭킹 데이터 이미지 매핑
   const rankImages = [first, second, third];
+
+  useEffect(() => {
+    if (isHost) {
+      handleSaveQuizClick();
+    }
+  }, [isHost, handleSaveQuizClick]);
 
   return (
     <>
@@ -129,10 +138,14 @@ function QuizShowResultSharedPage({
                 />
                 &nbsp;친구들이 가장 많이 틀린 퀴즈
               </button>
-              {isLoggedIn && (
+              {isLoggedIn && !isHost && (
                 <button
-                  onClick={handleSaveQuizClick}
-                  className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
+                  onClick={() => {
+                    setIsSaveDisabled(true);
+                    handleSaveQuizClick();
+                  }}
+                  disabled={isSaveDisabled}
+                  className={`group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20 ${isSaveDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   <img
                     src={save}
