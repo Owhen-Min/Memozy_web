@@ -81,7 +81,7 @@ function QuizShowSharedEntry({
       return;
     }
     try {
-      const success = await onChangeNickname(newNickname);
+      const success = await onChangeNickname(newNickname.replace(" ", ""));
       if (success) {
         setIsEditingNickname(false);
       }
@@ -200,7 +200,7 @@ function QuizShowSharedEntry({
                           type="text"
                           value={newNickname}
                           maxLength={10}
-                          onChange={(e) => setNewNickname(e.target.value)}
+                          onChange={(e) => setNewNickname(e.target.value.replace(" ", ""))}
                           className="border border-gray-300 rounded-md px-2 py-1 text-14 w-24"
                           autoFocus
                         />
