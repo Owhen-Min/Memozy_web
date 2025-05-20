@@ -102,6 +102,7 @@ const QuizShowSharedPage = () => {
             quizCount={quizCount}
             onStartQuizShow={handleStartQuizShow}
             onChangeNickname={handleChangeNickname}
+            errorHandler={setError}
           />
         )}
         {isShowStarted && !isShowEnded && (

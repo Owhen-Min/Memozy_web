@@ -67,6 +67,10 @@ export const useQuizShowWebsocket = (showId: string) => {
       ) {
         setIsHost(true);
       }
+    } else if (payload.type === "NICKNAME") {
+      if (payload.userId === useQuizShowSharedStore.getState().userId) {
+        setNickname(payload.nickname);
+      }
     } else if (payload.type === "START") {
       setIsShowStarted(true);
     }
@@ -248,8 +252,6 @@ export const useQuizShowWebsocket = (showId: string) => {
           nickname: newNickname,
         }),
       });
-
-      setNickname(newNickname);
       return true;
     } catch (error) {
       console.error("닉네임 변경 중 오류가 발생했습니다.", error);
