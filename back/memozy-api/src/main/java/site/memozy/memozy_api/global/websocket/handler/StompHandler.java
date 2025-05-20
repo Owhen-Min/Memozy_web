@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
-import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowService;
 import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
@@ -24,7 +23,6 @@ public class StompHandler implements ChannelInterceptor {
 
 	private final JwtUtil jwtUtil;
 	private final MultiQuizShowRedisRepository redisRepository;
-	private final MultiQuizShowService multiQuizShowService;
 	private static final String BEARER = "Bearer ";
 
 	@Override
@@ -49,7 +47,7 @@ public class StompHandler implements ChannelInterceptor {
 			String userId = (String)rawUserId;
 			String showId = (String)rawShowId;
 
-			multiQuizShowService.disconnectQuizShow(showId, userId);
+			redisRepository.disconnectParticipant(showId, userId);
 
 			return message;
 		}

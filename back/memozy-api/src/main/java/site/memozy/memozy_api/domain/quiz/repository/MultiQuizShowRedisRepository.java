@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowDisconnectEvent;
 import site.memozy.memozy_api.global.payload.exception.GeneralException;
 
 @Slf4j
@@ -23,6 +25,7 @@ import site.memozy.memozy_api.global.payload.exception.GeneralException;
 public class MultiQuizShowRedisRepository {
 
 	private final RedisTemplate<String, Object> redisTemplate;
+	private final ApplicationEventPublisher applicationEventPublisher;
 	private static final String SHOW_KEY = "show:";
 	private static final Duration DURATION = Duration.ofDays(1);
 
@@ -251,11 +254,17 @@ public class MultiQuizShowRedisRepository {
 		String participantKey = "show:" + showId + ":participants";
 		String participantInfoKey = "show:" + showId + ":user:" + userId;
 		try {
+			log.info("[service] disconnectQuizShow() called");
 			redisTemplate.opsForSet().remove(participantKey, userId);
 			redisTemplate.delete(participantInfoKey);
+
+			applicationEventPublisher.publishEvent(
+				new QuizShowDisconnectEvent(showId)
+			);
 		} catch (Exception e) {
 			log.error("[Redis] Error disconnecting participant: {}", e.getMessage());
 			throw new GeneralException(REDIS_PARTICIPANT_NOT_FOUND);
 		}
 	}
+
 }
