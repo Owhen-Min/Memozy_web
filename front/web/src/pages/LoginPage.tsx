@@ -90,13 +90,13 @@ function LoginPage() {
           <div className="w-full flex justify-center mt-4 px-8 lg:px-4">
             {/* 서비스 카드 섹션 - 모바일에서는 숨김 */}
             <div className="hidden lg:block">
-              <div className="w-[530px] mr-[200px]">
+              <div className="w-[530px] mr-[200px] mt-2">
                 <ServiceCards />
               </div>
             </div>
 
             {/* 로그인 카드  */}
-            <div className="relative mt-2 lg:-mt-20 z-20">
+            <div className="relative lg:-mt-20 z-20">
               <div className="bg-white shadow-lg rounded-xl py-4 w-[272px] h-[280px]">
                 {loading ? (
                   // 로딩 상태
@@ -173,7 +173,7 @@ function LoginPage() {
 
         {/* 모바일에서만 보이는 오른쪽 아래 몬스터 */}
         <div className="fixed bottom-4 right-4 lg:hidden">
-          <img src={rightmonster} alt="오른쪽 몬스터" className="w-32" />
+          <img src={rightmonster} alt="오른쪽 몬스터" className="w-32 z-50" />
         </div>
       </div>
     </div>

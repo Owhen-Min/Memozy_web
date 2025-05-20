@@ -9,7 +9,7 @@ interface NoteModalProps {
 
 function NoteModal({ sourceTitle, summary, onClose }: NoteModalProps) {
   return (
-    <div className="bg-white rounded-2xl p-4 md:p-6 w-[90%] sm:w-[95%] md:w-[800px] mx-4 relative max-h-[90vh] flex flex-col">
+    <div className="bg-white rounded-2xl p-4 md:p-6 w-[90%] sm:w-[95%] md:w-[800px] mx-4 relative max-h-[80vh] md:max-h-[90vh] flex flex-col">
       <button
         onClick={onClose}
         className="absolute top-4 right-4 z-60 w-8 h-8 flex items-center justify-center transition-transform duration-200 hover:scale-110"
@@ -22,7 +22,7 @@ function NoteModal({ sourceTitle, summary, onClose }: NoteModalProps) {
           {sourceTitle}
         </span>
       </div>
-      <div className="bg-bg rounded-xl p-3 md:p-4 overflow-y-auto flex-1">
+      <div className="bg-bg rounded-xl p-3 md:p-4 overflow-y-auto flex-1 min-h-0">
         <div className="text-14 md:text-16 font-pre-regular text-main200">
           <CustomReactMarkdown>{summary}</CustomReactMarkdown>
         </div>
