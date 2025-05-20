@@ -20,7 +20,6 @@ import site.memozy.memozy_api.domain.history.repository.HistoryRepository;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizResponse;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
-import site.memozy.memozy_api.domain.quiz.dto.QuizShowDisconnectEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowStartEvent;
@@ -98,17 +97,6 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		applicationEventPublisher.publishEvent(
 			new QuizShowJoinEvent(showId, userId, nickname, metaData.get("hostName"), metaData.get("collectionName"),
 				metaData.get("quizCount")));
-	}
-
-	@Override
-	public void disconnectQuizShow(String showId, String userId) {
-		log.info("[service] disconnectQuizShow() called");
-
-		multiQuizShowRedisRepository.disconnectParticipant(showId, userId);
-
-		applicationEventPublisher.publishEvent(
-			new QuizShowDisconnectEvent(showId)
-		);
 	}
 
 	@Override
