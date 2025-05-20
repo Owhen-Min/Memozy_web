@@ -76,9 +76,12 @@ function QuizShowSharedEntry({
 
   const handleNicknameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (newNickname.length > 10) {
+      alert("닉네임은 10자 이하로 입력해주세요.");
+      return;
+    }
     try {
-      const success = await onChangeNickname(newNickname);
+      const success = await onChangeNickname(newNickname.replace(" ", ""));
       if (success) {
         setIsEditingNickname(false);
       }
@@ -129,12 +132,14 @@ function QuizShowSharedEntry({
                   {participants.map((user, idx) => (
                     <li key={idx} className="py-1">
                       {hostId === user.userId ? (
-                        <span className="text-16 font-pre-bold flex items-center gap-1">
+                        <span className="text-16 font-pre-bold flex items-center gap-1 line-clamp-1">
                           <img src={crownIcon} alt="crown" className="w-6 h-6" />
                           {user.nickname}
                         </span>
                       ) : (
-                        <span className="text-16 font-pre-regular">{user.nickname}</span>
+                        <span className="text-16 font-pre-regular line-clamp-1">
+                          {user.nickname}
+                        </span>
                       )}
                     </li>
                   ))}
@@ -194,7 +199,8 @@ function QuizShowSharedEntry({
                         <input
                           type="text"
                           value={newNickname}
-                          onChange={(e) => setNewNickname(e.target.value)}
+                          maxLength={10}
+                          onChange={(e) => setNewNickname(e.target.value.replace(" ", ""))}
                           className="border border-gray-300 rounded-md px-2 py-1 text-14 w-24"
                           autoFocus
                         />

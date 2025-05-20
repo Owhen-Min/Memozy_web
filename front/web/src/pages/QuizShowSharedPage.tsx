@@ -34,6 +34,8 @@ const QuizShowSharedPage = () => {
     myResult,
     result,
     isResultReady,
+    isSubmitted,
+    setIsSubmitted,
     resetStore,
     setQuizSessionId,
   } = useQuizShowSharedStore();
@@ -121,6 +123,8 @@ const QuizShowSharedPage = () => {
             collectionName={collectionName}
             isLoading={!isResultReady}
             handleSaveQuizClick={handleSaveQuizClick}
+            isSubmitted={isSubmitted}
+            setIsSubmitted={setIsSubmitted}
           />
         )}
       </div>
