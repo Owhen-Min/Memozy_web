@@ -72,15 +72,17 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
           onMouseDown={(e) => e.stopPropagation()}
           onMouseUp={(e) => e.stopPropagation()}
         >
-          <button
-            onClick={onClose}
-            className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20 p-2"
-          >
-            <img src={closeIcon} alt="닫기" className="w-4" />
-          </button>
-          <div className="flex items-center mb-4 md:mb-6">
-            <img src={openfolder} alt="폴더" className="w-8 md:w-8 mr-2" />
-            <h2 className="text-20 md:text-24 font-bold">{data.name}</h2>
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center gap-2 flex-1 pr-12">
+              <img src={openfolder} alt="폴더" className="w-8 md:w-8 flex-shrink-0" />
+              <h2 className="text-20 md:text-24 font-bold break-words">{data.name}</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20 p-2"
+            >
+              <img src={closeIcon} alt="닫기" className="w-4" />
+            </button>
           </div>
           {data.data.length === 0 ? (
             <div className="text-center p-6 md:p-10">
