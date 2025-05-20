@@ -208,7 +208,6 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 	}
 
 	@Override
-	@Transactional
 	public void changeNickname(String showId, String userId, boolean isMember, String nickname) {
 		if (isMember) {
 			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
