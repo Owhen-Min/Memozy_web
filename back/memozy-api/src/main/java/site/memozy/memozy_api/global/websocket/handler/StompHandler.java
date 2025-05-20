@@ -31,7 +31,24 @@ public class StompHandler implements ChannelInterceptor {
 		log.debug("[StompHandler] preSend() called with command: {}", accessor.getCommand());
 
 		if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-			log.info("STOMP 정상 종료 요청: {}", accessor.getSessionId());
+			log.info("[StompHandler] disconnect command");
+			Map<String, Object> attrs = accessor.getSessionAttributes();
+			if (attrs == null) {
+				return message;
+			}
+
+			Object rawUserId = attrs.get("userId");
+			Object rawShowId = attrs.get("showId");
+
+			if (!(rawUserId instanceof String) || !(rawShowId instanceof String)) {
+				return message;
+			}
+
+			String userId = (String)rawUserId;
+			String showId = (String)rawShowId;
+
+			redisRepository.disconnectParticipant(showId, userId);
+
 			return message;
 		}
 

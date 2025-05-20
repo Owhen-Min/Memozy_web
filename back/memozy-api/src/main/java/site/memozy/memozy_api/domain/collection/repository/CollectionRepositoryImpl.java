@@ -1,7 +1,7 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -324,41 +324,42 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				.join(quizSource).on(quiz.sourceId.eq(quizSource.sourceId))
 				.where(
 					history.collectionId.eq(collectionId),
-					history.round.eq(round),
-					history.isSolved.eq(false)
+					history.round.eq(round)
 				)
 				.fetch();
 
-			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
-				History h = tuple.get(history);
-				Quiz q = tuple.get(quiz);
-				QuizSource s = tuple.get(quizSource);
-
-				return new QuizDetailResponse(
-					q.getQuizId(),
-					q.getContent(),
-					q.getType().name(),
-					h.getUserSelect(),
-					(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
-						? List.of(q.getOption().split("№"))
-						: null,
-					q.getAnswer(),
-					q.getCommentary(),
-					s.getUrl(),
-					s.getSummary()
-				);
-			}).toList();
-
-			History anyHistory = tuples.get(0).get(history);
-			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
 			int allCount = tuples.size();
 
+			List<QuizDetailResponse> quizList = tuples.stream()
+				.filter(t -> !t.get(history).getIsSolved())  // 틀린 히스토리만
+				.map(tuple -> {
+					Quiz q = tuple.get(quiz);
+					History h = tuple.get(history);
+					QuizSource s = tuple.get(quizSource);
+					return new QuizDetailResponse(
+						q.getQuizId(),
+						q.getContent(),
+						q.getType().name(),
+						h.getUserSelect(),
+						(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
+							? List.of(q.getOption().split("№"))
+							: null,
+						q.getAnswer(),
+						q.getCommentary(),
+						s.getUrl(),
+						s.getSummary()
+					);
+				})
+				.toList();
+
+			int failCount = quizList.size();
+
 			result.add(new CollectionHistoryDetailResponse(
-				anyHistory.getHistoryId(),
+				tuples.get(0).get(history).getHistoryId(),
 				round,
 				failCount,
 				allCount,
-				anyHistory.getCreatedAt().toLocalDate().toString(),
+				tuples.get(0).get(history).getCreatedAt().toLocalDate().toString(),
 				quizList
 			));
 		}
@@ -394,35 +395,39 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 				.where(
 					history.collectionId.eq(0),
 					history.round.eq(round),
-					history.isSolved.eq(false),
 					history.email.eq(userEmail)
 				)
 				.fetch();
 
-			List<QuizDetailResponse> quizList = tuples.stream().map(tuple -> {
-				History h = tuple.get(history);
-				Quiz q = tuple.get(quiz);
-				QuizSource s = tuple.get(quizSource);
-
-				return new QuizDetailResponse(
-					q.getQuizId(),
-					q.getContent(),
-					q.getType().name(),
-					h.getUserSelect(),
-					(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
-						? List.of(q.getOption().split("№"))
-						: null,
-					q.getAnswer(),
-					q.getCommentary(),
-					s.getUrl(),
-					s.getSummary()
-				);
-			}).toList();
-
-			History anyHistory = tuples.get(0).get(history);
-			int failCount = (int)tuples.stream().filter(t -> !t.get(history).getIsSolved()).count();
 			int allCount = tuples.size();
 
+			// 스트림에서 틀린 것만 매핑
+			List<QuizDetailResponse> quizList = tuples.stream()
+				.filter(t -> !t.get(history).getIsSolved())
+				.map(tuple -> {
+					History h = tuple.get(history);
+					Quiz q = tuple.get(quiz);
+					QuizSource s = tuple.get(quizSource);
+					return new QuizDetailResponse(
+						q.getQuizId(),
+						q.getContent(),
+						q.getType().name(),
+						h.getUserSelect(),
+						(q.getType() == QuizType.MULTIPLE_CHOICE && q.getOption() != null)
+							? List.of(q.getOption().split("№"))
+							: null,
+						q.getAnswer(),
+						q.getCommentary(),
+						s.getUrl(),
+						s.getSummary()
+					);
+				})
+				.toList();
+
+			// failCount는 quizList.size()로
+			int failCount = quizList.size();
+
+			History anyHistory = tuples.get(0).get(history);
 			result.add(new CollectionHistoryDetailResponse(
 				anyHistory.getHistoryId(),
 				round,
