@@ -245,4 +245,17 @@ public class MultiQuizShowRedisRepository {
 			throw new GeneralException(REDIS_SESSION_NOT_FOUND);
 		}
 	}
+
+	public void disconnectParticipant(String showId, String userId) {
+		log.info("[Redis] disconnectParticipant() called with showId: {}, userId: {}", showId, userId);
+		String participantKey = "show:" + showId + ":participants";
+		String participantInfoKey = "show:" + showId + ":user:" + userId;
+		try {
+			redisTemplate.opsForSet().remove(participantKey, userId);
+			redisTemplate.delete(participantInfoKey);
+		} catch (Exception e) {
+			log.error("[Redis] Error disconnecting participant: {}", e.getMessage());
+			throw new GeneralException(REDIS_PARTICIPANT_NOT_FOUND);
+		}
+	}
 }
