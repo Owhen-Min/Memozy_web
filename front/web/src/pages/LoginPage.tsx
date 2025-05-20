@@ -87,7 +87,7 @@ function LoginPage() {
           </div>
 
           {/* 서비스 카드와 로그인 카드를 감싸는 컨테이너 */}
-          <div className="w-full flex justify-center mt-8 px-8 lg:px-4">
+          <div className="w-full flex justify-center mt-4 px-8 lg:px-4">
             {/* 서비스 카드 섹션 - 모바일에서는 숨김 */}
             <div className="hidden lg:block">
               <div className="w-[530px] mr-[200px]">
