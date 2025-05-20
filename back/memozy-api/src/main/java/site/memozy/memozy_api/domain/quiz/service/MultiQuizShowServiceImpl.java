@@ -149,28 +149,29 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(newCollection.getCollectionId(), email)
 			.orElse(0) + 1;
 
-		for (Map.Entry<String, Map<String, Object>> entry : userChoices.entrySet()) {
-			Map<String, Object> choiceData = entry.getValue();
+		Map<String, Map<String, Object>> userAnswer = multiQuizShowRedisRepository.getUserChoice(showId,
+			String.valueOf(userId));
+		int quizCount = Integer.parseInt(metaData.get("quizCount"));
 
-			int index = Integer.parseInt(entry.getKey());
-			String userAnswer = (String)choiceData.getOrDefault("userAnswer", "");
-			Boolean isCorrect = (Boolean)choiceData.get("isCorrect");
-			log.info("index : {}, userChoice: {}, isCorrect: {}", index, userAnswer, isCorrect);
+		for (int i = 0; i < quizCount; i++) {
+			Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, i);
+			String content = (String)quizData.get("content");
 
-			if (isCorrect.equals(Boolean.FALSE)) {
+			Map<String, Object> choiceData = userAnswer.getOrDefault(String.valueOf(i), Map.of(
+				"userAnswer", "",
+				"isCorrect", false
+			));
 
-				log.info("index: {}", index);
+			String userAnswerText = (String)choiceData.getOrDefault("userAnswer", "");
+			Boolean isCorrect = (Boolean)choiceData.getOrDefault("isCorrect", "");
 
-				Map<String, Object> quizData = multiQuizShowRedisRepository.getQuizByIndex(showId, index);
-				String content = (String)quizData.get("content");
-				log.info("content: {}", content);
+			if (Boolean.FALSE.equals(isCorrect)) {
 				Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
 					.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
 
-				log.info("my quizId: {}", quizId);
 				History history = History.builder()
 					.isSolved(isCorrect)
-					.userSelect(userAnswer)
+					.userSelect(userAnswerText)
 					.quizId(quizId)
 					.collectionId(newCollection.getCollectionId())
 					.round(nextRound)
