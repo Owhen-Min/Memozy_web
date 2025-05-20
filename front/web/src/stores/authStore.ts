@@ -84,8 +84,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
         error: null,
       });
-
-      console.log("로그인 성공:", userInfo.name);
     } catch (error) {
       console.error("로그인 처리 오류:", error);
       set({
@@ -115,7 +113,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       // 현재 시간을 쿼리 파라미터로 추가하여 캐시 방지
       const redirectUrl = `${GOOGLE_AUTH_URL}&t=${Date.now()}`;
-      console.log("구글 로그인 페이지로 이동:", redirectUrl);
 
       window.location.href = redirectUrl;
     } catch (error) {
@@ -133,7 +130,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const token = extractTokenFromUrl();
 
       if (!token) {
-        console.log("URL에서 토큰을 찾을 수 없습니다.");
         set({ loading: false });
         return;
       }

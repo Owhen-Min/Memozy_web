@@ -193,7 +193,9 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         clearAllTimers();
         if (quizzes.length > 0) {
           const isResuming =
-            get().isShowStarted && !get().isShowEnded && (cqIndex > 0 || !get().isFirstStart);
+            get().isShowStarted &&
+            !get().isShowEnded &&
+            (get().currentQuizIndex > 0 || !get().isFirstStart);
 
           if (isResuming) {
             set({
@@ -241,33 +243,26 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
       },
 
       startQuizTimer: () => {
-        const { clearAllTimers } = get();
-
-        // 이미 정답 화면이면 타이머를 재설정하지 않음
-        if (get().showAnswer) {
-          return;
-        }
+        const currentState = get();
 
         // 이미 글로벌 타이머가 실행 중인 경우 중복 실행 방지
         if (isTimerActive) {
           return;
         }
+        // get().clearAllTimers();
 
-        // 기존 타이머 정리
-        clearAllTimers();
-
-        // 전역 타이머 변수 초기화
+        // 전역 타이머 변수만 초기화
         if (globalQuizTimer) {
           clearInterval(globalQuizTimer);
           globalQuizTimer = null;
         }
 
-        // 타이머 초기 상태 설정
+        // 타이머 초기 상태 설정 - 현재 상태 유지
         set({
-          timeLeft: 30,
-          displayTime: 20, // timeLeft - 10 (문제 풀이 시간 표시)
+          timeLeft: currentState.timeLeft,
+          displayTime: currentState.displayTime,
           isTimerRunning: true,
-          showAnswer: false,
+          showAnswer: currentState.showAnswer,
         });
 
         // 타이머 활성화 상태 설정
@@ -292,7 +287,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
 
             // displayTime이 0 이하면 다음 문제로 이동
             if (newDisplayTime <= 0) {
-              setTimeout(() => get().moveToNextQuiz(), 500);
+              setTimeout(() => get().moveToNextQuiz(), 50);
             }
 
             return;
@@ -360,7 +355,6 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
               };
             }
 
-            // 일반적인 타이머 틱 업데이트
             return {
               timeLeft,
               displayTime,
@@ -412,6 +406,8 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
           currentQuiz: state.quizzes[nextIndex],
           isTimerRunning: true,
           loadingCount: 0,
+          timeLeft: 30,
+          displayTime: 20,
         });
 
         // 약간의 지연 후 타이머 시작 (이전 타이머 정리 시간 확보)
@@ -526,20 +522,17 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
       storage: createJSONStorage(() => delayedSessionStorage),
       partialize: (state): Partial<QuizShowSharedStore> => ({
         quizSessionId: state.quizSessionId,
-        isShowStarted: state.isShowStarted,
-        isShowEnded: state.isShowEnded,
-        isHost: state.isHost,
-        quizCount: state.quizCount,
-        collectionName: state.collectionName,
-        participants: state.participants,
-        nickname: state.nickname,
         hostId: state.hostId,
         userId: state.userId,
+        isHost: state.isHost,
+        nickname: state.nickname,
+        participants: state.participants,
+        isShowStarted: state.isShowStarted,
+        isShowEnded: state.isShowEnded,
+        quizCount: state.quizCount,
+        collectionName: state.collectionName,
         currentQuizIndex: state.currentQuizIndex,
         quizzes: state.quizzes,
-        myResult: state.myResult,
-        result: state.result,
-        isResultReady: state.isResultReady,
         currentQuiz: state.currentQuiz,
         showAnswer: state.showAnswer,
         userAnswer: state.userAnswer,
@@ -548,8 +541,13 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         objectiveInput: state.objectiveInput,
         answerTime: state.answerTime,
         displayTime: state.displayTime,
+        isResultReady: state.isResultReady,
+        result: state.result,
+        myResult: state.myResult,
         isInitialized: state.isInitialized,
         isFirstStart: state.isFirstStart,
+        isTimerRunning: state.isTimerRunning,
+        timeLeft: state.timeLeft,
       }),
       onRehydrateStorage: () => {
         return (state, error) => {
