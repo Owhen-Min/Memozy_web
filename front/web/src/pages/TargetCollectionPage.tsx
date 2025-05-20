@@ -118,6 +118,8 @@ function TargetCollectionPage() {
       setIsQuizShowModalOpen(false);
       setIsDeleteModalOpen(false);
       setIsCopyModalOpen(false);
+      setIsEditMode(false);
+      setSelectedMemozyIds([]);
     }
   };
 
