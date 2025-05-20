@@ -1,10 +1,12 @@
 package site.memozy.memozy_api.domain.collection.repository;
 
-import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.quiz;
-import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.quizSource;
+import static site.memozy.memozy_api.domain.quiz.entity.QQuiz.*;
+import static site.memozy.memozy_api.domain.quizsource.entity.QQuizSource.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 
@@ -19,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.collection.dto.CollectionSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.MemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QCollectionSummaryResponse;
-import site.memozy.memozy_api.domain.collection.dto.QMemozyContentResponse;
 import site.memozy.memozy_api.domain.collection.dto.QQuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.dto.QuizSummaryResponse;
 import site.memozy.memozy_api.domain.collection.entity.QCollection;
@@ -137,23 +138,35 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 
 	@Override
 	public List<MemozyContentResponse> findByCollectionIdWithPaging(Integer collectionId, Pageable pageable) {
-		return queryFactory
-			.select(new QMemozyContentResponse(
-				quizSource.sourceId,
-				quizSource.title,
-				quizSource.summary,
-				quiz.count().intValue(), // 각 quizSource에 묶인 quiz 개수
-				quizSource.url
-			))
-			.from(quizSource)
-			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
-			.where(quizSource.collectionId.eq(collectionId),
-				quiz.collectionId.isNotNull())
-			.groupBy(quizSource.sourceId)
+		// 1. QuizSources 가져오기
+		List<QuizSource> quizSources = queryFactory
+			.selectFrom(quizSource)
+			.where(quizSource.collectionId.eq(collectionId))
 			.orderBy(quizSource.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+
+		// 2. Quiz 개수 조회 (collectionId가 null이 아닌 것만 카운팅)
+		Map<Integer, Long> quizCounts = queryFactory
+			.select(quiz.sourceId, quiz.count())
+			.from(quiz)
+			.where(quiz.sourceId.in(quizSources.stream().map(QuizSource::getSourceId).toList()))
+			.where(quiz.collectionId.isNotNull())
+			.groupBy(quiz.sourceId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(quiz.sourceId), tuple -> tuple.get(quiz.count())));
+
+		return quizSources.stream()
+			.map(q -> new MemozyContentResponse(
+				q.getSourceId(),
+				q.getTitle(),
+				q.getSummary(),
+				quizCounts.getOrDefault(q.getSourceId(), 0L).intValue(),
+				q.getUrl()
+			))
+			.toList();
 	}
 
 	@Override
@@ -176,9 +189,8 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 		// 	.fetch();
 
 		// 1. sourceId 목록 조회(동일한 메모지도 보여주도록)
-		List<Integer> sourceIds = queryFactory
-			.select(quizSource.sourceId)
-			.from(quizSource)
+		List<QuizSource> quizSources = queryFactory
+			.selectFrom(quizSource)
 			.where(
 				quizSource.userId.eq(userId),
 				quizSource.collectionId.isNotNull()  // collectionId가 null이 아닌 경우만
@@ -188,21 +200,26 @@ public class CollectionRepositoryImpl implements CollectionRepositoryCustom {
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		// 2. sourceId를 통해 상세 정보 조회
-		return queryFactory
-			.select(new QMemozyContentResponse(
-				quizSource.sourceId,
-				quizSource.title,
-				quizSource.summary,
-				quiz.count().intValue(),
-				quizSource.url
+		// 2. Quiz 개수 조회 (collectionId가 NULL이 아닌 것만 카운팅)
+		Map<Integer, Long> quizCounts = queryFactory
+			.select(quiz.sourceId, quiz.count())
+			.from(quiz)
+			.where(quiz.sourceId.in(quizSources.stream().map(QuizSource::getSourceId).toList()))
+			.where(quiz.collectionId.isNotNull())
+			.groupBy(quiz.sourceId)
+			.fetch()
+			.stream()
+			.collect(Collectors.toMap(tuple -> tuple.get(quiz.sourceId), tuple -> tuple.get(quiz.count())));
+
+		return quizSources.stream()
+			.map(q -> new MemozyContentResponse(
+				q.getSourceId(),
+				q.getTitle(),
+				q.getSummary(),
+				quizCounts.getOrDefault(q.getSourceId(), 0L).intValue(),
+				q.getUrl()
 			))
-			.from(quizSource)
-			.leftJoin(quiz).on(quiz.sourceId.eq(quizSource.sourceId))
-			.where(quizSource.sourceId.in(sourceIds))
-			.groupBy(quizSource.sourceId)
-			.orderBy(quizSource.createdAt.desc())
-			.fetch();
+			.toList();
 	}
 
 	@Override
