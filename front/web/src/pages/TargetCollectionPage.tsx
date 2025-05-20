@@ -128,7 +128,7 @@ function TargetCollectionPage() {
       <div className="content">
         <h1 className="text-[36px] font-pre-bold text-normalactive active:text-main200 flex flex-wrap items-center">
           <span
-            className="truncate w-full md:w-auto md:max-w-xl inline-block hover:whitespace-normal hover:break-all"
+            className="h-16 truncate w-full md:w-auto md:max-w-xl inline-block hover:whitespace-normal hover:break-all"
             title={collectionName ?? ""}
           >
             {collectionName}
@@ -140,7 +140,9 @@ function TargetCollectionPage() {
             <div className="flex items-center gap-2">
               <img src={memozyIcon} alt="메모지" className="w-5 h-5" />
               <span className="text-16 font-pre-semibold">Memozy</span>
-              <span className="text-16 font-pre-semibold text-normal">{memozyCount}</span>
+              <span className="text-16 font-pre-semibold text-normal">
+                {!loading && memozyCount}
+              </span>
             </div>
             {duplicateQuizCount > 0 && (
               <span className="text-16 font-pre-semibold text-gray200">
@@ -191,7 +193,7 @@ function TargetCollectionPage() {
           </div>
         )}
         {loading && memozies.length === 0 ? (
-          <div className="text-center py-4">로딩 중...</div>
+          <div className="loading-spinner" />
         ) : memozies.length === 0 ? (
           <div className="text-center py-4">메모지가 없습니다.</div>
         ) : (
@@ -211,7 +213,6 @@ function TargetCollectionPage() {
               />
             ))}
             {hasMore && !loading && <div ref={observer} className="h-4" />}
-            {loading && <div className="text-center py-4">추가 메모지 로딩 중...</div>}
           </>
         )}
       </div>

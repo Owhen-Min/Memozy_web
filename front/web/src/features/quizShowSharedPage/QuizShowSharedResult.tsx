@@ -42,6 +42,8 @@ interface QuizShowSharedResultProps {
   isLoading?: boolean;
   isHost: boolean;
   isLoggedIn: boolean;
+  isSubmitted: boolean;
+  setIsSubmitted: (isSubmitted: boolean) => void;
   handleSaveQuizClick: () => void;
 }
 
@@ -53,6 +55,8 @@ function QuizShowResultSharedPage({
   isLoggedIn,
   isHost,
   handleSaveQuizClick,
+  isSubmitted,
+  setIsSubmitted,
 }: QuizShowSharedResultProps) {
   const navigate = useNavigate();
   const [isSaveDisabled, setIsSaveDisabled] = useState(false);
@@ -75,11 +79,17 @@ function QuizShowResultSharedPage({
   // 랭킹 데이터 이미지 매핑
   const rankImages = [first, second, third];
 
+  const handleSaveButtonClick = () => {
+    setIsSaveDisabled(true);
+    setIsSubmitted(true);
+    handleSaveQuizClick();
+  };
+
   useEffect(() => {
-    if (isHost) {
-      handleSaveQuizClick();
+    if (isHost && !isSubmitted) {
+      handleSaveButtonClick();
     }
-  }, [isHost, handleSaveQuizClick]);
+  }, [isHost, isSubmitted, handleSaveButtonClick]);
 
   return (
     <>
@@ -141,11 +151,10 @@ function QuizShowResultSharedPage({
               {isLoggedIn && !isHost && (
                 <button
                   onClick={() => {
-                    setIsSaveDisabled(true);
-                    handleSaveQuizClick();
+                    handleSaveButtonClick();
                   }}
-                  disabled={isSaveDisabled}
-                  className={`group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20 ${isSaveDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={isSaveDisabled || isSubmitted}
+                  className={`group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20 ${isSaveDisabled || isSubmitted ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   <img
                     src={save}

@@ -34,7 +34,7 @@ export default function LearningContributionSection({
         하루 단위 문제 풀이 기록으로, 색상 강도는 풀이 개수(0, 1-4, 5-9, 10-14, 15+)를 의미합니다.
       </p>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scroll-smooth scroll-x-end">
         <div className="min-w-[650px]">
           <CalendarHeatmap
             startDate={startDate}

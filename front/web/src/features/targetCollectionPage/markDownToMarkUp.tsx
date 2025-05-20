@@ -71,7 +71,7 @@ const CustomReactMarkdown: React.FC<CustomReactMarkdownProps> = ({ children, ...
         blockquote({ node, ...props }) {
           return (
             <blockquote
-              className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-6 text-gray-600 dark:text-gray-400"
+              className="border-l-4 border-gray-300 pl-4 italic my-6 text-gray-600"
               {...props}
             />
           );

@@ -73,6 +73,7 @@ export interface QuizShowSharedStore {
   isTimerRunning: boolean;
   answerTime: number;
   displayTime: number;
+  isSubmitted: boolean;
   isInitialized: boolean;
   isFirstStart: boolean;
   timers: Timers;
@@ -109,7 +110,7 @@ export interface QuizShowSharedStore {
   setLoadingCount: (loadingCount: number | ((prev: number) => number)) => void;
   setTimeLeft: (timeLeft: number | ((prev: number) => number)) => void;
   setIsTimerRunning: (isTimerRunning: boolean) => void;
-
+  setIsSubmitted: (isSubmitted: boolean) => void;
   // 퀴즈 추가 액션
   addQuiz: (quiz: QuizShared, index: number) => void;
 
