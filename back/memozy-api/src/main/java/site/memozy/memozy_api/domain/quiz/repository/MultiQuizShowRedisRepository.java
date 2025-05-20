@@ -121,11 +121,19 @@ public class MultiQuizShowRedisRepository {
 		log.info("[Redis] updateParticipantNickname() called with showId: {}, userId: {}, newNickname: {}", showId,
 			userId, newNickname);
 		String participantInfoKey = "show:" + showId + ":user:" + userId;
-
 		try {
+			List<String> nicknames = findParticipants(showId).stream()
+				.map(p -> getParticipantInfo(showId, p.toString()).get("nickname"))
+				.toList();
+			if (nicknames.contains(newNickname)) {
+				throw new GeneralException(QUIZ_NICKNAME_DUPLICATE);
+			}
 			redisTemplate.opsForHash().put(participantInfoKey, "nickname", newNickname);
 			redisTemplate.expire(participantInfoKey, Duration.ofDays(1));
 			return redisTemplate.opsForHash().get(participantInfoKey, "nickname").toString();
+		} catch (GeneralException e) {
+			log.error("[Redis] 닉네임 중복 저장 시도 : {}", e.getMessage());
+			throw new GeneralException(QUIZ_NICKNAME_DUPLICATE);
 		} catch (Exception e) {
 			log.error("[Redis] Error updating participant nickname: {}", e.getMessage());
 			throw new GeneralException(REDIS_SAVE_ERROR);
@@ -266,5 +274,4 @@ public class MultiQuizShowRedisRepository {
 			throw new GeneralException(REDIS_PARTICIPANT_NOT_FOUND);
 		}
 	}
-
 }

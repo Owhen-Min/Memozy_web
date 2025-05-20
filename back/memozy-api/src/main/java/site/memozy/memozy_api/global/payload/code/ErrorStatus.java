@@ -32,7 +32,9 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_INVALID_STATE(HttpStatus.BAD_REQUEST, "QUIZ407", "퀴즈 상태가 유효하지 않습니다."),
 	QUIZ_NICKNAME_CANNOT_CHANGE(HttpStatus.BAD_REQUEST, "QUIZ_408", "닉네임은 변경할 수 없습니다."),
 	QUIZ_CANNOT_JOIN(HttpStatus.BAD_REQUEST, "QUIZ409", "해당 퀴즈는 이미 시작되었거나 종료되었습니다."),
-
+	QUIZ_NICKNAME_TOO_LONG(HttpStatus.BAD_REQUEST, "QUIZ410", "닉네임은 10자 이내로 입력해주세요."),
+	QUIZ_NICKNAME_NOT_BLANK(HttpStatus.BAD_REQUEST, "QUIZ411", "닉네임은 공백을 포함할 수 없습니다."),
+	QUIZ_NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "QUIZ412", "다른 이용자가 사용 중인 닉네임입니다."),
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
 	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),
