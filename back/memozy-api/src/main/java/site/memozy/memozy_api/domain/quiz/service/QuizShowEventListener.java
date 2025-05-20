@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MyMultiQuizShowResultResponse;
+import site.memozy.memozy_api.domain.quiz.dto.QuizShowDisconnectEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowJoinEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowParticipantEvent;
 import site.memozy.memozy_api.domain.quiz.dto.QuizShowResultEvent;
@@ -66,6 +67,13 @@ public class QuizShowEventListener {
 			"/sub/quiz/show/" + showId + "/join",
 			Map.of("type", type)
 		);
+	}
+
+	@EventListener
+	public void handleQuizShowDisconnectEvent(QuizShowDisconnectEvent event) {
+		String showId = event.showId();
+
+		broadcastParticipants("JOIN", showId);
 	}
 
 	@EventListener

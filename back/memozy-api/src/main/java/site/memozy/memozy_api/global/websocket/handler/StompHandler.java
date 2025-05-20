@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
+import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowService;
 import site.memozy.memozy_api.global.security.jwt.JwtUtil;
 
 @Slf4j
@@ -23,6 +24,7 @@ public class StompHandler implements ChannelInterceptor {
 
 	private final JwtUtil jwtUtil;
 	private final MultiQuizShowRedisRepository redisRepository;
+	private final MultiQuizShowService multiQuizShowService;
 	private static final String BEARER = "Bearer ";
 
 	@Override
@@ -31,7 +33,24 @@ public class StompHandler implements ChannelInterceptor {
 		log.debug("[StompHandler] preSend() called with command: {}", accessor.getCommand());
 
 		if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-			log.info("STOMP 정상 종료 요청: {}", accessor.getSessionId());
+			log.info("[StompHandler] disconnect command");
+			Map<String, Object> attrs = accessor.getSessionAttributes();
+			if (attrs == null) {
+				return message;
+			}
+
+			Object rawUserId = attrs.get("userId");
+			Object rawShowId = attrs.get("showId");
+
+			if (!(rawUserId instanceof String) || !(rawShowId instanceof String)) {
+				return message;
+			}
+
+			String userId = (String)rawUserId;
+			String showId = (String)rawShowId;
+
+			multiQuizShowService.disconnectQuizShow(showId, userId);
+
 			return message;
 		}
 
