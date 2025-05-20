@@ -57,8 +57,9 @@ const QuizShowSharedPage = () => {
   // 페이지를 완전히 나갈 때만 스토어 초기화
   useEffect(() => {
     return () => {
-      resetStore();
+      sessionStorage.removeItem(`quiz-show-shared-storage-${showId}`);
       sessionStorage.removeItem("current-session-id");
+      resetStore();
     };
   }, [resetStore]);
 
@@ -67,7 +68,7 @@ const QuizShowSharedPage = () => {
       .post(`quiz/show/${showId}`)
       .then((res) => {
         if (res.data.success) {
-          setError("나의 컬렉션에 저장되었습니다.", { showButtons: false });
+          window.alert("나의 컬렉션에 저장되었습니다.");
         } else {
           setError(res.data.errorMsg, { showButtons: false });
         }
