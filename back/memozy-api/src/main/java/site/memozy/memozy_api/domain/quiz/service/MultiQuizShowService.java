@@ -14,12 +14,14 @@ public interface MultiQuizShowService {
 	void joinMultiQuizShow(String showId, String userId, String nickname, boolean isMember);
 
 	@Transactional
+	void startMultiQuizShow(String showId, String userId);
+
+	@Transactional
 	void submitAnswer(String showId, String userId, QuizAnswerRequest request);
 
 	@Transactional
 	void changeNickname(String showId, String userId, boolean isMember, String nickname);
 
 	@Transactional
-	void saveQuizShow(String showId, Integer userId, String email);
-
+	void saveQuizShowCollection(String showId, Integer userId, String email);
 }
