@@ -143,9 +143,6 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			collectionService.copyQuizShowMemozies(userId, newCollection.getCollectionId(), quizSourceIds);
 		}
 
-		Map<String, Map<String, Object>> userChoices = multiQuizShowRedisRepository.getUserChoice(showId,
-			userId.toString());
-
 		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(newCollection.getCollectionId(), email)
 			.orElse(0) + 1;
 
@@ -163,23 +160,22 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 			));
 
 			String userAnswerText = (String)choiceData.getOrDefault("userAnswer", "");
-			Boolean isCorrect = (Boolean)choiceData.getOrDefault("isCorrect", "");
+			Boolean isCorrect = (Boolean)choiceData.getOrDefault("isCorrect", false);
 
-			if (Boolean.FALSE.equals(isCorrect)) {
-				Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
-					.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
+			Long quizId = quizRepository.findByCollectionIdAndContent(collectionId, content)
+				.orElseThrow(() -> new GeneralException(QUIZ_NOT_FOUND));
 
-				History history = History.builder()
-					.isSolved(isCorrect)
-					.userSelect(userAnswerText)
-					.quizId(quizId)
-					.collectionId(newCollection.getCollectionId())
-					.round(nextRound)
-					.email(email)
-					.build();
+			History history = History.builder()
+				.isSolved(isCorrect)
+				.userSelect(userAnswerText)
+				.quizId(quizId)
+				.collectionId(newCollection.getCollectionId())
+				.round(nextRound)
+				.email(email)
+				.build();
 
-				historyRepository.save(history);
-			}
+			historyRepository.save(history);
+
 		}
 	}
 
