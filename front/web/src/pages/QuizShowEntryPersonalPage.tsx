@@ -5,22 +5,29 @@ import monster1 from "../assets/images/monster1.png";
 // import outQuizShowIcon from "../assets/icons/outQuizShowIcon.svg";
 import { useQuizShowPersonalStore } from "../stores/quizShowPersonal/quizShowPersonalStore";
 import { useEffect } from "react";
+import { useErrorStore } from "../stores/errorStore";
 
 const QuizShowEntryPersonalPage = () => {
   const { collectionId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { quizCount } = location.state;
   const { createQuizShow, quizData, isLoading, error, resetQuiz } = useQuizShowPersonalStore();
+  const { setError } = useErrorStore();
+
+  useEffect(() => {
+    if (!location || !location?.state) {
+      setError("퀴즈쇼는 컬렉션을 통해 들어와야 합니다.", { showButtons: true });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     // 컴포넌트 마운트 시 이전 상태 초기화
     resetQuiz();
 
-    if (collectionId) {
-      createQuizShow(Number(collectionId), quizCount);
+    if (collectionId && location?.state?.quizCount) {
+      createQuizShow(Number(collectionId), location?.state?.quizCount);
     }
-  }, [collectionId, quizCount, createQuizShow, resetQuiz]);
+  }, [collectionId, location, createQuizShow, resetQuiz]);
 
   const handleStartQuizShow = () => {
     if (!quizData) return;

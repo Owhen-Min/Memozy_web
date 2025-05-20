@@ -9,6 +9,7 @@ const baseURL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
+  errorCode?: string;
   errorMsg?: string;
 }
 
@@ -42,10 +43,17 @@ httpClient.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
     // API 응답이 success: false인 경우 에러 처리
     if (response.data && response.data.success === false) {
+      const errorCode = response.data.errorCode;
       const errorMessage = response.data.errorMsg || "Unknown error";
       // zustand store에 직접 접근
-      useErrorStore.getState().setError(errorMessage, { showButtons: false });
-      return Promise.reject(new Error(errorMessage));
+      if (errorCode === "COMMON5000" || errorCode === "COLLECTION400") {
+        useErrorStore.getState().setError(errorMessage, { showButtons: true });
+        return Promise.reject(new Error(errorMessage));
+      } else {
+        console.log(errorCode);
+        useErrorStore.getState().setError(errorMessage, { showButtons: false });
+        return Promise.reject(new Error(errorMessage));
+      }
     }
     return response;
   },

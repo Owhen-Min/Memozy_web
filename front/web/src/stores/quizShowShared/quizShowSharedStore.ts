@@ -537,14 +537,19 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         isFirstStart: state.isFirstStart,
         isTimerRunning: state.isTimerRunning,
         timeLeft: state.timeLeft,
+        loadingCount: state.loadingCount,
       }),
       onRehydrateStorage: () => {
-        return (state) => {
-          if (state?.isInitialized && state?.isShowStarted && !state.isShowEnded) {
-            setTimeout(() => {
-              useQuizShowSharedStore.getState().startCountdown();
-            }, 100);
-          }
+        return () => {
+          const store = useQuizShowSharedStore.getState();
+          // (1) 초기 카운트다운 건너뛰기
+          store.setLoadingCount(0);
+          // (2) 타이머가 꺼진 상태로 만들어서 아래 로직이 실행되게
+          store.setIsTimerRunning(false);
+          // (3) 조금 딜레이를 둔 뒤 재개
+          setTimeout(() => {
+            store.startCountdown(); // 또는 store.startQuizTimer();
+          }, 100);
         };
       },
     }
