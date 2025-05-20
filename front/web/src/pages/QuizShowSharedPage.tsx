@@ -76,7 +76,7 @@ const QuizShowSharedPage = () => {
         }
       })
       .catch((err) => {
-        setError(err, { showButtons: false });
+        setError(err.message, { showButtons: false });
       });
   };
 
