@@ -74,7 +74,7 @@ function Modal({ isOpen, onClose, data, isLoading }: ModalProps) {
         >
           <button
             onClick={onClose}
-            className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20"
+            className="absolute top-2 md:top-4 right-2 md:right-4 text-16 md:text-20 p-2"
           >
             <img src={closeIcon} alt="닫기" className="w-4" />
           </button>

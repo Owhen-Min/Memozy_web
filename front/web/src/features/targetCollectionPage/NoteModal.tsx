@@ -12,15 +12,13 @@ function NoteModal({ sourceTitle, summary, onClose }: NoteModalProps) {
     <div className="bg-white rounded-2xl p-6 max-w-[800px] w-full mx-4 relative max-h-[90vh] flex flex-col">
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 z-60 transition-transform duration-200 hover:scale-110"
+        className="absolute top-4 right-4 z-60 w-8 h-8 flex items-center justify-center transition-transform duration-200 hover:scale-110"
       >
-        <img src={closeIcon} alt="close" className="w-3 h-3" />
+        <img src={closeIcon} alt="close" className="w-4" />
       </button>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-20 font-pre-semibold text-main200">
-          개념 요약 노트 -
-          <span className="text-20 font-pre-semibold text-normalactive">{sourceTitle}</span>
-        </h2>
+      <div className="flex flex-col mb-4">
+        <h2 className="text-20 md:text-24 font-pre-semibold text-main200">개념 요약 노트</h2>
+        <span className="text-20 font-pre-semibold text-normalactive mt-1">{sourceTitle}</span>
       </div>
       <div className="bg-bg rounded-xl p-4 overflow-y-auto flex-1">
         <div className="text-16 font-pre-regular text-main200">

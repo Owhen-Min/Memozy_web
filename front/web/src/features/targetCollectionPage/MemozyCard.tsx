@@ -109,15 +109,17 @@ function MemozyCard({
       </div>
       <div className="h-4" />
       {isModalOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onMouseDown={handleOutsideClick}
-        >
-          <NoteModal
-            sourceTitle={sourceTitle}
-            summary={summary}
-            onClose={() => setIsModalOpen(false)}
-          />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div
+            className="mt-14 w-full h-full flex items-center justify-center"
+            onMouseDown={handleOutsideClick}
+          >
+            <NoteModal
+              sourceTitle={sourceTitle}
+              summary={summary}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </div>
         </div>
       )}
     </div>
