@@ -29,7 +29,7 @@ public class MultiQuizShowRunner {
 	private final TaskScheduler quizTaskScheduler;
 	private final Map<String, ScheduledFuture<?>> activeTasks = new ConcurrentHashMap<>();
 	private final Map<String, Integer> activeQuestionIndex = new ConcurrentHashMap<>();
-	private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(25);
+	private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(30);
 
 	private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -58,7 +58,7 @@ public class MultiQuizShowRunner {
 					log.error("퀴즈쇼 문제 오류 = {}번째 문제부터", index);
 					throw new GeneralException(QUIZ_INVALID_STATE);
 				}
-				sendQuiz(showId, index, quiz);
+				sendQuiz(showId, index, quiz, System.currentTimeMillis());
 				activeQuestionIndex.put(showId, index + 1);
 			} catch (Exception e) {
 				log.error("퀴즈쇼 {} 에서 오류 발생: {}", showId, e.getMessage());
@@ -69,7 +69,7 @@ public class MultiQuizShowRunner {
 		activeTasks.put(showId, future);
 	}
 
-	private void sendQuiz(String showId, int index, Map<String, Object> quiz) {
+	private void sendQuiz(String showId, int index, Map<String, Object> quiz, long startTime) {
 		Map<String, Object> quizData = Map.of(
 			"content", quiz.get("content"),
 			"choice", quiz.get("choice"),
@@ -84,7 +84,7 @@ public class MultiQuizShowRunner {
 				"type", "QUIZ",
 				"quiz", quizData,
 				"index", index,
-				"startTime", System.currentTimeMillis()
+				"startTime", startTime
 			)
 		);
 	}
