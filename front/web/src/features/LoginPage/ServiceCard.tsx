@@ -78,7 +78,7 @@ const ServiceCards = () => {
           </div>
           <h3 className="text-16 font-pre-semibold text-[#2196F3] mb-1">익스텐션</h3>
           <p className="text-10 font-pre-regular text-center text-gray-600">
-            유튜브, 블로그, 기술문서 등
+            노션, 블로그, 기술문서 등
             <br />
             원하는 내용을 직접 저장해 학습
           </p>
