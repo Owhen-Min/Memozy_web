@@ -34,4 +34,11 @@ public interface HistoryRepository extends JpaRepository<History, Integer>, Hist
 
 	@Query("SELECT h.quizId FROM History h WHERE h.quizId IN :quizIds")
 	List<Long> findQuizIdByQuizIdIn(@Param("quizIds") List<Long> quizIds);
+
+	@Query("""
+		SELECT MAX(h.round)
+		FROM History h
+		WHERE h.collectionId = :collectionId
+		""")
+	Optional<Integer> findMaxHistoryIdByCollectionId(@Param("collectionId") Integer collectionId);
 }
