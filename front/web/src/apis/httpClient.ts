@@ -46,7 +46,7 @@ httpClient.interceptors.response.use(
       const errorCode = response.data.errorCode;
       const errorMessage = response.data.errorMsg || "Unknown error";
       // zustand store에 직접 접근
-      if (errorCode === "COMMON5000" || errorCode === "COLLECTION400") {
+      if (errorCode === "COMMON5000" || errorCode === "COLLECTION400" || errorCode === "VALID401") {
         useErrorStore.getState().setError(errorMessage, { showButtons: true });
         return Promise.reject(new Error(errorMessage));
       } else {

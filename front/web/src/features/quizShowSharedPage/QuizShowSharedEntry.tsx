@@ -83,6 +83,16 @@ function QuizShowSharedEntry({
       return;
     }
 
+    if (newNickname.trim() === "") {
+      setIsEditingNickname(false);
+      return;
+    }
+
+    if (newNickname.trim() === nickname) {
+      setIsEditingNickname(false);
+      return;
+    }
+
     if (participants.some((user) => user.nickname === newNickname)) {
       errorHandler("이미 사용중인 닉네임입니다.", { showButtons: false });
       return;
