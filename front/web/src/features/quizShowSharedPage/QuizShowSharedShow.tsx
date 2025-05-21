@@ -121,7 +121,7 @@ function QuizShowSharedShow({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full flex flex-col justify-center min-h-[85vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
+      <div className="w-full flex flex-col justify-center min-h-[75vh] sm:min-h-[80vh] bg-white rounded-xl shadow-xl px-8 py-4 relative">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -145,7 +145,7 @@ function QuizShowSharedShow({
                   showAnswer ? "bg-green-600" : "bg-blue-600"
                 }`}
                 style={{
-                  width: `${Math.max(0, (displayTime / (showAnswer ? answerTime : 20)) * 100)}%`,
+                  width: `${Math.max(0, (displayTime / (showAnswer ? answerTime : 10)) * 100)}%`,
                 }}
               ></div>
             </div>

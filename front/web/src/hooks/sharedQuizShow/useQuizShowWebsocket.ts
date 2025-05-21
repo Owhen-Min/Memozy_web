@@ -169,8 +169,8 @@ export const useQuizShowWebsocket = (showId: string) => {
       choice: choiceMatch ? choiceMatch : [],
       commentary: commentaryMatch ? commentaryMatch : "",
       startTime: startTimeMatch ? startTimeMatch : Date.now() - 500,
-      expiringTime: startTimeMatch ? startTimeMatch + 23000 : Date.now() + 22500,
-      answerCloseTime: startTimeMatch ? startTimeMatch + 33000 : Date.now() + 32500,
+      expiringTime: startTimeMatch ? startTimeMatch + 13000 : Date.now() + 12500,
+      answerCloseTime: startTimeMatch ? startTimeMatch + 18000 : Date.now() + 17500,
     };
   };
 

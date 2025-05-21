@@ -27,8 +27,8 @@ const initialState = {
   selectedMultipleChoice: null as number | null,
   objectiveInput: "",
   loadingCount: 3,
-  timeLeft: 30,
-  displayTime: 20,
+  timeLeft: 15,
+  displayTime: 10,
   isTimerRunning: false,
   answerTime: 0,
   isInitialized: false,
@@ -317,9 +317,9 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
               }
 
               return {
-                timeLeft: timeLeft + 10,
-                displayTime: timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
-                answerTime: state.timeLeft + 10,
+                timeLeft: timeLeft + 5,
+                displayTime: timeLeft + 5, // 해설 화면에서는 displayTime = timeLeft
+                answerTime: state.timeLeft + 5,
                 isTimerRunning: true,
               };
             }
@@ -443,8 +443,8 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         // 정답 확인 시 상태 설정
         set({
           showAnswer: true, // 정답 화면 표시
-          answerTime: state.timeLeft + 10, // 정답 확인 시간 기록
-          displayTime: state.timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
+          answerTime: state.timeLeft + 5, // 정답 확인 시간 기록
+          displayTime: state.timeLeft + 5, // 해설 화면에서는 displayTime = timeLeft
           isTimerRunning: true,
         });
 
@@ -472,7 +472,7 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
         get().clearAllTimers();
       },
 
-      autoSubmitAnswer: () => {
+      autoSubmitAnswer: (submitAnswerCallback?: (answer: any) => void) => {
         const state = get();
         const currentQuizData = state.quizzes[state.currentQuizIndex];
 
@@ -495,12 +495,22 @@ export const useQuizShowSharedStore = create<QuizShowSharedStore>()(
 
         isCorrect = currentQuizData.answer === answerValue;
 
+        // 정답 자동 제출 시 콜백 호출
+        if (submitAnswerCallback) {
+          submitAnswerCallback({
+            type: "SUBMIT",
+            index: state.currentQuizIndex,
+            choice: answerValue,
+            isCorrect: isCorrect,
+          });
+        }
+
         // 정답 자동 제출 시 상태 설정
         set({
           showAnswer: true, // 정답 화면 표시
-          answerTime: state.timeLeft + 10, // 정답 확인 시간 기록
+          answerTime: state.timeLeft + 5, // 정답 확인 시간 기록
           userAnswer: answerValue, // 사용자 답변 설정
-          displayTime: state.timeLeft + 10, // 해설 화면에서는 displayTime = timeLeft
+          displayTime: state.timeLeft + 5, // 해설 화면에서는 displayTime = timeLeft
           isTimerRunning: true,
         });
 
