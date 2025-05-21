@@ -161,7 +161,7 @@ PWD: memozy1!
 
 
 ### 📌 ERD
-<img src="img/ERD.png">
+<img src="img/erd.png">
 <br/><br/>
 
 ### 📌 User Flow
