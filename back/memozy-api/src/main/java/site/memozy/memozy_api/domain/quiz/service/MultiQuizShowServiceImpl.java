@@ -171,15 +171,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	@Override
 	public void changeNickname(String showId, String userId, boolean isMember, String nickname) {
-		if (isMember) {
-			throw new GeneralException(QUIZ_NICKNAME_CANNOT_CHANGE);
-		}
-		if (nickname.length() > 10) {
-			throw new GeneralException(QUIZ_NICKNAME_TOO_LONG);
-		}
-		if (nickname.isEmpty() || nickname.isBlank()) {
-			throw new GeneralException(QUIZ_NICKNAME_NOT_BLANK);
-		}
+
 		log.info("[service] changeNickname() called with showId: {}, userId: {}, nickname : {}", showId, userId,
 			nickname);
 

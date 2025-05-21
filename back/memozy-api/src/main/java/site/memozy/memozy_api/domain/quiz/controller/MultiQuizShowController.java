@@ -1,6 +1,7 @@
 package site.memozy.memozy_api.domain.quiz.controller;
 
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import site.memozy.memozy_api.domain.quiz.dto.MultiQuizShowCreateResponse;
 import site.memozy.memozy_api.domain.quiz.dto.NicknameUpdateRequest;
 import site.memozy.memozy_api.domain.quiz.dto.QuizAnswerRequest;
+import site.memozy.memozy_api.domain.quiz.repository.MultiQuizShowRedisRepository;
 import site.memozy.memozy_api.domain.quiz.service.MultiQuizShowService;
 import site.memozy.memozy_api.global.payload.ApiResponse;
 import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
@@ -31,6 +33,7 @@ import site.memozy.memozy_api.global.security.auth.CustomOAuth2User;
 public class MultiQuizShowController {
 
 	private final MultiQuizShowService multiQuizShowService;
+	private final MultiQuizShowRedisRepository multiQuizShowRedisRepository;
 
 	@GetMapping("/{collectionId}")
 	@ResponseBody
@@ -83,6 +86,16 @@ public class MultiQuizShowController {
 		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 		String userId = (String)accessor.getSessionAttributes().get("userId");
 		boolean isMember = (boolean)accessor.getSessionAttributes().get("isMember");
+
+		if (isMember) {
+			throw new MessageDeliveryException("회원의 닉네임은 변경할 수 없습니다.");
+		}
+		if (request.nickname().length() > 10) {
+			throw new MessageDeliveryException("닉네임은 10자 이내로 입력해주세요.");
+		}
+		if (request.nickname().trim().isBlank()) {
+			throw new MessageDeliveryException("닉네임은 공백일 수 없습니다.");
+		}
 
 		log.info("[Controller] changeNickname() called with showId: {}, nickname : {}", showId, request.nickname());
 
