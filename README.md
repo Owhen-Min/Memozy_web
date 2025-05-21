@@ -18,11 +18,7 @@
 📊 **문제 풀이 기록과 학습 리포트 제공**  
 > 푼 문제 수, 정답률, 학습 주제 분포, 오답노트까지 한눈에 확인할 수 있는 리포트를 통해 학습 현황을 정리하고 성장 과정을 시각화합니다.
 
-## 🧪 테스트 계정
-ID: memozyTest1@gmail.com  <br> 
-PWD: memozy1!
-
-## 🔔 SSAFY 12기 특화 PJT
+## 🔔 SSAFY 12기 자율율 PJT
 
 📍 **자율 프로젝트**
 
@@ -37,13 +33,16 @@ PWD: memozy1!
 ### 🏛️ 1. AI 요약 & 문제 생성 일지
 > 크롬 익스텐션을 통해 GPT, 블로그, 위키백과, 노션등에서 글과 이미지를 추출한 후, 요약해줍니다.
 
+<div style="display: flex; justify-content: space-between;">
+  <img alt='' src="./img/extension1.gif" style="width: 100%; height: 500;">
+</div>
+<br>
+
 > 핵심 내용을 바탕으로 AI가 자동으로 문제를 생성해줍니다.
 
 <div style="display: flex; justify-content: space-between;">
-  <img alt='' src="./img/today1.gif" style="width: 100%; height: 500;">
-  <img alt='' src="./img/today2.gif" style="width: 100%; height: 500;">
+  <img alt='' src="./img/extension2.gif" style="width: 100%; height: 500;">
 </div>
-<br>
 
 ### ✍️ 2. 지식 컬렉션 정리 & 분류
 > 생성된 문제들을 주제별 컬렉션으로 정리하고, 주제별 흐름을 쉽게 따라갈 수 있는 형태로 제공합니다.
@@ -55,19 +54,19 @@ PWD: memozy1!
 ### 🔎 3. 개인 및 단체 퀴즈 쇼
 > 컬렉션 단위로 문제를 풀며 나만의 속도로 학습하고 복습할 수 있습니다.
 
-> 여러 명이 함께 실시간으로 참여해 문제를 풀고 결과를 비교하는 활동도 가능합니다.
-
 <div style="display: flex; justify-content: space-between;">
-  <img alt='' src="./img/search1.gif" style="width: 100%; height: 500;">
-  <img alt='' src="./img/search2.gif" style="width: 100%; height: 500;">
+  <img alt='' src="./img/personalquiz1.gif" style="width: 100%; height: 500;">
 </div>
 
-<br>
+> 여러 명이 함께 실시간으로 참여해 문제를 풀고 결과를 비교하는 활동도 가능합니다.
+<div style="display: flex; justify-content: space-between;">
+  <img alt='' src="./img/multiquiz.gif" style="width: 100%; height: 500;">
+</div>
 
 ### 🎨 4. 히스토리
-> 컬렉션 단위로 문제를 풀며 나만의 속도로 학습하고 복습할 수 있습니다.
+> 개인 및 단체 퀴즈 쇼를 통해 푼 문제 수, 정답률, 학습 주제 분포, 오답 노트 등 다양한 지표가 담긴 시각화된 학습 리포트를 제공합니다.
 
-> 여러 
+> 자신의 학습 현황을 한눈에 파악하고, 성장 과정을 체계적으로 관리할 수 있습니다. 
 
 
 
@@ -82,9 +81,11 @@ PWD: memozy1!
 
 🔗 [Memozy](https://memozy.site/)
 
----
+## 🧪 테스트 계정
+ID: memozyTest1@gmail.com  <br> 
+PWD: memozy1!
 
-<br>
+---
 
 ## ⚙️ 기술 스택
 
@@ -101,8 +102,8 @@ PWD: memozy1!
                   <p>프론트엔드</p>
             </td>
             <td>
-                    <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" />
-                    <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white" />
+                  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white" />
+<img src="https://img.shields.io/badge/Zustand-544542logo=zustand&logoColor=white" />
             </td>
         </tr>
         <tr>
@@ -110,8 +111,8 @@ PWD: memozy1!
                 <p>백엔드</p>
             </td>
             <td>
-                <img src="https://img.shields.io/badge/Spring-6DB33F?logo=spring&logoColor=white">
-                <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?logo=springsecurity&logoColor=white">
+                <img src="https://img.shields.io/badge/Spring Boot 3.4.5-6DB33F?logoColor=white">
+                <img src="https://img.shields.io/badge/Spring Security-6DB33F?logo=springsecurity&logoColor=white">
             </td>
         </tr>
         <tr>
@@ -125,9 +126,10 @@ PWD: memozy1!
         </tr>
                 <tr>
             <td>
-                <p>로그 분석?</p>
+                <p>로그 수집</p>
             </td>
             <td>
+            <img src="https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=white"/>
             <img src="https://img.shields.io/badge/Logstash-000000?logo=logstash&logoColor=white">
              <img src="https://img.shields.io/badge/Kibana-E8478B?logo=kibana&logoColor=white">
             </td>
@@ -149,17 +151,7 @@ PWD: memozy1!
 
 ## 📜 산출물
 ### 📌 Architecture Diagram
-<img src="img/System_Architecture.png">
-<img src="img/System_Architecture2.png">
-<img src="img/pipeline.png">
-
-#### 🛠️ 무중단 배포
-
-- ****
-- **** 
-- ****
-- ****
-
+<img src="img/infra.png">
 
 
 ### 📌 ERD
