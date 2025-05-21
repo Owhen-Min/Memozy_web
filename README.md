@@ -81,6 +81,10 @@
 ## 🌐 사이트
 
 🔗 [Memozy](https://memozy.site/)
+<br>
+
+🧩 [Memozy (Chrome 확장)](https://chromewebstore.google.com/detail/memozy/edkigpibifokljeefiomnfadenbfcchj?hl=ko)
+
 
 ## 🧪 테스트 계정
 ID: memozyTest1@gmail.com  <br> 
@@ -130,7 +134,7 @@ PWD: memozy1!
 <img src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white">
             </td>
         </tr>
-                <tr>
+        <tr>
             <td>
                 <p>로그 수집</p>
             </td>
@@ -138,6 +142,15 @@ PWD: memozy1!
             <img src="https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=white"/>
             <img src="https://img.shields.io/badge/Logstash-000000?logo=logstash&logoColor=white">
              <img src="https://img.shields.io/badge/Kibana-E8478B?logo=kibana&logoColor=white">
+            </td>
+        </tr>
+                <tr>
+            <td>
+                <p>모니터링</p>
+            </td>
+            <td>
+<img src="https://img.shields.io/badge/Grafana-F46800?logo=Grafana&logoColor=white"/>
+<img src="https://img.shields.io/badge/Prometheus-E6522C?logo=Prometheus&logoColor=white"/>
             </td>
         </tr>
         <tr>
@@ -197,7 +210,7 @@ PWD: memozy1!
         <a href="https://github.com/Owhen-Min"><img src="./img/gyeonghyeon.jpg" width=160/></a>
       </td>
       <td>
-        <a href="https://github.com/manimani10002"><img src="https://avatars.githubusercontent.com/lhj4499" width=160/></a>
+        <a href="https://github.com/manimani10002"><img src="https://avatars.githubusercontent.com/manimani10002" width=160/></a>
       </td>
       <td>
        <a href="https://github.com/2gahee"><img src="https://avatars.githubusercontent.com/u/129130899?s=400&u=a6a073b28d5067320acdb8083da5455bdf668b8c&v=4" width=160/></a> 
