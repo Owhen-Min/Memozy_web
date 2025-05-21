@@ -186,7 +186,7 @@ public class MultiQuizShowServiceImpl implements MultiQuizShowService {
 
 	private void saveHistory(String showId, Integer userId, String email, Integer collectionId,
 		Map<String, String> metaData) {
-		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId, email)
+		int nextRound = historyRepository.findMaxHistoryIdByCollectionId(collectionId)
 			.orElse(0) + 1;
 
 		Map<String, Map<String, Object>> userAnswer = multiQuizShowRedisRepository.getUserChoice(showId,
