@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -28,6 +29,29 @@ public class GlobalExceptionHandler {
 
 		logError(e, VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
 		return errorResponse(VALIDATION_ERROR.getErrorCode(), message);
+	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ApiResponse<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+		Class<?> requiredType = ex.getRequiredType();
+
+		String typeName = (requiredType != null)
+			? requiredType.getSimpleName()
+			: "요청한 타입";
+
+		String detailMessage = String.format(
+			"파라미터 '%s'의 값 '%s'을(를) %s 타입으로 변환할 수 없습니다.",
+			ex.getName(), ex.getValue(), typeName
+		);
+
+		logError(ex,
+			VALIDATION_ERROR.getHttpStatusCode(),
+			VALIDATION_ERROR.getErrorCode(),
+			detailMessage
+		);
+
+		String userMessage = "입력한 값이 허용 범위를 초과했습니다.";
+		return errorResponse(VALIDATION_ERROR.getErrorCode(), userMessage);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
