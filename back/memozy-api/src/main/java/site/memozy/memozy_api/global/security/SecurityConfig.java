@@ -94,6 +94,8 @@ public class SecurityConfig {
 		configuration.setAllowedOrigins(Arrays.asList(
 			"chrome-extension://mlgeojjbngcoionmkpgncgagfliiddgj",
 			"chrome-extension://edkigpibifokljeefiomnfadenbfcchj",
+			"chrome-extension://nefohmbgipjojkepcndhnhnbpbldabdi",
+			"chrome-extension://ofcakbiecfnkhepdkhkjfnlnokjddhnl",
 			"http://localhost:5173",
 			"https://localhost:5173",
 			"https://memozy.site",
