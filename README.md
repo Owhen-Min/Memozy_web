@@ -57,6 +57,7 @@
 <div style="display: flex; justify-content: space-between;">
   <img alt='' src="./img/personalquiz1.gif" style="width: 100%; height: 500;">
 </div>
+<br>
 
 > 여러 명이 함께 실시간으로 참여해 문제를 풀고 결과를 비교하는 활동도 가능합니다.
 <div style="display: flex; justify-content: space-between;">
@@ -102,7 +103,12 @@ PWD: memozy1!
                   <p>프론트엔드</p>
             </td>
             <td>
-                  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white" />
+               <img src="https://img.shields.io/badge/React-20232a?logo=react&logoColor=61DAFB" />
+<img src="https://img.shields.io/badge/TailwindCSS-1daabb?logo=tailwind-css&logoColor=white" />
+<img src="https://img.shields.io/badge/TypeScript-007ACC?slogo=typescript&logoColor=white" />
+<img src="https://img.shields.io/badge/Webpack-8DD6F9?logo=webpack&logoColor=white" />
+<img src="https://img.shields.io/badge/React%20Query-FF4154?logo=react-query&logoColor=white" />
+
 <img src="https://img.shields.io/badge/Zustand-544542logo=zustand&logoColor=white" />
             </td>
         </tr>
@@ -159,12 +165,8 @@ PWD: memozy1!
 <br/><br/>
 
 ### 📌 User Flow
-<img src="img/UserFlow1.png">
-<img src="img/UserFlow2.png">
+<img src="img/front.png">
 <br/><br/>
-
-### 📌 Wire Frame
-<img src="img/WireFrame.png">
 
 ## 🧡 팀원 소개
 
