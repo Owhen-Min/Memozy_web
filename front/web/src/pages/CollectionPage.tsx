@@ -6,6 +6,7 @@ import { useState } from "react";
 import small_logo from "../assets/images/small_logo.png";
 import { motion } from "framer-motion";
 import { useCollectionStore } from "../stores/collection/collectionStore";
+import { useRefetchOnBackNavigation } from "../hooks/useRefetchOnBackNavigation";
 
 function CollectionPage() {
   const [isAddCollectionModalOpen, setIsAddCollectionModalOpen] = useState(false);
@@ -18,6 +19,9 @@ function CollectionPage() {
     fetchCollections();
     fetchAllCollection();
   }, [fetchCollections, fetchAllCollection]);
+
+  useRefetchOnBackNavigation(fetchCollections);
+  useRefetchOnBackNavigation(fetchAllCollection);
 
   const handleAddCollectionClick = () => {
     setIsAddCollectionModalOpen(true);

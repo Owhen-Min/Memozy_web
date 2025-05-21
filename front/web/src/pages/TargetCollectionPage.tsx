@@ -7,6 +7,7 @@ import DeleteMemozyModal from "../features/targetCollectionPage/DeleteMemozyModa
 import CopyMemozyModal from "../features/targetCollectionPage/CopyMemozyModal";
 import { Memozy } from "../stores/collection/types";
 import { useCollectionStore } from "../stores/collection/collectionStore";
+import { useRefetchOnBackNavigation } from "../hooks/useRefetchOnBackNavigation";
 
 function TargetCollectionPage() {
   const { collectionId } = useParams();
@@ -84,6 +85,8 @@ function TargetCollectionPage() {
       }
     }
   }, [collectionId, fetchMemozyList, fetchAllMemozyList, fetchAllCollection, setPage]);
+
+  useRefetchOnBackNavigation(fetchAllCollection);
 
   const handleMemozySelect = (memozyId: number) => {
     setSelectedMemozyIds((prev) =>

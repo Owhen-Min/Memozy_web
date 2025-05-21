@@ -84,6 +84,7 @@ function QuizShowSharedEntry({
     }
 
     if (newNickname.trim() === "") {
+      setNewNickname(nickname);
       setIsEditingNickname(false);
       return;
     }
