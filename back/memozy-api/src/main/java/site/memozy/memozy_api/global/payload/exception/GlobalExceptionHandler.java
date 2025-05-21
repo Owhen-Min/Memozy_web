@@ -1,7 +1,6 @@
 package site.memozy.memozy_api.global.payload.exception;
 
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.INTERNAL_SERVER_ERROR;
-import static site.memozy.memozy_api.global.payload.code.ErrorStatus.VALIDATION_ERROR;
+import static site.memozy.memozy_api.global.payload.code.ErrorStatus.*;
 
 import java.util.Optional;
 
@@ -27,8 +26,8 @@ public class GlobalExceptionHandler {
 			.findFirst()
 			.orElse("유효성 검증 실패");
 
-		logError(e, VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
-		return errorResponse(VALIDATION_ERROR.getErrorCode(), message);
+		logError(e, VALIDATION_ERROR_NULL.getHttpStatusCode(), VALIDATION_ERROR_NULL.getErrorCode(), message);
+		return errorResponse(VALIDATION_ERROR_NULL.getErrorCode(), message);
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -61,8 +60,8 @@ public class GlobalExceptionHandler {
 			.findFirst()
 			.orElse("요청 필드 유효성 검증 실패");
 
-		logError(ex, VALIDATION_ERROR.getHttpStatusCode(), VALIDATION_ERROR.getErrorCode(), message);
-		return errorResponse(VALIDATION_ERROR.getErrorCode(), message);
+		logError(ex, VALIDATION_ERROR_NULL.getHttpStatusCode(), VALIDATION_ERROR_NULL.getErrorCode(), message);
+		return errorResponse(VALIDATION_ERROR_NULL.getErrorCode(), message);
 	}
 
 	@ExceptionHandler(GeneralException.class)
