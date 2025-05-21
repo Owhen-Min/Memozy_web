@@ -10,7 +10,7 @@ interface CopyMemozyModalProps {
 
 function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
-  const { collections, copyMemozy } = useCollectionStore();
+  const { collections, copyMemozy, fetchCollections } = useCollectionStore();
   const { collectionId } = useParams();
   const currentCollectionId = Number(collectionId);
   const navigate = useNavigate();
@@ -31,6 +31,7 @@ function CopyMemozyModal({ memozyIds, onClose }: CopyMemozyModalProps) {
 
     try {
       await copyMemozy(selectedCollectionId, memozyIds, currentCollectionId);
+      await fetchCollections(); // 전체 컬렉션 목록 새로고침
       onClose();
       navigate(`/collection/${selectedCollectionId}`);
     } catch (err) {

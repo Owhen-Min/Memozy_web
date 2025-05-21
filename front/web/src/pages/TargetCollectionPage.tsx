@@ -22,6 +22,7 @@ function TargetCollectionPage() {
     setPage,
     allCollection,
     fetchAllCollection,
+    fetchCollections,
   } = useCollectionStore();
   const memozyCount = memozies?.length ?? 0;
   const quizCount =
@@ -82,8 +83,16 @@ function TargetCollectionPage() {
       } else {
         fetchMemozyList(collectionIdNum, 0);
       }
+      fetchCollections(); // 컬렉션 목록 가져오기
     }
-  }, [collectionId, fetchMemozyList, fetchAllMemozyList, fetchAllCollection, setPage]);
+  }, [
+    collectionId,
+    fetchMemozyList,
+    fetchAllMemozyList,
+    fetchAllCollection,
+    setPage,
+    fetchCollections,
+  ]);
 
   const handleMemozySelect = (memozyId: number) => {
     setSelectedMemozyIds((prev) =>
