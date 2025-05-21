@@ -84,7 +84,7 @@ const QuizShowEntryPersonalPage = () => {
             퀴즈 종료하기
           </button> */}
         </div>
-        <div className="w-full h-[calc(100vh-56px-40px-80px)] bg-white rounded-xl shadow-xl">
+        <div className="w-full h-[calc(100vh-176px)] bg-white rounded-xl shadow-xl">
           <div className="flex flex-col items-center pt-12">
             <div className="mb-8 w-52 self-start ml-1 md:ml-16">
               <img src={Memozy_logo} alt="Memozy 로고" />

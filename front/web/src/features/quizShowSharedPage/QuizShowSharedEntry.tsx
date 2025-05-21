@@ -129,7 +129,7 @@ function QuizShowSharedEntry({
           퀴즈 나가기
         </button>
       </div>
-      <div className="w-full min-h-[85vh] sm:h-[80vh] bg-white rounded-xl shadow-xl">
+      <div className="w-full min-h-[75vh] sm:min-h-[80vh] bg-white rounded-xl shadow-xl">
         <div className="flex grid grid-cols-2 items-center">
           <div className="mb-8 w-52 self-start ml-2 md:ml-16 pt-6 sm:pt-12">
             <img src={Memozy_logo} alt="Memozy 로고" />
