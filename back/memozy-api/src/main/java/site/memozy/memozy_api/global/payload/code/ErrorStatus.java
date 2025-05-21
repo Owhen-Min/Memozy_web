@@ -16,6 +16,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	// 검증 관련 에러
 	VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALID401", "입력값이 유효하지 않습니다."),
+	VALIDATION_ERROR_NULL(HttpStatus.BAD_REQUEST, "VALID402", "입력값이 유효하지 않습니다."),
 
 	// User 에러 (USER)
 	MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER401", "사용자가 없습니다."),
@@ -35,6 +36,7 @@ public enum ErrorStatus implements BaseErrorCode {
 	QUIZ_NICKNAME_TOO_LONG(HttpStatus.BAD_REQUEST, "QUIZ410", "닉네임은 10자 이내로 입력해주세요."),
 	QUIZ_NICKNAME_NOT_BLANK(HttpStatus.BAD_REQUEST, "QUIZ411", "닉네임은 공백을 포함할 수 없습니다."),
 	QUIZ_NICKNAME_DUPLICATE(HttpStatus.BAD_REQUEST, "QUIZ412", "다른 이용자가 사용 중인 닉네임입니다."),
+	QUIZ_SUMMARY_TOO_LONG(HttpStatus.BAD_REQUEST, "QUIZ420", "요약하려는 내용이 너무 깁니다."),
 	// QuizSource 에러 (QUIZ_SOURCE)
 	QUIZ_SOURCE_EXISTS(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE400", "이미 저장된 데이터입니다."),
 	QUIZ_SOURCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUIZ_SOURCE401", "해당 데이터가 없습니다."),

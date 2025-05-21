@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -59,11 +60,38 @@ public class OpenAiService {
 			    - 데이터가 하나의 주제로 파악하기 위해 논리적이고 체계적인 접근 방식을 사용하세요.
 			""" + request.getContext();
 
-		return chatClient
-			.prompt()
-			.user(promptText)
-			.call()
-			.content();
+		try {
+			return chatClient
+				.prompt()
+				.user(promptText)
+				.call()
+				.content();
+		} catch (NonTransientAiException ex) {
+			String raw = ex.getMessage();
+			String code = null;
+
+			int jsonStart = raw.indexOf('{');
+			if (jsonStart != -1) {
+				String json = raw.substring(jsonStart);
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					JsonNode root = mapper.readTree(json);
+					code = root.path("error").path("code").asText(null);
+				} catch (Exception parseEx) {
+					throw new GeneralException(QUIZ_VALID_SUMMARY);
+				}
+			}
+
+			if ("rate_limit_exceeded".equals(code)) {
+				throw new GeneralException(QUIZ_SUMMARY_TOO_LONG);
+			}
+
+			// 다른 비회복성 오류 처리
+			throw new GeneralException(QUIZ_VALID_SUMMARY);
+		} catch (Exception ex) {
+			// 기타 예외
+			throw new GeneralException(QUIZ_VALID_SUMMARY);
+		}
 	}
 
 	public QuizResponse createQuiz(Integer quizCount, List<String> quizTypes, String inputData,
