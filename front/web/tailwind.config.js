@@ -1,0 +1,47 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        bg: "#F7F7F9",
+        black: "#000000",
+        light: "#EAF1FF",
+        lighthover: "#D6E5FF",
+        lightactive: "#91BAFF",
+        normal: "#3E6FFA",
+        normalhover: "#191FD9",
+        normalactive: "#002086",
+        main200: "#121212",
+        main100: "#242C6C",
+        gray200: "#BFBFBF",
+        gray100: "#D2D2D2",
+        gray300: "#D9D9D9",
+        red: "#FA3E41",
+        redhover: "#A60003",
+      },
+      fontFamily: {
+        "pre-black": ["Pretendard-Black", "sans-serif"],
+        "pre-extrabold": ["Pretendard-ExtraBold", "sans-serif"],
+        "pre-bold": ["Pretendard-Bold", "sans-serif"],
+        "pre-semibold": ["Pretendard-SemiBold", "sans-serif"],
+        "pre-regular": ["Pretendard-Regular", "sans-serif"],
+        "pre-medium": ["Pretendard-Medium", "sans-serif"],
+        "pre-light": ["Pretendard-Light", "sans-serif"],
+        "pre-thin": ["Pretendard-Thin", "sans-serif"],
+        "pre-extralight": ["Pretendard-ExtraLight", "sans-serif"],
+      },
+      fontSize: {
+        8: "8px",
+        10: "10px",
+        12: "12px",
+        14: "14px",
+        16: "16px",
+        20: "20px",
+        24: "24px",
+        32: "32px",
+      },
+    },
+  },
+  plugins: [],
+};
