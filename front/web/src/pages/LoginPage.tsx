@@ -33,17 +33,15 @@ function LoginPage() {
   const { isLoggedIn, userInfo, loading, error, redirectToGoogleAuth, handleAuthCallback } =
     useAuthStore();
   const location = useLocation();
-  const [isExtensionInstalled, setIsExtensionInstalled] = useState(false);
-  const [isExtensionChecked, setIsExtensionChecked] = useState(false);
+  const [isExtensionInstalled, setIsExtensionInstalled] = useState(true);
 
   useEffect(() => {
     // 이벤트 핸들러
     const handleExtensionInstalled = (event: Event) => {
-      console.log("익스텐션 설치 이벤트 감지됨");
       const customEvent = event as CustomEvent<{ installed: boolean }>;
-      if (customEvent.detail.installed) {
-        console.log("익스텐션이 설치되어 있음");
-        setIsExtensionInstalled(true);
+      console.log(customEvent.detail.installed);
+      if (!customEvent?.detail?.installed) {
+        setIsExtensionInstalled(false);
       }
     };
 
@@ -62,7 +60,6 @@ function LoginPage() {
 
     // 주기적으로 익스텐션 설치 여부 확인 (2초마다)
     const intervalId = setInterval(checkExtensionInstalled, 2000);
-    setIsExtensionChecked(true);
     // 언마운트 시 정리
     return () => {
       document.removeEventListener("memozyExtensionInstalled", handleExtensionInstalled);
@@ -107,7 +104,7 @@ function LoginPage() {
   return (
     <div className="max-h-screen flex flex-col">
       {/* 메인 컨텐츠 */}
-      {isExtensionChecked && !isExtensionInstalled && (
+      {!isExtensionInstalled && isLoggedIn && (
         <ChromeExtensionPopup
           onClose={() => setIsExtensionInstalled(true)}
           onDontShowAgain={() => setIsExtensionInstalled(true)}
