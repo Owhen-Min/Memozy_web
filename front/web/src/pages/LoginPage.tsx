@@ -7,6 +7,23 @@ import profile_monster from "../assets/images/profile_monster.png";
 import google_icon from "../assets/icons/google_icon.png";
 import ServiceCards from "../features/LoginPage/ServiceCard";
 import { useAuthStore } from "../stores/authStore";
+import ChromeExtensionPopup from "../features/LoginPage/ChromeExtensionPopup";
+
+// Chrome 익스텐션 타입 선언
+declare global {
+  interface Window {
+    chrome?: {
+      runtime?: {
+        id?: string;
+        sendMessage?: (
+          extensionId: string,
+          message: any,
+          callback?: (response: any) => void
+        ) => void;
+      };
+    };
+  }
+}
 
 function LoginPage() {
   // 애니메이션 상태 추가
@@ -16,6 +33,42 @@ function LoginPage() {
   const { isLoggedIn, userInfo, loading, error, redirectToGoogleAuth, handleAuthCallback } =
     useAuthStore();
   const location = useLocation();
+  const [isExtensionInstalled, setIsExtensionInstalled] = useState(false);
+  const [isExtensionChecked, setIsExtensionChecked] = useState(false);
+
+  useEffect(() => {
+    // 이벤트 핸들러
+    const handleExtensionInstalled = (event: Event) => {
+      console.log("익스텐션 설치 이벤트 감지됨");
+      const customEvent = event as CustomEvent<{ installed: boolean }>;
+      if (customEvent.detail.installed) {
+        console.log("익스텐션이 설치되어 있음");
+        setIsExtensionInstalled(true);
+      }
+    };
+
+    // 리스너 등록
+    document.addEventListener("memozyExtensionInstalled", handleExtensionInstalled);
+
+    // 익스텐션 설치 여부 확인을 위한 메시지 전송
+    const checkExtensionInstalled = () => {
+      // 익스텐션이 설치되어 있는지 확인하는 메시지 전송
+      const message = { type: "CHECK_INSTALLATION" };
+      window.postMessage(message, "*");
+    };
+
+    // 초기 확인
+    checkExtensionInstalled();
+
+    // 주기적으로 익스텐션 설치 여부 확인 (2초마다)
+    const intervalId = setInterval(checkExtensionInstalled, 2000);
+    setIsExtensionChecked(true);
+    // 언마운트 시 정리
+    return () => {
+      document.removeEventListener("memozyExtensionInstalled", handleExtensionInstalled);
+      clearInterval(intervalId);
+    };
+  }, []);
 
   // URL에 토큰이 있는지 확인하고 처리
   useEffect(() => {
@@ -54,6 +107,12 @@ function LoginPage() {
   return (
     <div className="max-h-screen flex flex-col">
       {/* 메인 컨텐츠 */}
+      {isExtensionChecked && !isExtensionInstalled && (
+        <ChromeExtensionPopup
+          onClose={() => setIsExtensionInstalled(true)}
+          onDontShowAgain={() => setIsExtensionInstalled(true)}
+        />
+      )}
       <div className="flex-1 flex flex-col items-center pt-12">
         <div className="mb-4 lg:mb-8 w-40 lg:w-52 self-start ml-4 lg:ml-36">
           <img src={Memozy_logo} alt="Memozy 로고" />
