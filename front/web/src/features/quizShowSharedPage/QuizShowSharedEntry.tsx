@@ -191,6 +191,7 @@ function QuizShowSharedEntry({
                 <p className="text-16 font-pre-bold">퀴즈 참여가 완료되었어요!</p>
                 <p className="text-14 font-pre-regular">
                   호스트가 퀴즈를 시작할 때까지 잠시만 기다려주세요!
+                  <br /> 모바일 접속의 경우 화면을 유지해야 정상적으로 작동합니다.
                 </p>
               </div>
             )}
