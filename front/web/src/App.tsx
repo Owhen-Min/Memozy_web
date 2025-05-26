@@ -52,31 +52,31 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/quiz-entry/personal/:collectionId"
-            element={
-              <ProtectedRoute>
-                <QuizShowEntryPersonalPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quiz-show/personal/:collectionId/:quizSessionId"
-            element={
-              <ProtectedRoute>
-                <QuizShowPersonalPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/quiz-result/personal/:collectionId/:quizSessionId"
-            element={
-              <ProtectedRoute>
-                <QuizShowResultPersonalPage />
-              </ProtectedRoute>
-            }
-          />
         </Route>
+        <Route
+          path="/quiz-entry/personal/:collectionId"
+          element={
+            <ProtectedRoute>
+              <QuizShowEntryPersonalPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz-show/personal/:collectionId/:quizSessionId"
+          element={
+            <ProtectedRoute>
+              <QuizShowPersonalPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz-result/personal/:collectionId/:quizSessionId"
+          element={
+            <ProtectedRoute>
+              <QuizShowResultPersonalPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/quiz/show/:showId" element={<QuizShowSharedPage />} />
         <Route path="*" element={<ErrorPage />} />

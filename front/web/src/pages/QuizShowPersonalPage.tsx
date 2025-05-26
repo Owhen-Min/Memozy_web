@@ -244,7 +244,7 @@ function QuizShowPersonalPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-2 md:mb-4">
         <h1 className="text-[20px] md:text-[28px] font-pre-semibold text-main200 flex items-center gap-2 whitespace-nowrap min-w-0">
           <img src={small_logo} alt="logo" className="w-10 h-10 flex-shrink-0" />
-          <span className="flex-shrink-0">Quiz :</span>
+          {/* <span className="flex-shrink-0">Quiz :</span> */}
           <span className="text-normalactive truncate min-w-0">{collectionName}</span>
         </h1>
         {/* <button
