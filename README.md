@@ -26,7 +26,7 @@
 
 ## 🎬 서비스 영상
 
-👉🏻[Memozy](https://www.youtube.com/watch?v=JatCCZYCbwI)
+👉🏻[Memozy](https://www.youtube.com/watch?v=ioXKScyEP98)
 
 ## ✨ 주요 기능
 
