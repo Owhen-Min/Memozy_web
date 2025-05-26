@@ -85,9 +85,22 @@ export const useQuizShowSharedResult = ({
   const processRankingData = (rankingData: any[]) => {
     if (!rankingData || rankingData.length === 0) return [];
 
+    let prevScore: number | null = null;
+    let prevRank: number = 0;
+    let count: number = 0;
+
     return rankingData.map((ranker, index) => {
+      count++;
+      let rank;
+      if (ranker.score === prevScore) {
+        rank = prevRank;
+      } else {
+        rank = count;
+        prevRank = rank;
+        prevScore = ranker.score;
+      }
       return {
-        rank: ranker.rank,
+        rank,
         name: ranker.name,
         score: `${ranker.score}점`,
         imageIndex: index < 3 ? index : 2, // 0,1,2 이미지 인덱스
