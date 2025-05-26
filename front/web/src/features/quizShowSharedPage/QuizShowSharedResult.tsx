@@ -195,8 +195,8 @@ function QuizShowResultSharedPage({
 
           {/* 랭킹 영역 - 모든 화면 크기 */}
           <div className="block md:absolute md:right-24 md:top-16 mt-4 md:mt-0">
-            {processedRanking.map((ranker) => (
-              <div key={ranker.rank} className="flex items-center mb-8">
+            {processedRanking.map((ranker, index) => (
+              <div key={index} className="flex items-center mb-8">
                 <img src={rankImages[ranker.rank - 1]} alt={`${ranker.rank}`} className="w-4" />
                 <span className="text-16 md:text-20 font-pre-semibold ml-3">{ranker.name}</span>
                 <span className="text-16 md:text-20 font-pre-semibold ml-3">{ranker.score}</span>
