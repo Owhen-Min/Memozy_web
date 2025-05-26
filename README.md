@@ -342,10 +342,10 @@ PWD: memozy1!
 
 ### 이가희 - 데이터 시각화 및 상태 관리
 
-* **FSD 디자인 패턴 적용**
+* **FSD 디자인 패턴 기반 개발환경 구축**
 
   * `pages`, `features`, `components` 분리로 관심사 분리
-  * 구조화된 개발환경으로 확장성 확보
+  * 구조화된 개발환경 구축으로 확장성 확보
 * **UI 및 접근 제어**
 
   * Tailwind CSS 기반 반응형 UI 구성
@@ -359,7 +359,13 @@ PWD: memozy1!
   * Chart.js + react-calendar-heatmap 사용
   * 막대 차트, 파이 차트, 히트맵 등 3종 시각화 구현
   * 시각화 목적에 맞춘 데이터 구조 최적화
+* **라우팅**
 
+  * React Router + useLocation / useParams: 동적 라우팅
+  * Link, Outlet을 활용한 중첩 라우팅
+* **애니메이션 처리**
+
+  * Framer Motion을 이용한 부드러운 UI 전환
 
 
 </div>
