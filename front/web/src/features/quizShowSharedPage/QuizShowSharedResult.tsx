@@ -164,6 +164,21 @@ function QuizShowResultSharedPage({
                   &nbsp;나의 컬렉션에 저장하기
                 </button>
               )}
+              {isHost && (
+                <button
+                  onClick={() => {
+                    navigate(`/my`);
+                  }}
+                  className={`group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20`}
+                >
+                  <img
+                    src={save}
+                    alt="마이페이지"
+                    className="w-4 md:w-5 ml-1 group-hover:text-blue-600 group-hover:[filter:invert(40%)_sepia(50%)_saturate(800%)_hue-rotate(190deg)_brightness(101%)_contrast(102%)]"
+                  />
+                  &nbsp;퀴즈 기록 확인하기
+                </button>
+              )}
               <button
                 onClick={() => navigate(`/collection`)}
                 className="group flex items-center font-pre-medium hover:text-blue-600 text-14 md:text-20"
